@@ -14,13 +14,15 @@
 - 检查：`stat` 里的单元数、触发器数、面积
 
 ### 02 Floorplan
-- 决定 die/core 大小、IO 位置、布线轨道（真实流程还有电源网格）
+- 决定 die/core 大小、IO 位置、布线轨道、阱接触和电源网格
 - 利用率（utilization）通常 30%–70%，太高难布线，太低浪费面积
 - 看：`report_design_area`、DEF 里的 `DIEAREA`
-- **PDN 在这一步做**：`add_global_connection` → `set_voltage_domain` → `define_pdn_grid`
+- **tap cell**：`tapcell -distance 13 -tapcell_master ...` 插阱接触（防闩锁），本设计 93 个
+- **PDN 也在这一步**：`add_global_connection` → `set_voltage_domain` → `define_pdn_grid`
   → `add_pdn_stripe`（met1 followpin + met4/met5 主干）→ `pdngen`
+- 顺序：place_pins → tapcell → global_connect → pdngen（tap 必须在 PDN 前，否则电源脚接不上）
 - 看：DEF 里有没有 `SPECIALNETS`；跑 `check_power_grid` 看电源网是否全连通
-- 注意：本 lab 不做 IR drop（PDK 没带 RC 参数），只做连通性检查
+- IR drop 用 `analyze_power_grid`，但要先给 via 灌电阻（`set_layer_rc`），本 lab 按 5 Ω 假设
 
 ### 03 Place
 - `global_placement`：解析解，可能重叠

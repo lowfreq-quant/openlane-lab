@@ -98,11 +98,11 @@ bash scripts/run_lvs.sh            # 9c. netgen 比对
 |------|------|------|------------------------|
 | 0 合并 LEF | tlef + lef | `runs/lef/*.lef` | 13 layers + 441 cells |
 | 1 综合 | `rtl/counter.v` | `runs/01_synth/counter_synth.v` | 23 cells，面积 299 µm² |
-| 2 布图 + PDN | 网表 + SDC | `runs/02_floorplan/floorplan.def` | die 100×100，`SPECIALNETS=2`，否则退出 1 |
-| 3 布局 | floorplan.odb | `runs/03_place/place.def` | 0 重叠，HPWL 492.6 µm |
+| 2 布图 + tap + PDN | 网表 + SDC | `runs/02_floorplan/floorplan.def` | die 100×100，93 tapcells，`SPECIALNETS=2`，否则退出 1 |
+| 3 布局 | floorplan.odb | `runs/03_place/place.def` | 0 重叠，HPWL 514.9 µm |
 | 4 CTS | place.odb | `runs/04_cts/cts.def` | 插入 clkbuf，skew 0.25 ns |
 | 5 布线 | cts.odb | `runs/05_route/route.def` | violations = 0 → 否则脚本退出 1 |
-| 6 签核 | route.odb | `runs/06_signoff/sta.log`、`pdn_check.log` | WNS/TNS = 0；2/2 电源网连通 → 否则退出 1 |
+| 6 签核 | route.odb | `runs/06_signoff/sta.log`、`pdn_check.log` | WNS/TNS = 0；2/2 网连通；IR 0.56% → 否则退出 1 |
 | 7 GDS | route.def | `runs/09_gds/counter.gds` | 单 top `counter` |
 | 8 DRC | GDS | `runs/09_gds/drc.lyrdb` | `<item>` = 0 → 否则脚本退出 1 |
 | 9 LVS | ext + golden | `runs/10_lvs/lvs.out` | `Netlists match uniquely` → 否则退出 1 |
@@ -120,11 +120,11 @@ bash scripts/run_lvs.sh            # 9c. netgen 比对
 | `scripts/env.sh` | **唯一环境入口**：ROOT、PATH、PDK 路径、MERGED_LEF；被所有脚本 source |
 | `scripts/merge_lef.sh` | tlef + lef 合成一份；去掉重复 `END LIBRARY`，从第一个 `MACRO` 起保留单元段 |
 | `scripts/01_synth.sh` | yosys：`techmap → dfflibmap → abc`；没 PDK 时退化 generic |
-| `scripts/02_floorplan.sh` | `initialize_floorplan -site unithd` + `make_tracks` + `place_pins` + **PDN**（`add_global_connection` → `pdngen`：met1 跟随轨 + met4/met5 主干） |
+| `scripts/02_floorplan.sh` | `initialize_floorplan` + `make_tracks` + `place_pins` + **tapcell**（93 个，间距 13 µm）+ **PDN**（`add_global_connection` → `pdngen`：met1 跟随轨 + met4/met5 主干） |
 | `scripts/03_place.sh` | `global_placement -density 0.55` + `detailed_placement` |
 | `scripts/04_cts.sh` | `clock_tree_synthesis -buf_list {buf_1 buf_2}` + 重新合法化 |
 | `scripts/05_route.sh` | `global_route` + `detailed_route`，末尾检查 violations=0 |
-| `scripts/06_signoff.sh` | STA（setup/hold/wns/tns/area）+ PDN 连通性（`check_power_grid`） |
+| `scripts/06_signoff.sh` | STA（setup/hold/wns/tns/area）+ PDN 连通性（`check_power_grid`）+ IR drop（`analyze_power_grid`，via 电阻按 5 Ω 假设） |
 | `scripts/common.tcl` | OpenROAD 公共初始化：读合并 LEF + liberty |
 
 ### 4.2 验证（不需要 PDK）
@@ -204,12 +204,12 @@ bash scripts/run_lvs.sh            # 9c. netgen 比对
 | 变异测试 | 3/3 抓到 + 对照 OK | `sim/out/mutation_summary.txt` |
 | STA @10 MHz | WNS/TNS = 0 | `runs/06_signoff/sta.log` |
 | 时钟扫描 | 2 ns MET；1 ns WNS=-0.13；0.5 ns -0.63 | `runs/08_timing_sweep/sta_*.log` |
-| 布图 | `SPECIALNETS=2`，met1 轨 30 条 + met4/met5 主干各 6 条 | `runs/02_floorplan/floorplan.def` |
-| 布线 | violations = 0，信号线长 611 µm，via 194 | `runs/05_route/openroad.log` |
-| 电源 | **2/2 电源网所有图形连通** | `runs/06_signoff/pdn_check.log` |
-| GDS | 单 top `counter`，约 370 KB（met1–met5 + via） | `runs/09_gds/klayout_gds.log` |
+| 布图 | 93 tapcells；`SPECIALNETS=2`，met1 轨 30 条 + met4/met5 主干各 6 条 | `runs/02_floorplan/floorplan.def` |
+| 布线 | violations = 0，信号线长 622 µm，via 187 | `runs/05_route/openroad.log` |
+| 电源 | **2/2 电源网连通**；IR drop 最差 10.1 mV / 0.56% | `runs/06_signoff/pdn_check.log` |
+| GDS | 单 top `counter`，约 520 KB（met1–met5 + via） | `runs/09_gds/klayout_gds.log` |
 | DRC | **0 违例**（166 类规则） | `runs/09_gds/drc.lyrdb` |
-| LVS | **match uniquely**（26 devices / 32 nets） | `runs/10_lvs/lvs.out` |
+| LVS | **match uniquely**（26 devices / 30 nets，阱并进电源） | `runs/10_lvs/lvs.out` |
 
 ---
 
@@ -240,9 +240,16 @@ bash scripts/run_lvs.sh            # 9c. netgen 比对
 16. **PDN 顺序不能错**：先 `add_global_connection` + `global_connect`，再 `define_pdn_grid` / `pdngen`；
     否则单元电源脚没连上，网格是空壳。`define_pdn_grid` 加 `-pins {met5}` 才会生成顶层电源端子，
     没有端子 `check_power_grid` 会报 `PSM-0025 does not contain any terminals`。
-17. **IR drop 算不了**：PDK 的 LEF 没有电阻参数，`analyze_power_grid` 直接报
-    `PSM-0021 Resistance map contains invalid values`；要算得先用 `set_layer_rc` 灌 RC。
-    所以本 lab 只做连通性检查（`check_power_grid`），不做压降。
+17. **IR drop 默认算不了**：sky130 的 LEF 只有层电阻（`RESISTANCE RPERSQ`），**没有 via 电阻**，
+    `analyze_power_grid` 直接报 `PSM-0021 Resistance map contains invalid values`。
+    先 `set_layer_rc -via via -resistance 5.0`（每个 via 类型都要设）就能跑；本 lab 的压降数字
+    建立在这个 5 Ω 假设上，只能看数量级。
+18. **插了 tap cell，LVS 会多出一条孤立 VPB 网**：tap 把 nwell 短到 VPWR、pwell 短到 VGND，
+    版图侧阱被并走，而金标准还把 VPB/VNB 当独立网 → `Netlists do not match`。
+    做法是两侧都按 tap 约定归一（`make_golden.py` / `fix_ext_power.py` 里 VPB→VPWR、VNB→VGND），
+    并在 `lvs_extra.tcl` 里只声明 VPWR/VGND 为全局网。
+19. **tap cell 要在 PDN 之前插**，且 `add_global_connection` 要放在 tapcell 之后，
+    否则新插的 tap 电源脚接不上网格。
 
 ---
 
@@ -305,16 +312,16 @@ bash scripts/run_sim.sh && bash scripts/run_equiv.sh && bash scripts/run_mutatio
 
 ## 10. 已知局限
 
-1. **有 PDN，但没有 IR drop / EM**：met1 跟随轨 + met4/met5 主干，`check_power_grid` 确认两网连通；
-   但 LEF 不带电阻参数，`analyze_power_grid` 报 `PSM-0021 Resistance map contains invalid values`。
-   LVS 的电源仍是 `fix_ext_power.py` 按名字短接**假定**的。
-2. **LVS 是 LEF 抽象级**：Magic 用 LEF abstract 提取，比的是实例+连接，不是晶体管级版图。
+1. **IR drop 是估计值**：PDN 真实存在、连通性已验证；`analyze_power_grid` 能跑，
+   但 via 电阻是按 5 Ω 假设灌进去的（LEF 只带层电阻），所以 10.1 mV / 0.56% 只能看数量级。
+2. **LVS 是 LEF 抽象级**：Magic 用 LEF abstract 提取，比的是实例+连接，不是晶体管级版图；
+   阱（VPB/VNB）按 tap 约定并进电源，不逐阱检查。
 3. **没有真实寄生**：只有 `estimate_parasitics -global_routing`，无 SPEF、无后仿。
-4. **10 MHz + 5% 利用率**：时序与面积数字没有工程意义，只是跑通流程。
+4. **10 MHz + 7% 利用率**：时序与面积数字没有工程意义，只是跑通流程。
 5. **单元功能模型手写**：`sim/sky130_hd_min.v` 只覆盖用到的 10 个 cell。
-6. **没有 tap cell / decap**：well tap 没插。
+6. **没有 decap / filler**：tap 有了，去耦电容和填充单元没插。
 
-要往"真设计"走，按这个顺序补：IR drop（补 RC 参数）→ SPEF/后仿 → tap/decap → 换 UART/SPI → 缩 die 提频率。
+要往"真设计"走，按这个顺序补：decap/filler → SPEF/后仿 → 用真实 RC 出 IR → 换 UART/SPI → 缩 die 提频率。
 
 ---
 
@@ -335,12 +342,14 @@ bash scripts/run_sim.sh && bash scripts/run_equiv.sh && bash scripts/run_mutatio
 - [x] 验证：仿真 / 门级 / 等价 / 变异 / STA / 时钟扫描
 - [x] GDS + DRC(0) + LVS(match uniquely)
 - [x] PDN：met1 跟随轨 + met4/met5 主干，`check_power_grid` 2/2 连通
+- [x] tap cell：93 个，间距 13 µm，阱按 tap 约定并进电源
+- [x] IR drop：最差 10.1 mV / 0.56%（via 电阻 5 Ω 假设）
 - [x] 路径去硬编码，clone 到任意目录可跑
 - [x] 仓库整理：`.gitignore` / `LICENSE` / legacy 归档 / CI
 - [x] 文档：README / HANDOFF / tools / flow-notes / verification / first-run-report
-- [ ] IR drop / EM（缺 RC 参数，未做）
+- [ ] 用真实 RC（而非假设的 via 电阻）重算 IR / EM
 - [ ] 后仿 / SPEF（未做）
-- [ ] tap cell / decap（未做）
+- [ ] decap / filler（未做）
 - [ ] 更大设计 UART/SPI（未做）
 
 有问题先查 §7 坑列表；脚本细节见 §4；验证结论见 §6。

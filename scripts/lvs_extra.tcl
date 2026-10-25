@@ -1,8 +1,8 @@
 # netgen LVS 额外规则：电源全局 + 忽略 fill/tap
 # 在 sky130A_setup.tcl 之后 source
 
-# 电源地视为全局网
-foreach n {VGND VPWR VNB VPB} {
+# 电源地视为全局网（阱 VPB/VNB 已按 tap 约定并进 VPWR/VGND，见 make_golden.py）
+foreach n {VGND VPWR} {
   catch {net global "-circuit1 $n"}
   catch {net global "-circuit2 $n"}
 }

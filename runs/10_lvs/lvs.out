@@ -9,14 +9,6 @@ Cell sky130_fd_sc_hd__dfrtp_1 disconnected node: VPWR
 Cell sky130_fd_sc_hd__dfrtp_1 disconnected node: Q
 Equate pins:  cell sky130_fd_sc_hd__dfrtp_1 and/or sky130_fd_sc_hd__dfrtp_1 has no elements.
 
-Cell sky130_fd_sc_hd__clkinv_1 disconnected node: A
-Cell sky130_fd_sc_hd__clkinv_1 disconnected node: VGND
-Cell sky130_fd_sc_hd__clkinv_1 disconnected node: VNB
-Cell sky130_fd_sc_hd__clkinv_1 disconnected node: VPB
-Cell sky130_fd_sc_hd__clkinv_1 disconnected node: VPWR
-Cell sky130_fd_sc_hd__clkinv_1 disconnected node: Y
-Equate pins:  cell sky130_fd_sc_hd__clkinv_1 and/or sky130_fd_sc_hd__clkinv_1 has no elements.
-
 Cell sky130_fd_sc_hd__nand2_1 disconnected node: A
 Cell sky130_fd_sc_hd__nand2_1 disconnected node: B
 Cell sky130_fd_sc_hd__nand2_1 disconnected node: VGND
@@ -25,6 +17,14 @@ Cell sky130_fd_sc_hd__nand2_1 disconnected node: VPB
 Cell sky130_fd_sc_hd__nand2_1 disconnected node: VPWR
 Cell sky130_fd_sc_hd__nand2_1 disconnected node: Y
 Equate pins:  cell sky130_fd_sc_hd__nand2_1 and/or sky130_fd_sc_hd__nand2_1 has no elements.
+
+Cell sky130_fd_sc_hd__clkinv_1 disconnected node: A
+Cell sky130_fd_sc_hd__clkinv_1 disconnected node: VGND
+Cell sky130_fd_sc_hd__clkinv_1 disconnected node: VNB
+Cell sky130_fd_sc_hd__clkinv_1 disconnected node: VPB
+Cell sky130_fd_sc_hd__clkinv_1 disconnected node: VPWR
+Cell sky130_fd_sc_hd__clkinv_1 disconnected node: Y
+Equate pins:  cell sky130_fd_sc_hd__clkinv_1 and/or sky130_fd_sc_hd__clkinv_1 has no elements.
 
 Cell sky130_fd_sc_hd__buf_1 disconnected node: A
 Cell sky130_fd_sc_hd__buf_1 disconnected node: VGND
@@ -107,8 +107,8 @@ Subcircuit summary:
 Circuit 1: counter                         |Circuit 2: counter                         
 -------------------------------------------|-------------------------------------------
 sky130_fd_sc_hd__dfrtp_1 (8)               |sky130_fd_sc_hd__dfrtp_1 (8)               
-sky130_fd_sc_hd__clkinv_1 (1)              |sky130_fd_sc_hd__clkinv_1 (1)              
 sky130_fd_sc_hd__nand2_1 (2)               |sky130_fd_sc_hd__nand2_1 (2)               
+sky130_fd_sc_hd__clkinv_1 (1)              |sky130_fd_sc_hd__clkinv_1 (1)              
 sky130_fd_sc_hd__buf_1 (3)                 |sky130_fd_sc_hd__buf_1 (3)                 
 sky130_fd_sc_hd__xnor2_1 (3)               |sky130_fd_sc_hd__xnor2_1 (3)               
 sky130_fd_sc_hd__lpflow_isobufsrc_1 (2)    |sky130_fd_sc_hd__lpflow_isobufsrc_1 (2)    
@@ -118,7 +118,7 @@ sky130_fd_sc_hd__nor2_1 (1)                |sky130_fd_sc_hd__nor2_1 (1)
 sky130_fd_sc_hd__nand4_1 (1)               |sky130_fd_sc_hd__nand4_1 (1)               
 sky130_fd_sc_hd__and4_1 (1)                |sky130_fd_sc_hd__and4_1 (1)                
 Number of devices: 26                      |Number of devices: 26                      
-Number of nets: 32                         |Number of nets: 32                         
+Number of nets: 30                         |Number of nets: 30                         
 ---------------------------------------------------------------------------------------
 Circuits match uniquely.
 Netlists match uniquely.
@@ -134,11 +134,11 @@ q[5]                                       |q[5]
 q[3]                                       |q[3]                                       
 q[6]                                       |q[6]                                       
 q[7]                                       |q[7]                                       
-VGND                                       |(no matching pin)                          
-VPWR                                       |(no matching pin)                          
 rst_n                                      |rst_n                                      
 q[1]                                       |q[1]                                       
 q[4]                                       |q[4]                                       
+VGND                                       |(no matching pin)                          
+VPWR                                       |(no matching pin)                          
 ---------------------------------------------------------------------------------------
 Cell pin lists for counter and counter altered to match.
 Circuits match uniquely.

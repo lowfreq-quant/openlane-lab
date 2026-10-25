@@ -21,16 +21,6 @@ Circuit sky130_fd_sc_hd__dfrtp_1 contains 28 device instances.
 Circuit contains 21 nets.
 
 Circuit sky130_fd_sc_hd__dfrtp_1 contains no devices.
-Contents of circuit 1:  Circuit: 'sky130_fd_sc_hd__clkinv_1'
-Circuit sky130_fd_sc_hd__clkinv_1 contains 0 device instances.
-Circuit contains 0 nets, and 6 disconnected pins.
-Contents of circuit 2:  Circuit: 'sky130_fd_sc_hd__clkinv_1'
-Circuit sky130_fd_sc_hd__clkinv_1 contains 2 device instances.
-  Class: pfet_01v8_hvt         instances:   1
-  Class: nfet_01v8             instances:   1
-Circuit contains 6 nets.
-
-Circuit sky130_fd_sc_hd__clkinv_1 contains no devices.
 Contents of circuit 1:  Circuit: 'sky130_fd_sc_hd__nand2_1'
 Circuit sky130_fd_sc_hd__nand2_1 contains 0 device instances.
 Circuit contains 0 nets, and 7 disconnected pins.
@@ -41,6 +31,16 @@ Circuit sky130_fd_sc_hd__nand2_1 contains 4 device instances.
 Circuit contains 8 nets.
 
 Circuit sky130_fd_sc_hd__nand2_1 contains no devices.
+Contents of circuit 1:  Circuit: 'sky130_fd_sc_hd__clkinv_1'
+Circuit sky130_fd_sc_hd__clkinv_1 contains 0 device instances.
+Circuit contains 0 nets, and 6 disconnected pins.
+Contents of circuit 2:  Circuit: 'sky130_fd_sc_hd__clkinv_1'
+Circuit sky130_fd_sc_hd__clkinv_1 contains 2 device instances.
+  Class: pfet_01v8_hvt         instances:   1
+  Class: nfet_01v8             instances:   1
+Circuit contains 6 nets.
+
+Circuit sky130_fd_sc_hd__clkinv_1 contains no devices.
 Contents of circuit 1:  Circuit: 'sky130_fd_sc_hd__buf_1'
 Circuit sky130_fd_sc_hd__buf_1 contains 0 device instances.
 Circuit contains 0 nets, and 6 disconnected pins.
@@ -134,7 +134,7 @@ Circuit counter contains 26 device instances.
   Class: sky130_fd_sc_hd__xnor2_1 instances:   3
   Class: sky130_fd_sc_hd__lpflow_isobufsrc_1 instances:   2
   Class: sky130_fd_sc_hd__nor2_1 instances:   1
-Circuit contains 32 nets.
+Circuit contains 30 nets.
 Contents of circuit 2:  Circuit: 'counter'
 Circuit counter contains 26 device instances.
   Class: sky130_fd_sc_hd__a31oi_1 instances:   2
@@ -148,10 +148,10 @@ Circuit counter contains 26 device instances.
   Class: sky130_fd_sc_hd__xnor2_1 instances:   3
   Class: sky130_fd_sc_hd__lpflow_isobufsrc_1 instances:   2
   Class: sky130_fd_sc_hd__nor2_1 instances:   1
-Circuit contains 32 nets.
+Circuit contains 30 nets.
 
 Circuit 1 contains 26 devices, Circuit 2 contains 26 devices.
-Circuit 1 contains 32 nets,    Circuit 2 contains 32 nets.
+Circuit 1 contains 30 nets,    Circuit 2 contains 30 nets.
 
 Netlists match uniquely.
 Result: Circuits match uniquely.

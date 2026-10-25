@@ -7,4 +7,28 @@ Components of this program may be licensed under more restrictive licenses which
 PDK loaded from /home/user/.volare/sky130A  (merged LEF: /path/to/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef)
 [INFO PSM-0040] All shapes on net VPWR are connected.
 [INFO PSM-0040] All shapes on net VGND are connected.
+[INFO PSM-0040] All shapes on net VPWR are connected.
+########## IR report #################
+Net              : VPWR
+Corner           : default
+Total power      : 1.60e-05 W
+Supply voltage   : 1.80e+00 V
+Worstcase voltage: 1.79e+00 V
+Average voltage  : 1.79e+00 V
+Average IR drop  : 5.05e-03 V
+Worstcase IR drop: 1.01e-02 V
+Percentage drop  : 0.56 %
+######################################
+[INFO PSM-0040] All shapes on net VGND are connected.
+########## IR report #################
+Net              : VGND
+Corner           : default
+Total power      : 1.60e-05 W
+Supply voltage   : 0.00e+00 V
+Worstcase voltage: 1.01e-02 V
+Average voltage  : 5.06e-03 V
+Average IR drop  : 5.06e-03 V
+Worstcase IR drop: 1.01e-02 V
+Percentage drop  : 0.56 %
+######################################
 PDN_CHECK_DONE

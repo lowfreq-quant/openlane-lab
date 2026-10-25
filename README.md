@@ -10,12 +10,13 @@
 |------|------|
 | 工艺 / 单元库 | SKY130A / `sky130_fd_sc_hd`（volare 预编译版） |
 | 综合面积 | 23 cells，299 µm²（8× `dfrtp_1`） |
-| 布线 | 0 违例，信号线长 611 µm，via 194 |
-| 电源 | met1 跟随轨 + met4/met5 主干，2 个电源网 **全部连通**（`check_power_grid`） |
+| 布图 / 布局后 | 23 logic + **93 tapcells**，415 µm²，利用率 7%（CTS 后 427 µm²） |
+| 布线 | 0 违例，信号线长 622 µm，via 187 |
+| 电源 | met1 跟随轨 + met4/met5 主干，2/2 电源网全连通；IR drop 最差 **10.1 mV（0.56%）**（via 电阻按 5 Ω 假设） |
 | STA @10 MHz | WNS/TNS = 0（~1 GHz 开始违例） |
-| GDS | 单 top cell `counter`，约 370 KB（met1–met5 + via） |
+| GDS | 单 top cell `counter`，约 520 KB（met1–met5 + via） |
 | DRC | **0 违例**（sky130A.lydrc，166 类规则） |
-| LVS | **Netlists match uniquely**（26 devices / 32 nets） |
+| LVS | **Netlists match uniquely**（26 devices / 30 nets） |
 | 形式等价 | 9/9 proven |
 | 变异测试 | 3/3 注入 bug 被 testbench 抓到 |
 
@@ -34,11 +35,11 @@
 |---|------|------|------|------|
 | 0 | 合并 LEF | `scripts/merge_lef.sh` | `runs/lef/*.lef` | 13 层 + 441 cells 能读入 |
 | 1 | 综合 | `scripts/01_synth.sh` | `runs/01_synth/counter_synth.v` | 23 cells / 299 µm² |
-| 2 | 布图 + PDN | `scripts/02_floorplan.sh` | `runs/02_floorplan/floorplan.def` | die 100×100，`SPECIALNETS=2` |
-| 3 | 布局 | `scripts/03_place.sh` | `runs/03_place/place.def` | 0 重叠，HPWL 492.6 µm |
+| 2 | 布图 + tap + PDN | `scripts/02_floorplan.sh` | `runs/02_floorplan/floorplan.def` | die 100×100，93 tapcells，`SPECIALNETS=2` |
+| 3 | 布局 | `scripts/03_place.sh` | `runs/03_place/place.def` | 0 重叠，HPWL 514.9 µm |
 | 4 | CTS | `scripts/04_cts.sh` | `runs/04_cts/cts.def` | 插入 clock buffer，skew 可报告 |
 | 5 | 布线 | `scripts/05_route.sh` | `runs/05_route/route.def` | violations = 0 |
-| 6 | 签核（STA + PDN） | `scripts/06_signoff.sh` | `runs/06_signoff/sta.log`、`pdn_check.log` | WNS/TNS = 0；2/2 电源网连通 |
+| 6 | 签核（STA + PDN + IR） | `scripts/06_signoff.sh` | `runs/06_signoff/sta.log`、`pdn_check.log` | WNS/TNS = 0；2/2 网连通；IR 0.56% |
 | 7 | GDS | `scripts/run_gds_drc.sh` | `runs/09_gds/counter.gds` | 单 top cell |
 | 8 | DRC | 同上 | `runs/09_gds/drc.lyrdb` | `<item>` 数量 = 0 |
 | 9 | LVS | `dump_cts_netlist.sh` + `lvs_extract.sh` + `run_lvs.sh` | `runs/10_lvs/lvs.out` | match uniquely |
@@ -113,19 +114,19 @@ bash scripts/run_timing_sweep.sh   # 时钟 100ns → 0.5ns 扫 WNS
 
 ## 5. 已知局限（先声明，别当它是可流片设计）
 
-1. **有 PDN，但没有 IR drop / EM。** 电源网格是 met1 跟随轨 + met4/met5 主干，
-   `check_power_grid` 确认两个网全部连通；但 PDK 的 LEF 不带电阻参数，
-   `analyze_power_grid` 会报 `PSM-0021 Resistance map contains invalid values`，
-   所以压降/电迁移没算。另外 LVS 里的电源仍是 `fix_ext_power.py` 按名字短接**假定**的
-   （Magic 的提取网表没有把电源轨并进顶层网）。
+1. **IR drop 是估计值，不是签核值。** PDN 是真的（met1 跟随轨 + met4/met5 主干），
+   `check_power_grid` 确认两个网全部连通；`analyze_power_grid` 也能跑，但 sky130 的 LEF
+   **只有层电阻、没有 via 电阻**，所以脚本里按 **5 Ω/个 via** 假设（`set_layer_rc`）。
+   最差压降 10.1 mV / 0.56%，数量级可信，但不能当签核数字。
 2. **LVS 是 LEF 抽象级。** Magic 用 LEF abstract 提取，比的是「实例类型 + 连接关系」，
-   不是版图器件级。真实 LVS 要从 GDS 提晶体管，还要有完整的器件模型。
+   不是版图器件级。阱（VPB/VNB）按 tap 约定并进 VPWR/VGND，所以**不逐阱检查**。
+   真实 LVS 要从 GDS 提晶体管，还要有完整的器件模型。
 3. **STA 没有真实寄生。** 只有 `estimate_parasitics` 的布线估算，没有 SPEF / RC 提取，也没跑后仿。
    10 MHz 下 WNS=0 几乎没有信息量（setup slack 97.98 ns）。
-4. **die 100×100，利用率 5%。** 教学用，面积/功耗数字不代表真实设计。真芯片会缩到 30×30 上下。
+4. **die 100×100，利用率 7%。** 靠 93 个 tap 撑着，面积数字不代表真实设计。真芯片会缩到 30×30 上下。
 5. **单元功能模型是手写的**（`sim/sky130_hd_min.v`，10 个 cell）。它证明逻辑映射正确，
    不等于与 foundry 的 Verilog 模型 bit-exact。
-6. **没有 tap cell / decap。** 防闩锁的 well tap 没插，这也是 IR drop 之外的空白。
+6. **没有 decap / filler。** tap 有了，但去耦电容和填充单元没插（DRC 不强制，密度规则也不查）。
 
 ## 6. 来源与致谢
 

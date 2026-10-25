@@ -46,13 +46,24 @@ if [[ -f "$RT/route_drc.rpt" ]]; then
   fi
 fi
 
-# --- PDN 连通性（电源网格是否真的连到每个实例的电源脚）---
+# --- PDN 连通性 + IR drop ---
 cat > "$OUT/pdn_check.tcl" <<'EOF'
 source $::env(SCRIPTS_DIR)/common.tcl
 read_db $::env(RT)/route.odb
 foreach n {VPWR VGND} {
   if {[catch {check_power_grid -net $n} err]} {
     puts "PDN_CHECK_FAIL $n: $err"
+  }
+}
+
+# LEF 里层电阻有、via 电阻没有；PSM 遇到 0 电阻会报 PSM-0021。
+# 这里按 5 ohm/个 假设（见 README「已知局限」），只为让 PSM 能算出压降。
+foreach v {via via2 via3 via4} {
+  catch {set_layer_rc -via $v -resistance 5.0}
+}
+foreach n {VPWR VGND} {
+  if {[catch {analyze_power_grid -net $n} err]} {
+    puts "IR_FAIL $n: $err"
   }
 }
 puts "PDN_CHECK_DONE"
@@ -64,8 +75,21 @@ if grep -q 'PDN_CHECK_FAIL' "$OUT/pdn_check.log"; then
   grep 'PDN_CHECK_FAIL' "$OUT/pdn_check.log" >&2
   exit 1
 fi
-pdn_ok=$(grep -c 'All shapes on net .* are connected' "$OUT/pdn_check.log" || true)
+# check_power_grid 和 analyze_power_grid 都会打这行，按网名去重再计数
+pdn_ok=$(grep -oE 'All shapes on net [A-Za-z0-9_]+ are connected' "$OUT/pdn_check.log" | sort -u | wc -l)
 echo "[DONE] PDN: ${pdn_ok:-0}/2 个电源网所有图形连通（check_power_grid）"
+if [[ "${pdn_ok:-0}" -ne 2 ]]; then
+  echo "[ERROR] 电源网连通数不对（期望 2）" >&2
+  exit 1
+fi
+
+if grep -q 'IR_FAIL' "$OUT/pdn_check.log"; then
+  echo "[WARN] IR drop 分析失败（不阻塞流程）："
+  grep 'IR_FAIL' "$OUT/pdn_check.log" | sed 's/^/       /'
+else
+  grep -E '^Net +: (VPWR|VGND)|Worstcase IR drop|Percentage drop' "$OUT/pdn_check.log" \
+    | sed 's/^/       /'
+fi
 
 wns=$(grep -E '^wns ' "$OUT/sta.log" | tail -1 | awk '{print $3}')
 tns=$(grep -E '^tns ' "$OUT/sta.log" | tail -1 | awk '{print $3}')

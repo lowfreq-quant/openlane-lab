@@ -16,7 +16,14 @@ from pathlib import Path
 
 ROOT = Path(os.environ.get("ROOT") or Path(__file__).resolve().parents[1])
 LVS_DIR = ROOT / "runs" / "10_lvs"
-POWER = ("VGND", "VNB", "VPB", "VPWR")
+# 阱连接：插了 tap cell 之后，nwell 经 tap 接 VPWR、pwell 接 VGND，
+# LVS 两侧统一按这个约定归一，否则版图侧会多出一条只挂一个脚的 VPB 网。
+POWER = {
+    "VPWR": "VPWR",
+    "VGND": "VGND",
+    "VPB": "VPWR",
+    "VNB": "VGND",
+}
 
 
 def cdl_path() -> Path:
@@ -92,7 +99,7 @@ def main() -> int:
         conns = []
         for p in pins:
             if p in POWER:
-                conns.append(p)
+                conns.append(POWER[p])
             else:
                 val = pinmap.get(p) or pinmap.get(p.lower()) or pinmap.get(p.upper())
                 conns.append(val if val else f"UNCONN_{p}")

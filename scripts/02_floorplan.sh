@@ -36,6 +36,10 @@ make_tracks
 # IO 摆放（sky130：水平 met3 / 垂直 met2）
 place_pins -hor_layers met3 -ver_layers met2
 
+# ---- 阱接触（tap cell）：防闩锁，间距按 sky130 常见值 13 µm ----
+# 必须在 PDN 之前插：tap 的电源脚要跟后面的电源轨一起连上
+tapcell -distance 13 -tapcell_master sky130_fd_sc_hd__tapvpwrvgnd_1
+
 # ---- PDN：把单元的 VPWR/VGND 接成真正的电源网络 ----
 # 1) 把每个实例的电源脚按名字连到全局网
 add_global_connection -net VPWR -pin_pattern {^VPWR$} -power
@@ -71,5 +75,6 @@ if ! grep -q '^SPECIALNETS' "$OUT/floorplan.def"; then
   exit 1
 fi
 nets=$(grep -m1 '^SPECIALNETS' "$OUT/floorplan.def" | awk '{print $2}')
-echo "[DONE] DEF: $OUT/floorplan.def   SPECIALNETS=${nets:-?}（VPWR/VGND）"
+taps=$(grep -c 'sky130_fd_sc_hd__tap' "$OUT/floorplan.def" || true)
+echo "[DONE] DEF: $OUT/floorplan.def   SPECIALNETS=${nets:-?}（VPWR/VGND）  tapcells=${taps:-0}"
 echo "       下一步: 03_place.sh"

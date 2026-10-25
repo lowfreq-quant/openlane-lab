@@ -21,7 +21,9 @@ def main() -> int:
         print("        先跑 bash scripts/run_lvs_cell.sh", file=sys.stderr)
         return 1
 
-    power_map = {"VPWR": "VPWR", "VGND": "VGND", "VPB": "VPB", "VNB": "VNB", "SUB": "VNB"}
+    # 插了 tap cell 之后阱经 tap 接电源：VPB→VPWR、VNB/SUB→VGND，
+    # 与 make_golden.py 的约定保持一致。
+    power_map = {"VPWR": "VPWR", "VGND": "VGND", "VPB": "VPWR", "VNB": "VGND", "SUB": "VGND"}
 
     def fix_net(n: str) -> str:
         n = n.strip()
@@ -32,9 +34,9 @@ def main() -> int:
         if n.endswith("/VGND"):
             return "VGND"
         if n.endswith("/VPB"):
-            return "VPB"
+            return "VPWR"
         if n.endswith("/VNB"):
-            return "VNB"
+            return "VGND"
         return n
 
     # 以 '+' 续行的语句先拼成一条
