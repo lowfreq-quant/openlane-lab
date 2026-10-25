@@ -17,6 +17,7 @@
 | 填充 | **730 个 fill cell**（fill_8 519 / fill_4 83 / fill_2 64 / fill_1 64） |
 | 电源 | met1 跟随轨 + met4/met5 主干，2/2 电源网全连通；IR drop 最差 **15.5 mV（0.86%）**（via 电阻按 5 Ω 假设） |
 | STA @10 MHz | WNS/TNS = 0（~1 GHz 开始违例） |
+| 多工艺角 | tt / ff / ss 在 10 MHz 下 setup+hold **全部 MET**；ss 的 setup 最紧（94.61 ns slack）、ff 的 hold 最紧（0.05 ns）；拉到 1 ns 时 ss −2.88、tt −0.27，ff 仍 MET |
 | 后仿 | 布线后网表 + SDF（估算寄生），PASS |
 | GDS | 单 top cell `counter`，约 1.9 MB（含填充单元） |
 | DRC | **0 违例**（sky130A.lydrc，166 类规则） |
@@ -48,6 +49,7 @@
 | 8 | DRC | 同上 | `runs/09_gds/drc.lyrdb` | `<item>` 数量 = 0 |
 | 9 | LVS | `dump_cts_netlist.sh` + `lvs_extract.sh` + `run_lvs.sh` | `runs/10_lvs/lvs.out` | match uniquely |
 | 10 | 后仿 | `dump_route_netlist.sh` + `run_postsim.sh` | `runs/12_postsim/postsim.log` | `PASS` |
+| 11 | 多 corner STA | `scripts/run_corner_sta.sh` | `runs/13_corners/sta_<corner>_*.log` | 10 MHz 下 tt/ff/ss 全 MET |
 
 ## 2. 5 分钟复现
 
@@ -99,10 +101,12 @@ bash scripts/run_timing_sweep.sh   # 时钟 100ns → 0.5ns 扫 WNS
 前三个在 CI 里也跑（见 [`.github/workflows/smoke.yml`](.github/workflows/smoke.yml)），
 所以 clone 下来不装 PDK 也能确认「仿真和等价是对的」。
 
-后仿需要先跑完布线（`make all`），然后：
+后仿和多 corner STA 需要先跑完布线（`make all`），然后：
 
 ```bash
 make postsim                       # 布线后网表 + SDF → 时序后仿
+make corners                       # tt/ff/ss 三工艺角（10 MHz setup+hold，外加 1 ns 压力）
+make finish                        # 上面两项 + GDS/DRC + LVS 一起跑
 ```
 
 ## 4. 目录
@@ -143,8 +147,10 @@ make postsim                       # 布线后网表 + SDF → 时序后仿
 4. **后仿是「估算寄生 + 手写 specify」**：SDF 里的单元延迟来自 liberty，连线延迟来自估算；
    单元模型里的 specify 弧是我按端口手写的（占位值会被 SDF 覆盖），不是从 liberty 自动生成。
    它能验证「布线后网表 + 延迟标注」这条链路，但不是签核级时序仿真。
-5. **die 100×100，利用率 7%。** 靠 93 个 tap 和 730 个 fill 撑着，面积数字不代表真实设计。
-6. **单元功能模型是手写的**（`sim/sky130_hd_min.v`，11 个 cell）。它证明逻辑映射正确，
+5. **多 corner 只覆盖 3 个典型点。** tt/ff/ss 各一个电压温度组合，没有 OCV/derate、
+   没有 RC corner 组合、没有逐电压扫描。
+6. **die 100×100，利用率 7%。** 靠 93 个 tap 和 730 个 fill 撑着，面积数字不代表真实设计。
+7. **单元功能模型是手写的**（`sim/sky130_hd_min.v`，11 个 cell）。它证明逻辑映射正确，
    不等于与 foundry 的 Verilog 模型 bit-exact。
 7. **没有 decap / 金属填充（density fill）。** fill cell 已插满空 site；decap 和
    `density_fill`（金属密度）没做——5% 利用率下 IR 只有 0.86%，没有 decap 需求。

@@ -17,19 +17,20 @@
 | 2 | 门级仿真 | 综合有没有改坏功能 | **PASS**（同一 testbench） | `sim/out/gate_sim.log` |
 | 3 | 形式等价 | RTL ≡ 网表能否证明 | **9/9 proven** | `runs/07_equiv/equiv.log` |
 | 4 | 变异测试 | testbench 是否真能抓 bug | **3/3 抓到 + 对照通过** | `sim/out/mutation_summary.txt` |
-| 5 | 静态时序 STA | 目标频率下能不能工作 | **MET @10 MHz**；1 ns 起违例 | `runs/06_signoff/sta.log`、`runs/08_timing_sweep/` |
-| 6 | 布线 DRC | 布出来的线有没有短路/间距问题 | **0 violations** | `runs/05_route/openroad.log` |
-| 7 | 天线 | 长线会不会在刻蚀时积累电荷 | **0 net / 0 pin 违例** | `runs/05_route/openroad.log` |
-| 8 | 填充 | 空 site 有没有 fill | **730 个 fill cell** | `runs/05_route/route.def` |
-| 9 | 版图 DRC | GDS 能不能制造 | **0 违例 / 166 类规则** | `runs/09_gds/drc.lyrdb` |
-| 10 | LVS | 版图连接 = 网表连接吗 | **match uniquely**（26 dev / 30 nets） | `runs/10_lvs/lvs.out` |
-| 11 | 阱连接 | tap 有没有把阱接到电源 | **93 tapcells，阱并入 VPWR/VGND** | `runs/02_floorplan/floorplan.def` |
-| 12 | PDN 连通 | 电源网格连到每个电源脚了吗 | **2/2 网全部连通** | `runs/06_signoff/pdn_check.log` |
-| 13 | IR drop | 压降够不够 | **15.5 mV / 0.86%**（via 电阻 5 Ω 假设） | `runs/06_signoff/pdn_check.log` |
-| 14 | SDF 后仿 | 带延迟的布线后网表还对吗 | **PASS**（估算寄生） | `runs/12_postsim/postsim.log` |
-| 15 | EM | 电流密度够不够 | **未做**（PSM 的 EM 选项没开） | — |
+| 5 | 静态时序 STA | 目标频率下能不能工作 | **MET @10 MHz**；1 ns 起违例（−0.27） | `runs/06_signoff/sta.log`、`runs/08_timing_sweep/` |
+| 6 | 多工艺角 | tt/ff/ss 都行吗 | **10 MHz 下三角全 MET**（ss setup 94.61、ff hold 0.05） | `runs/13_corners/` |
+| 7 | 布线 DRC | 布出来的线有没有短路/间距问题 | **0 violations** | `runs/05_route/openroad.log` |
+| 8 | 天线 | 长线会不会在刻蚀时积累电荷 | **0 net / 0 pin 违例** | `runs/05_route/openroad.log` |
+| 9 | 填充 | 空 site 有没有 fill | **730 个 fill cell** | `runs/05_route/route.def` |
+| 10 | 版图 DRC | GDS 能不能制造 | **0 违例 / 166 类规则** | `runs/09_gds/drc.lyrdb` |
+| 11 | LVS | 版图连接 = 网表连接吗 | **match uniquely**（26 dev / 30 nets） | `runs/10_lvs/lvs.out` |
+| 12 | 阱连接 | tap 有没有把阱接到电源 | **93 tapcells，阱并入 VPWR/VGND** | `runs/02_floorplan/floorplan.def` |
+| 13 | PDN 连通 | 电源网格连到每个电源脚了吗 | **2/2 网全部连通** | `runs/06_signoff/pdn_check.log` |
+| 14 | IR drop | 压降够不够 | **15.5 mV / 0.86%**（via 电阻 5 Ω 假设） | `runs/06_signoff/pdn_check.log` |
+| 15 | SDF 后仿 | 带延迟的布线后网表还对吗 | **PASS**（估算寄生） | `runs/12_postsim/postsim.log` |
+| 16 | EM | 电流密度够不够 | **未做**（PSM 的 EM 选项没开） | — |
 
-前 14 层都跑通了。这说明：
+前 15 层都跑通了。这说明：
 
 - 规格自洽（每拍 +1，满一圈 tick）
 - 综合映射到 sky130 后功能一致（仿真 + 形式证明 + 变异测试三重）
@@ -66,6 +67,22 @@ bash scripts/dump_route_netlist.sh && bash scripts/run_postsim.sh   # 14
 6. **SDF 后仿需要 specify 块**：iverilog 默认丢掉 specify，`$sdf_annotate` 直接不执行；
    模型要写 specify + 编译加 `-gspecify`，延迟才真的生效（用 5 ns 的 SDF 单独验证过）。
 7. **fill 插完要再 `global_connect`**，否则新实例的电源脚是浮的。
+8. **`route.odb` 里的寄生在插 fill 后失效**：STA 读回来必须重新
+   `estimate_parasitics -global_routing`，否则退化成理想连线——1 ns 会显示 −0.13，
+   实际 −0.27。06、时钟扫描、多 corner 三处现在都统一重估。
+
+## 多 corner 结果（10 MHz，真实 SDC）
+
+| corner | setup slack | hold slack | 结论 |
+|--------|-------------|------------|------|
+| tt | 96.69 ns | 0.23 ns | MET |
+| ff | 97.09 ns | **0.05 ns** | MET（hold 最紧） |
+| ss | **94.61 ns** | 0.84 ns | MET（setup 最紧） |
+
+1 ns 压力（只看 setup）：tt −0.27、**ff +0.19（快角仍过）**、ss −2.88。
+
+说明这颗设计的边界是 **ss 的 setup**；往上压频率时 ss 先挂，而 hold 在 ff 最紧——
+只跑 tt 是看不出这两个方向的。
 
 ## 为什么还不能称「流片级」
 
@@ -78,8 +95,9 @@ bash scripts/dump_route_netlist.sh && bash scripts/run_postsim.sh   # 14
    所以 STA 和 SDF 都用 `estimate_parasitics -global_routing` 的估算。
 4. **后仿不是签核级**：SDF 的连线延迟是估算的，单元延迟来自 liberty；模型里的 specify
    弧是手写占位（被 SDF 覆盖），不是从 liberty 自动生成。
-5. **约束很简单**：只有一个时钟，没有多周期/假路径/复杂 IO 时序。
-6. **单元模型手写**：门级仿真用的 `sim/sky130_hd_min.v` 只覆盖 11 个 cell，
+5. **多 corner 只有 3 个典型点**：没有 OCV/derate、没有 RC corner、没有逐电压扫描。
+6. **约束很简单**：只有一个时钟，没有多周期/假路径/复杂 IO 时序。
+7. **单元模型手写**：门级仿真用的 `sim/sky130_hd_min.v` 只覆盖 11 个 cell，
    证明逻辑映射对，不等于与 foundry 模型 bit-exact。
 7. **10 MHz / 7% 利用率**：数字没有工程意义，只证明流程通。
 8. **没有 decap / 金属填充**：fill cell 有了；decap 和 `density_fill` 没做（IR 0.86%，暂无需求）。

@@ -5,7 +5,8 @@
 #   make gds      GDS + DRC
 #   make lvs      post-CTS 网表 → 提取 → netgen
 #   make postsim  布线后网表 + SDF 时序后仿
-#   make finish   gds + lvs + postsim（一条龙收尾）
+#   make corners  多工艺角 STA（tt/ff/ss）
+#   make finish   gds + lvs + postsim + corners（一条龙收尾）
 #   make png      版图分层渲染
 #   make check    环境自检
 #   make sanitize 把 runs/ 日志里的本机路径换成占位符（提交前跑）
@@ -15,7 +16,7 @@ SHELL := /bin/bash
 ROOT  := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 S     := $(ROOT)/scripts
 
-.PHONY: all synth floorplan place cts route signoff verify gds lvs postsim finish png check sanitize clean tree help
+.PHONY: all synth floorplan place cts route signoff verify gds lvs postsim corners finish png check sanitize clean tree help
 
 all: synth floorplan place cts route signoff
 
@@ -43,7 +44,10 @@ postsim:
 	bash $(S)/dump_route_netlist.sh
 	bash $(S)/run_postsim.sh
 
-finish: gds lvs postsim
+corners:
+	bash $(S)/run_corner_sta.sh
+
+finish: gds lvs postsim corners
 
 png:
 	klayout -b -r $(S)/dump_shapes.py

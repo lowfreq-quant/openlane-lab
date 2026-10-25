@@ -53,6 +53,11 @@
 - LVS 三连：post-CTS 网表（金标准）→ Magic 提取 → netgen 比对；阱按 tap 约定归一
 - 后仿：布线后网表 + SDF，iverilog 要加 `-gspecify` 才会标注延迟
 
+### 11 多 corner STA
+- `run_corner_sta.sh`：tt/ff/ss 各用对应 liberty 重读 route.odb
+- 10 MHz 下看 setup+hold（真实 SDC）；再跑 1 ns 压力只看 setup
+- 经验：ss 先挂 setup、ff 先收紧 hold——只跑 tt 看不出来
+
 ## 常见坑
 
 1. **PDK 路径不对**：工具能跑但单元库是空的 → 检查 `PDK_ROOT`，跑 `scripts/check_env.sh`
@@ -65,6 +70,8 @@
 7. **PDN 顺序错**：没先 `add_global_connection` 就 `pdngen`，网格是空壳；
    `define_pdn_grid` 不加 `-pins` 就没有顶层电源端子，`check_power_grid` 会报 PSM-0025
 8. **IR drop 直接跑会失败**：LEF 没电阻参数 → `PSM-0021`，要先用 `set_layer_rc` 灌 RC
+9. **读完 route.odb 不重估寄生**：插过 fill 之后 db 里的寄生失效，STA 会退回理想连线，
+   数字偏乐观（1 ns 显示 −0.13，重估后 −0.27）→ 一定要再 `estimate_parasitics -global_routing`
 
 ## 和 OpenLane 对照
 

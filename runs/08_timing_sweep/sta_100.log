@@ -15,7 +15,7 @@ Path Type: max
            0.00    0.00    0.00   clock clk (rise edge)
                    0.00    0.00   clock network delay (ideal)
                    0.10    0.10 ^ input external delay
-   0.03    0.00    0.00    0.10 ^ rst_n (in)
+   0.04    0.00    0.00    0.10 ^ rst_n (in)
            0.00    0.00    0.10 ^ _23_/RESET_B (sky130_fd_sc_hd__dfrtp_1)
                            0.10   data arrival time
 
@@ -43,12 +43,12 @@ Path Type: max
            0.00    0.00    0.00   clock clk (rise edge)
                    0.00    0.00   clock network delay (ideal)
            0.00    0.00    0.00 ^ _23_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.01    0.14    0.37    0.37 ^ _23_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.01    0.15    0.27    0.64 ^ _10_/X (sky130_fd_sc_hd__and4_1)
-   0.01    0.13    0.16    0.80 v _12_/Y (sky130_fd_sc_hd__nand4_1)
-   0.00    0.04    0.16    0.96 v _21_/X (sky130_fd_sc_hd__lpflow_isobufsrc_1)
-           0.04    0.00    0.96 v _29_/D (sky130_fd_sc_hd__dfrtp_1)
-                           0.96   data arrival time
+   0.02    0.18    0.41    0.41 ^ _23_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.02    0.20    0.32    0.73 ^ _10_/X (sky130_fd_sc_hd__and4_1)
+   0.01    0.16    0.19    0.92 v _12_/Y (sky130_fd_sc_hd__nand4_1)
+   0.00    0.05    0.18    1.10 v _21_/X (sky130_fd_sc_hd__lpflow_isobufsrc_1)
+           0.05    0.00    1.10 v _29_/D (sky130_fd_sc_hd__dfrtp_1)
+                           1.10   data arrival time
 
            0.00  100.00  100.00   clock clk (rise edge)
                    0.00  100.00   clock network delay (ideal)
@@ -59,9 +59,9 @@ Path Type: max
                           99.83   data required time
 -----------------------------------------------------------------------
                           99.83   data required time
-                          -0.96   data arrival time
+                          -1.10   data arrival time
 -----------------------------------------------------------------------
-                          98.87   slack (MET)
+                          98.73   slack (MET)
 
 
 wns max 0.00

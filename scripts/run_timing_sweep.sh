@@ -30,6 +30,9 @@ EOF
 source $SCRIPTS_DIR/common.tcl
 read_db $RT/route.odb
 read_sdc $sdc
+# route.odb 里存的寄生是插 fill 之前算的，重读后会失效；
+# 不重新估算的话 STA 会退化成理想连线，数字偏乐观。
+estimate_parasitics -global_routing
 report_checks -path_delay max -fields {slew capacitance} -format full_clock_expanded
 report_wns
 report_tns

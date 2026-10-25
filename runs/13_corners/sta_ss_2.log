@@ -1,0 +1,20 @@
+OpenROAD 26Q2 
+Features included (+) or not (-): +GPU +GUI +Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0227] LEF file: /path/to/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef, created 13 layers, 25 vias, 441 library cells
+[WARNING STA-1171] /home/user/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__ss_100C_1v40.lib line 24, default_fanout_load is 0.0.
+Startpoint                           Endpoint                               Slack
+--------------------------------------------------------------------------------
+rst_n (input)                        _23_/RESET_B (sky130_fd_sc_hd__dfrtp_1)    2.53
+_23_/Q (sky130_fd_sc_hd__dfrtp_1)    _29_/D (sky130_fd_sc_hd__dfrtp_1)      -1.88
+
+wns max -1.88
+tns max -8.53
+Startpoint                           Endpoint                               Slack
+--------------------------------------------------------------------------------
+rst_n (input)                        _27_/RESET_B (sky130_fd_sc_hd__dfrtp_1)   -0.86
+_29_/Q (counter)                     q[6] (output)                           1.00
+
+wns min -0.86
+tns min -6.90
