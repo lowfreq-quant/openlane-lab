@@ -644,7 +644,7 @@ ABC: ABC command line: "source <abc-temp-dir>/abc.script".
 ABC: 
 ABC: + read_blif <abc-temp-dir>/input.blif 
 ABC: + read_lib -w /home/user/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib 
-ABC: Parsing finished successfully.  Parsing time =     0.08 sec
+ABC: Parsing finished successfully.  Parsing time =     0.52 sec
 ABC: Scl_LibertyReadGenlib() skipped cell "sky130_fd_sc_hd__decap_12" without logic function.
 ABC: Scl_LibertyReadGenlib() skipped cell "sky130_fd_sc_hd__decap_3" without logic function.
 ABC: Scl_LibertyReadGenlib() skipped cell "sky130_fd_sc_hd__decap_4" without logic function.
@@ -739,8 +739,8 @@ ABC: Scl_LibertyReadGenlib() skipped sequential cell "sky130_fd_sc_hd__sedfxbp_2
 ABC: Scl_LibertyReadGenlib() skipped sequential cell "sky130_fd_sc_hd__sedfxtp_1".
 ABC: Scl_LibertyReadGenlib() skipped sequential cell "sky130_fd_sc_hd__sedfxtp_2".
 ABC: Scl_LibertyReadGenlib() skipped sequential cell "sky130_fd_sc_hd__sedfxtp_4".
-ABC: Library "sky130_fd_sc_hd__tt_025C_1v80" from "/home/user/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib" has 334 cells (94 skipped: 63 seq; 13 tri-state; 18 no func; 0 dont_use).  Time =     0.13 sec
-ABC: Memory =   19.85 MB. Time =     0.13 sec
+ABC: Library "sky130_fd_sc_hd__tt_025C_1v80" from "/home/user/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib" has 334 cells (94 skipped: 63 seq; 13 tri-state; 18 no func; 0 dont_use).  Time =     0.70 sec
+ABC: Memory =   19.85 MB. Time =     0.70 sec
 ABC: Warning: Detected 9 multi-output gates (for example, "sky130_fd_sc_hd__fa_1").
 ABC: + strash 
 ABC: + &get -n 
@@ -811,6 +811,6 @@ Removed 0 unused cells and 30 unused wires.
 Dumping module `\counter'.
 
 Warnings: 26 unique messages, 234 total
-End of script. Logfile hash: cdc4abb96b, CPU: user 0.38s system 0.00s, MEM: 37.22 MB peak
+End of script. Logfile hash: 2dee8e4dc2, CPU: user 1.77s system 1.13s, MEM: 37.21 MB peak
 Yosys 0.33 (git sha1 2584903a060)
-Time spent: 36% 1x abc (0 sec), 27% 1x stat (0 sec), ...
+Time spent: 36% 1x stat (1 sec), 27% 1x abc (1 sec), 26% 1x dfflibmap (1 sec), ...
