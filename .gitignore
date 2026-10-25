@@ -1,0 +1,33 @@
+# 本项目 clone 后跑一遍即可再生成这些文件，因此不入库。
+
+# OpenDB checkpoint，每份约 1.8 MB
+runs/**/*.odb
+# merge_lef.sh 生成的合并 LEF
+runs/lef/
+# LVS 展开网表，由 PDK CDL 派生，单份 > 1 MB
+runs/**/*.spice
+# 版图几何导出，由 dump_shapes.py 生成
+runs/**/shapes.json
+# 分层渲染 PNG（精选图已放到 docs/img/）
+runs/11_layout_png/
+# netgen 过程报告只保留最终那份
+runs/10_lvs/*.out
+!runs/10_lvs/lvs.out
+
+# 仿真可执行文件 / 提取中间件
+sim/out/
+*.ext
+*.mag
+*.maglef
+*.vcd
+*.fst
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+*.swp

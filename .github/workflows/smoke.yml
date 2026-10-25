@@ -1,0 +1,50 @@
+name: smoke
+
+# 不需要 PDK 的那一半验证：语法、RTL 仿真、门级仿真、形式等价、变异测试。
+# 综合/布局/布线/DRC/LVS 需要 sky130 PDK，留在本地跑（见 README）。
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 yosys + iverilog
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends yosys iverilog
+
+      - name: 版本
+        run: |
+          yosys -V | head -1
+          iverilog -V | head -1
+
+      - name: 脚本语法检查
+        run: |
+          for f in scripts/*.sh scripts/legacy/*.sh; do
+            bash -n "$f" || { echo "语法错误: $f"; exit 1; }
+          done
+          python3 -m py_compile scripts/*.py
+
+      - name: RTL + 门级仿真
+        run: bash scripts/run_sim.sh
+
+      - name: 形式等价
+        run: bash scripts/run_equiv.sh
+
+      - name: 变异测试
+        run: bash scripts/run_mutation.sh
+
+      - name: 上传日志
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs
+          path: |
+            sim/out/*.log
+            sim/out/mutation_summary.txt
+            runs/07_equiv/equiv.log

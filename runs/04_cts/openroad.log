@@ -1,0 +1,149 @@
+OpenROAD 26Q2 
+Features included (+) or not (-): +GPU +GUI +Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0227] LEF file: /path/to/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef, created 13 layers, 25 vias, 441 library cells
+[WARNING STA-1171] /home/user/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib line 23, default_fanout_load is 0.0.
+PDK loaded from /home/user/.volare/sky130A  (merged LEF: /path/to/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef)
+[WARNING CTS-0132] -balance_levels is obsolete.
+[WARNING CTS-0104] Clock wire resistance/capacitance values are zero.
+Use set_wire_rc to set them.
+[INFO CTS-0050] Root buffer is sky130_fd_sc_hd__buf_1.
+[INFO CTS-0051] Sink buffer is sky130_fd_sc_hd__buf_1.
+[INFO CTS-0052] The following clock buffers will be used for CTS:
+                    sky130_fd_sc_hd__buf_1
+                    sky130_fd_sc_hd__buf_2
+[INFO CTS-0049] Characterization buffer is sky130_fd_sc_hd__buf_2.
+[INFO CTS-0007] Net "clk" found for clock "clk".
+[INFO CTS-0010]  Clock net "clk" has 8 sinks.
+[INFO CTS-0008] TritonCTS found 1 clock nets.
+[INFO CTS-0097] Characterization used 2 buffer(s) types.
+[INFO CTS-0201] 0 blockages from hard placement blockages and placed macros will be used.
+[INFO CTS-0027] Generating H-Tree topology for net clk.
+[INFO CTS-0028]  Total number of sinks: 8.
+[INFO CTS-0090]  Sinks will be clustered based on buffer max cap.
+[INFO CTS-0030]  Number of static layers: 0.
+[INFO CTS-0020]  Wire segment unit: 13600  dbu (13 um).
+[INFO CTS-0023]  Original sink region: [(39365, 15020), (53625, 23060)].
+[INFO CTS-0024]  Normalized sink region: [(2.89449, 1.10441), (3.94301, 1.69559)].
+[INFO CTS-0025]     Width:  1.0485.
+[INFO CTS-0026]     Height: 0.5912.
+ Level 1
+    Direction: Horizontal
+    Sinks per sub-region: 4
+    Sub-region size: 0.5243 X 0.5912
+[INFO CTS-0034]     Segment length (rounded): 1.
+[INFO CTS-0032]  Stop criterion found. Max number of sinks is 15.
+[INFO CTS-0035]  Number of sinks covered: 8.
+[INFO CTS-0018]     Created 3 clock buffers.
+[INFO CTS-0012]     Minimum number of buffers in the clock path: 2.
+[INFO CTS-0013]     Maximum number of buffers in the clock path: 2.
+[INFO CTS-0015]     Created 3 clock nets.
+[INFO CTS-0016]     Fanout distribution for the current clock = 4:2..
+[INFO CTS-0017]     Max level of the clock tree: 1.
+[INFO CTS-0098] Clock net "clk"
+[INFO CTS-0099]  Sinks 8
+[INFO CTS-0100]  Leaf buffers 0
+[INFO CTS-0101]  Average sink wire length 45.22 um
+[INFO CTS-0102]  Path depth 2 - 2
+[INFO CTS-0207]  Dummy loads inserted 0
+[INFO DPL-0005] Max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+Movements Summary
+---------------------------------------
+Total cells:                      26
+Diamond Move Success:             26 (100.00%)
+Diamond Move Failure:              0
+Rip-up and replace Success:        0 (  0.00% of diamond failures)
+Rip-up and replace Failure:        0
+Total Placement Failures:          0
+---------------------------------------
+Placement Analysis
+---------------------------------
+total displacement          7.2 u
+average displacement        0.3 u
+max displacement            4.5 u
+original HPWL             536.0 u
+legalized HPWL            547.4 u
+delta HPWL                    2 %
+
+[WARNING EST-0018] wire capacitance for corner default is zero. Use the set_wire_rc command to set wire resistance and capacitance.
+[WARNING STA-0168] unknown field nets.
+Startpoint: rst_n (input port clocked by clk)
+Endpoint: _23_ (recovery check against rising-edge clock clk)
+Path Group: asynchronous
+Path Type: max
+
+    Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------
+                   0.00    0.00   clock clk (rise edge)
+                   0.00    0.00   clock network delay (propagated)
+                   2.00    2.00 ^ input external delay
+   0.03    0.00    0.00    2.00 ^ rst_n (in)
+           0.00    0.00    2.00 ^ _23_/RESET_B (sky130_fd_sc_hd__dfrtp_1)
+                           2.00   data arrival time
+
+                 100.00  100.00   clock clk (rise edge)
+                   0.00  100.00   clock source latency
+   0.00    0.00    0.00  100.00 ^ clk (in)
+           0.00    0.00  100.00 ^ clkbuf_0_clk/A (sky130_fd_sc_hd__buf_1)
+   0.00    0.06    0.08  100.08 ^ clkbuf_0_clk/X (sky130_fd_sc_hd__buf_1)
+           0.06    0.00  100.08 ^ clkbuf_1_1__f_clk/A (sky130_fd_sc_hd__buf_1)
+   0.01    0.10    0.12  100.20 ^ clkbuf_1_1__f_clk/X (sky130_fd_sc_hd__buf_1)
+           0.10    0.00  100.20 ^ _23_/CLK (sky130_fd_sc_hd__dfrtp_1)
+                  -0.25   99.95   clock uncertainty
+                   0.00   99.95   clock reconvergence pessimism
+                   0.26  100.21   library recovery time
+                         100.21   data required time
+-----------------------------------------------------------------------
+                         100.21   data required time
+                          -2.00   data arrival time
+-----------------------------------------------------------------------
+                          98.21   slack (MET)
+
+
+Startpoint: _23_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: tick (output port clocked by clk)
+Path Group: clk
+Path Type: max
+
+    Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------
+                   0.00    0.00   clock clk (rise edge)
+                   0.00    0.00   clock source latency
+   0.00    0.00    0.00    0.00 ^ clk (in)
+           0.00    0.00    0.00 ^ clkbuf_0_clk/A (sky130_fd_sc_hd__buf_1)
+   0.00    0.06    0.08    0.08 ^ clkbuf_0_clk/X (sky130_fd_sc_hd__buf_1)
+           0.06    0.00    0.08 ^ clkbuf_1_1__f_clk/A (sky130_fd_sc_hd__buf_1)
+   0.01    0.10    0.12    0.20 ^ clkbuf_1_1__f_clk/X (sky130_fd_sc_hd__buf_1)
+           0.10    0.00    0.20 ^ _23_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.01    0.14    0.41    0.61 ^ _23_/Q (sky130_fd_sc_hd__dfrtp_1)
+           0.14    0.00    0.61 ^ _10_/A (sky130_fd_sc_hd__and4_1)
+   0.01    0.15    0.27    0.88 ^ _10_/X (sky130_fd_sc_hd__and4_1)
+           0.15    0.00    0.88 ^ _12_/D (sky130_fd_sc_hd__nand4_1)
+   0.01    0.13    0.16    1.04 v _12_/Y (sky130_fd_sc_hd__nand4_1)
+           0.13    0.00    1.04 v _13_/SLEEP (sky130_fd_sc_hd__lpflow_isobufsrc_1)
+   0.00    0.04    0.10    1.14 ^ _13_/X (sky130_fd_sc_hd__lpflow_isobufsrc_1)
+           0.04    0.00    1.14 ^ tick (out)
+                           1.14   data arrival time
+
+                 100.00  100.00   clock clk (rise edge)
+                   0.00  100.00   clock network delay (propagated)
+                  -0.25   99.75   clock uncertainty
+                   0.00   99.75   clock reconvergence pessimism
+                  -2.00   97.75   output external delay
+                          97.75   data required time
+-----------------------------------------------------------------------
+                          97.75   data required time
+                          -1.14   data arrival time
+-----------------------------------------------------------------------
+                          96.61   slack (MET)
+
+
+Clock clk
+   0.20 source latency _23_/CLK ^
+  -0.20 target latency _23_/CLK ^
+   0.25 clock uncertainty
+   0.00 CRPR
+--------------
+   0.25 setup skew
+

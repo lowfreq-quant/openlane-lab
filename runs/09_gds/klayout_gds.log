@@ -1,0 +1,4 @@
+cell lib cells=442
+merged top=counter instances=205
+GDS_OK size=250324 tops=['counter']
+DEF 绕线层映射: {'met1': 253, 'li1': 84, 'mcon': 84, 'met2': 180, 'met3': 16, 'via': 85, 'via2': 10}

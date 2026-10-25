@@ -1,0 +1,177 @@
+OpenROAD 26Q2 
+Features included (+) or not (-): +GPU +GUI +Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0227] LEF file: /path/to/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef, created 13 layers, 25 vias, 441 library cells
+[WARNING STA-1171] /home/user/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib line 23, default_fanout_load is 0.0.
+PDK loaded from /home/user/.volare/sky130A  (merged LEF: /path/to/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef)
+[INFO GPL-0001] ---- Initialize GPL Main Data Structures
+[INFO GPL-0002] DBU: 1000
+[INFO GPL-0003] SiteSize: (  0.460  2.720 ) um
+[INFO GPL-0004] CoreBBox: ( 10.120 10.880 ) ( 89.700 89.760 ) um
+[INFO GPL-0036] Movable instances area:        299.037 um^2
+[INFO GPL-0037] Total instances area:          299.037 um^2
+[INFO GPL-0035] Pin density area adjust:        12.606 um^2
+[INFO GPL-0032] ---- Initialize Region: Top-level
+[INFO GPL-0006] Number of instances:                23
+[INFO GPL-0007] Movable instances:                  23
+[INFO GPL-0008] Fixed instances:                     0
+[INFO GPL-0009] Dummy instances:                     0
+[INFO GPL-0010] Number of nets:                     25
+[INFO GPL-0011] Number of pins:                     95
+[INFO GPL-0012] Die BBox:  (  0.000  0.000 ) ( 100.000 100.000 ) um
+[INFO GPL-0013] Core BBox: ( 10.120 10.880 ) ( 89.700 89.760 ) um
+[INFO GPL-0016] Core area:                    6277.270 um^2
+[INFO GPL-0014] Region name: top-level.
+[INFO GPL-0015] Region area:                  6277.270 um^2
+[INFO GPL-0017] Fixed instances area:            0.000 um^2
+[INFO GPL-0018] Movable instances area:        311.643 um^2
+[INFO GPL-0019] Utilization:                     4.965 %
+[INFO GPL-0020] Standard cells area:           311.643 um^2
+[INFO GPL-0021] Large instances area:            0.000 um^2
+[INFO GPL-0005] ---- Execute Conjugate Gradient Initial Placement.
+[INFO GPL-0051] Source of initial instance position counters:
+	Odb location = 0	Core center = 23	Region center = 0
+[InitialPlace]  Iter: 1 conjugate gradient residual: 0.00000005 HPWL: 708860
+[InitialPlace]  Iter: 2 conjugate gradient residual: 0.00000011 HPWL: 366407
+[InitialPlace]  Iter: 3 conjugate gradient residual: 0.00000004 HPWL: 364813
+[InitialPlace]  Iter: 4 conjugate gradient residual: 0.00000003 HPWL: 368225
+[InitialPlace]  Iter: 5 conjugate gradient residual: 0.00000003 HPWL: 367955
+[INFO GPL-0033] ---- Initialize Nesterov Region: Top-level
+[INFO GPL-0023] Placement target density:       0.5500
+[INFO GPL-0024] Movable insts average area:     13.550 um^2
+[INFO GPL-0025] Ideal bin area:                 24.636 um^2
+[INFO GPL-0026] Ideal bin count:                   254
+[INFO GPL-0027] Total bin area:               6277.270 um^2
+[INFO GPL-0028] Bin count (X, Y):           8 ,      8
+[INFO GPL-0029] Bin size (W * H):       9.947 *  9.860 um
+[INFO GPL-0030] Number of bins:                     64
+[INFO GPL-0007] ---- Execute Nesterov Global Placement.
+[INFO GPL-0031] HPWL: Half-Perimeter Wirelength
+Iteration | Overflow |     HPWL (um) |  HPWL(%) |   Penalty | Group
+---------------------------------------------------------------
+        0 |   0.3664 |  2.816230e+02 |   +0.00% |  5.28e-13 |      
+       10 |   0.3602 |  2.812570e+02 |   -0.13% |  8.60e-13 |      
+       20 |   0.3602 |  2.811390e+02 |   -0.04% |  1.40e-12 |      
+       30 |   0.3602 |  2.811560e+02 |   +0.01% |  2.28e-12 |      
+       40 |   0.3602 |  2.811600e+02 |   +0.00% |  3.72e-12 |      
+       50 |   0.3602 |  2.811550e+02 |   -0.00% |  6.05e-12 |      
+       60 |   0.3602 |  2.811660e+02 |   +0.00% |  9.86e-12 |      
+       70 |   0.3602 |  2.811600e+02 |   -0.00% |  1.61e-11 |      
+       80 |   0.3602 |  2.811580e+02 |   -0.00% |  2.62e-11 |      
+       90 |   0.3602 |  2.811550e+02 |   -0.00% |  4.26e-11 |      
+      100 |   0.3602 |  2.811720e+02 |   +0.01% |  6.94e-11 |      
+      110 |   0.3602 |  2.813160e+02 |   +0.05% |  1.13e-10 |      
+      120 |   0.3602 |  2.815120e+02 |   +0.07% |  1.84e-10 |      
+      130 |   0.3602 |  2.815920e+02 |   +0.03% |  3.00e-10 |      
+      140 |   0.3602 |  2.814130e+02 |   -0.06% |  4.89e-10 |      
+      150 |   0.3602 |  2.813360e+02 |   -0.03% |  7.96e-10 |      
+      160 |   0.3602 |  2.815050e+02 |   +0.06% |  1.30e-09 |      
+      170 |   0.3601 |  2.813090e+02 |   -0.07% |  2.11e-09 |      
+      180 |   0.3601 |  2.813840e+02 |   +0.03% |  3.44e-09 |      
+      190 |   0.3600 |  2.816880e+02 |   +0.11% |  5.60e-09 |      
+      200 |   0.3599 |  2.819490e+02 |   +0.09% |  9.13e-09 |      
+      210 |   0.3596 |  2.824480e+02 |   +0.18% |  1.49e-08 |      
+      220 |   0.3592 |  2.839790e+02 |   +0.54% |  2.42e-08 |      
+      230 |   0.3583 |  2.862800e+02 |   +0.81% |  3.94e-08 |      
+      240 |   0.3401 |  2.971060e+02 |   +3.78% |  6.23e-08 |      
+      250 |   0.3116 |  3.122970e+02 |   +5.11% |  9.18e-08 |      
+      260 |   0.2584 |  3.299220e+02 |   +5.64% |  1.35e-07 |      
+      270 |   0.2223 |  3.421190e+02 |   +3.70% |  1.99e-07 |      
+      280 |   0.1792 |  3.526870e+02 |   +3.09% |  2.94e-07 |      
+      290 |   0.1363 |  3.653310e+02 |   +3.59% |  4.32e-07 |      
+      300 |   0.0970 |  3.720650e+02 |   +1.84% |  6.37e-07 |      
+      300 |   0.0970 |  3.720650e+02 |          |  6.62e-07 |      
+---------------------------------------------------------------
+[INFO GPL-1001] Global placement finished at iteration 300
+[INFO GPL-1002] Placed Cell Area              311.6433
+[INFO GPL-1003] Available Free Area          6277.2704
+[INFO GPL-1004] Minimum Feasible Density        0.0500 (cell_area / free_area)
+[INFO GPL-1006]   Suggested Target Densities:
+[INFO GPL-1007]     - For 90% usage of free space: 0.0552
+[INFO GPL-1008]     - For 80% usage of free space: 0.0621
+[INFO GPL-1009]     - For 50% usage of free space: 0.0993
+[INFO GPL-1014] Final placement area: 311.64 (+0.00%)
+[WARNING EST-0018] wire capacitance for corner default is zero. Use the set_wire_rc command to set wire resistance and capacitance.
+[WARNING STA-0168] unknown field nets.
+Startpoint: rst_n (input port clocked by clk)
+Endpoint: _23_ (recovery check against rising-edge clock clk)
+Path Group: asynchronous
+Path Type: max
+
+    Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------
+           0.00    0.00    0.00   clock clk (rise edge)
+                   0.00    0.00   clock network delay (ideal)
+                   2.00    2.00 ^ input external delay
+   0.03    0.00    0.00    2.00 ^ rst_n (in)
+           0.00    0.00    2.00 ^ _23_/RESET_B (sky130_fd_sc_hd__dfrtp_1)
+                           2.00   data arrival time
+
+           0.00  100.00  100.00   clock clk (rise edge)
+                   0.00  100.00   clock network delay (ideal)
+                  -0.25   99.75   clock uncertainty
+                   0.00   99.75   clock reconvergence pessimism
+                          99.75 ^ _23_/CLK (sky130_fd_sc_hd__dfrtp_1)
+                   0.23   99.98   library recovery time
+                          99.98   data required time
+-----------------------------------------------------------------------
+                          99.98   data required time
+                          -2.00   data arrival time
+-----------------------------------------------------------------------
+                          97.98   slack (MET)
+
+
+Startpoint: _23_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: tick (output port clocked by clk)
+Path Group: clk
+Path Type: max
+
+    Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------
+           0.00    0.00    0.00   clock clk (rise edge)
+                   0.00    0.00   clock network delay (ideal)
+           0.00    0.00    0.00 ^ _23_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.01    0.14    0.37    0.37 ^ _23_/Q (sky130_fd_sc_hd__dfrtp_1)
+           0.14    0.00    0.37 ^ _10_/A (sky130_fd_sc_hd__and4_1)
+   0.01    0.15    0.27    0.64 ^ _10_/X (sky130_fd_sc_hd__and4_1)
+           0.15    0.00    0.64 ^ _12_/D (sky130_fd_sc_hd__nand4_1)
+   0.01    0.13    0.16    0.80 v _12_/Y (sky130_fd_sc_hd__nand4_1)
+           0.13    0.00    0.80 v _13_/SLEEP (sky130_fd_sc_hd__lpflow_isobufsrc_1)
+   0.00    0.04    0.10    0.90 ^ _13_/X (sky130_fd_sc_hd__lpflow_isobufsrc_1)
+           0.04    0.00    0.90 ^ tick (out)
+                           0.90   data arrival time
+
+           0.00  100.00  100.00   clock clk (rise edge)
+                   0.00  100.00   clock network delay (ideal)
+                  -0.25   99.75   clock uncertainty
+                   0.00   99.75   clock reconvergence pessimism
+                  -2.00   97.75   output external delay
+                          97.75   data required time
+-----------------------------------------------------------------------
+                          97.75   data required time
+                          -0.90   data arrival time
+-----------------------------------------------------------------------
+                          96.85   slack (MET)
+
+
+[INFO DPL-0005] Max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+Movements Summary
+---------------------------------------
+Total cells:                      23
+Diamond Move Success:             23 (100.00%)
+Diamond Move Failure:              0
+Rip-up and replace Success:        0 (  0.00% of diamond failures)
+Rip-up and replace Failure:        0
+Total Placement Failures:          0
+---------------------------------------
+Placement Analysis
+---------------------------------
+total displacement        119.1 u
+average displacement        5.2 u
+max displacement            8.2 u
+original HPWL             373.0 u
+legalized HPWL            492.6 u
+delta HPWL                   32 %
+
+Design area 299 um^2 5% utilization.

@@ -1,0 +1,21 @@
+# 仓库里的脚本要在 WSL/Linux 里跑：强制 LF，否则 CRLF 会让
+# shebang 变成 "/usr/bin/env bash^M"，报 "bad interpreter"。
+* text=auto eol=lf
+
+*.sh   text eol=lf
+*.tcl  text eol=lf
+*.py   text eol=lf
+*.v    text eol=lf
+*.sdc  text eol=lf
+*.md   text eol=lf
+*.yml  text eol=lf
+*.def  text eol=lf
+*.lef  text eol=lf
+*.lib  text eol=lf
+Makefile text eol=lf
+
+# 二进制
+*.gds  binary
+*.png  binary
+*.jpg  binary
+*.odb  binary
