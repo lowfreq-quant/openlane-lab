@@ -1,0 +1,20 @@
+OpenROAD 26Q2 
+Features included (+) or not (-): +GPU +GUI +Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0227] LEF file: /mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef, created 13 layers, 25 vias, 441 library cells
+[WARNING STA-1171] /home/ty/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib line 23, default_fanout_load is 0.0.
+PDK loaded from /home/ty/.volare/sky130A  (merged LEF: /mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef)
+[INFO RCX-0435] Reading extraction model file /home/ty/.volare/sky130A/libs.tech/openlane/rcx_rules.info ...
+[INFO RCX-0434] Defined process_corner MinMax0 with ext_model_index 0 (using extRulesFile defaults)
+[INFO RCX-0436] RC segment generation counter (max_merge_res 50.0) ...
+[INFO RCX-0040] Final 277 rc segments
+[INFO RCX-0439] Coupling Cap extraction counter ...
+[INFO RCX-0440] Coupling threshhold is 0.1000 fF, coupling capacitance less than 0.1000 fF will be grounded.
+[INFO RCX-0442] 60% of 276 wires extracted
+[INFO RCX-0442] 100% of 276 wires extracted
+[INFO RCX-0045] Extract 28 nets, 305 rsegs, 305 caps, 178 ccs
+[INFO RCX-0443] 28 nets finished
+wns max 0.00
+wns min 0.00
+SCENARIO rc_rmax cap=1.0 res=1.3

@@ -15,9 +15,9 @@
 | 布图 / 布局后 | 23 logic + **93 tapcells**，415 µm²，利用率 7%（CTS 后 427 µm²） |
 | 布线 | 0 违例，**天线 0 违例**，信号线长 622 µm，via 187 |
 | 填充 | **730 个 fill cell**（fill_8 519 / fill_4 83 / fill_2 64 / fill_1 64） |
-| 电源 | met1 跟随轨 + met4/met5 主干，2/2 电源网全连通；IR drop 最差 **15.5 mV（0.86%）**（via 电阻按 5 Ω 假设） |
-| STA @10 MHz | WNS/TNS = 0（~1 GHz 开始违例） |
-| 多工艺角 | tt / ff / ss 在 10 MHz 下 setup+hold **全部 MET**；ss 的 setup 最紧（94.61 ns slack）、ff 的 hold 最紧（0.05 ns）；拉到 1 ns 时 ss −2.88、tt −0.27，ff 仍 MET |
+| 电源 | met1 跟随轨 + met4/met5 主干，2/2 电源网全连通；IR drop VPWR **28 mV（1.6%）** / VGND **74 mV（4.1%）**（via 电阻按 5 Ω 假设） |
+| STA @125 MHz | WNS/TNS = 0（tt 极限约 667 MHz） |
+| 多工艺角 | tt / ff / ss 在 125 MHz（SDC 8 ns）下 setup+hold **全部 MET**；ss setup 最紧（slack≈2.6 ns）；1 ns 压力 ss −3.0、tt −0.3，ff 仍 MET |
 | 后仿 | 布线后网表 + SDF（估算寄生），PASS |
 | GDS | 单 top cell `counter`，约 1.9 MB（含填充单元） |
 | DRC | **0 违例**（sky130A.lydrc，166 类规则） |
@@ -44,12 +44,12 @@
 | 3 | 布局 | `scripts/03_place.sh` | `runs/03_place/place.def` | 0 重叠，HPWL 514.9 µm |
 | 4 | CTS | `scripts/04_cts.sh` | `runs/04_cts/cts.def` | 插入 clock buffer，skew 可报告 |
 | 5 | 布线 + 天线 + 填充 | `scripts/05_route.sh` | `runs/05_route/route.def` | violations = 0，天线 0，730 个 fill cell |
-| 6 | 签核（STA + PDN + IR + SDF） | `scripts/06_signoff.sh` | `runs/06_signoff/sta.log`、`pdn_check.log`、`counter.sdf` | WNS/TNS = 0；2/2 网连通；IR 0.86% |
+| 6 | 签核（STA + PDN + IR + SDF） | `scripts/06_signoff.sh` | `runs/06_signoff/sta.log`、`pdn_check.log`、`counter.sdf` | WNS/TNS = 0；2/2 网连通；IR 约 1.6%/4.1% |
 | 7 | GDS | `scripts/run_gds_drc.sh` | `runs/09_gds/counter.gds` | 单 top cell |
 | 8 | DRC | 同上 | `runs/09_gds/drc.lyrdb` | `<item>` 数量 = 0 |
 | 9 | LVS | `dump_cts_netlist.sh` + `lvs_extract.sh` + `run_lvs.sh` | `runs/10_lvs/lvs.out` | match uniquely |
 | 10 | 后仿 | `dump_route_netlist.sh` + `run_postsim.sh` | `runs/12_postsim/postsim.log` | `PASS` |
-| 11 | 多 corner STA | `scripts/run_corner_sta.sh` | `runs/13_corners/sta_<corner>_*.log` | 10 MHz 下 tt/ff/ss 全 MET |
+| 11 | 多 corner STA | `scripts/run_corner_sta.sh` | `runs/13_corners/sta_<corner>_*.log` | 125 MHz 下 tt/ff/ss 全 MET |
 
 ## 2. 5 分钟复现
 
@@ -114,7 +114,7 @@ make finish                        # 上面两项 + GDS/DRC + LVS 一起跑
 ```
 .
 ├── rtl/counter.v              设计：8-bit 自由跑计数器（异步复位）
-├── constraints/counter.sdc    10 MHz 约束
+├── constraints/counter.sdc    125 MHz（8 ns）约束
 ├── sim/                       testbench / 变异版本 / 单元模型（带 specify）/ 物理单元桩
 ├── scripts/
 │   ├── env.sh                 唯一的环境入口（PDK 路径、PATH、合并 LEF）
@@ -137,7 +137,7 @@ make finish                        # 上面两项 + GDS/DRC + LVS 一起跑
 1. **IR drop 是估计值，不是签核值。** PDN 是真的（met1 跟随轨 + met4/met5 主干），
    `check_power_grid` 确认两个网全部连通；`analyze_power_grid` 也能跑，但 sky130 的 LEF
    **只有层电阻、没有 via 电阻**，所以脚本里按 **5 Ω/个 via** 假设（`set_layer_rc`）。
-   最差压降 15.5 mV / 0.86%，数量级可信，但不能当签核数字。
+   压降 VPWR 28 mV/1.6%、VGND 74 mV/4.1%，数量级可信，但不能当签核数字。
 2. **LVS 是 LEF 抽象级。** Magic 用 LEF abstract 提取，比的是「实例类型 + 连接关系」，
    不是版图器件级。阱（VPB/VNB）按 tap 约定并进 VPWR/VGND，所以**不逐阱检查**。
    真实 LVS 要从 GDS 提晶体管，还要有完整的器件模型。
@@ -149,11 +149,11 @@ make finish                        # 上面两项 + GDS/DRC + LVS 一起跑
    它能验证「布线后网表 + 延迟标注」这条链路，但不是签核级时序仿真。
 5. **多 corner 只覆盖 3 个典型点。** tt/ff/ss 各一个电压温度组合，没有 OCV/derate、
    没有 RC corner 组合、没有逐电压扫描。
-6. **die 100×100，利用率 7%。** 靠 93 个 tap 和 730 个 fill 撑着，面积数字不代表真实设计。
+6. **die 40×40，逻辑利用率 27%**（含 decap 后 site 铺满）；decap 451 + fill。
 7. **单元功能模型是手写的**（`sim/sky130_hd_min.v`，11 个 cell）。它证明逻辑映射正确，
    不等于与 foundry 的 Verilog 模型 bit-exact。
 7. **没有 decap / 金属填充（density fill）。** fill cell 已插满空 site；decap 和
-   `density_fill`（金属密度）没做——5% 利用率下 IR 只有 0.86%，没有 decap 需求。
+   decap 与 `density_fill` **已做**（见 make density / 05_route.sh）。
 
 ## 6. 来源与致谢
 

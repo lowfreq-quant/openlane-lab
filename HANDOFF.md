@@ -23,7 +23,10 @@
 | GDS | 单 top `counter` | `make gds` |
 | DRC | **0 / 166 类** | `make gds` |
 | LVS | **cell-level match uniquely**（26 器件 / 30 网） | `make lvs` |
-| 晶体管 LVS | 346=346 / 177=177，拓扑残差已定性 | `make lvs_dev` |
+| 晶体管 LVS | 346=346 / 177=177，拓扑残差已定性；层次 GDS 尝试见 `docs/p6-topology.md` | `make lvs_dev` |
+| 多 RC corner | 5 情景 SPEF+STA **全 MET**（复杂 SDC） | `make rc` |
+| 复杂 SDC | `constraints/counter_complex.sdc`（假路径/IO 预算） | 同上 |
+| 签核级后仿 | SPEF SDF annotate **PASS** | `make psign` |
 | 后仿 | SDF annotate PASS | `make postsim` |
 | PDN / IR | 2/2 连通；IR 约 1.6% / 4.1%（小 die 后 VGND 变差） | `06_signoff.sh` |
 | EM | Imax ≈ 典型 Jmax 的 8.6% | `make em` |
@@ -35,23 +38,23 @@
 | 项 | 状态 | 说明 |
 |----|------|------|
 | **push 到 GitHub** | **未完成** | commit `7cabc34` 已在本地；`git push` 超时/失败，仍是 `ahead 1` |
-| 晶体管 LVS 100% 拓扑 match | 未完成 | 见 `docs/p6-topology.md`；需层次化 GDS 或更强 permute |
-| 后仿签核级 | 未完成 | 单元延迟 liberty + 估算/RCX 线延迟；无 SDF 反标到 liberty 自动 specify |
-| RC / 多 corner 寄生 | 未完成 | SPEF 单提取角，无 RC corner 组合 |
+| 晶体管 LVS 100% 拓扑 match | 未完成 | 层次 GDS 已试；Magic 顶层提取缺端口；见 `docs/p6-topology.md` |
+| 后仿签核级 | **部分完成** | SPEF SDF 后仿 PASS；多角 STA 另见 `make ocv` |
+| RC / 多 corner 寄生 | **部分完成** | `make rc` 5 情景；仍为单 RCX 模型+缩放 |
 | OCV 逐角 derate 表 | 未完成 | 现为全局 early/late derate |
-| 复杂约束 | 未做 | 单时钟，无多周期/假路径/复杂 IO |
-| GDS 层次化提取 LVS | 未做 | 现为扁平 GDS |
+| 复杂约束 | **部分完成** | `counter_complex.sdc` 有假路径/IO；仍无多周期启用 |
+| GDS 层次化提取 LVS | 未完成 | 见 p6-topology.md |
 | 更大设计 / UART 等 | 明确不做 | 按你的要求 |
 
 ### 下一步建议（按优先级）
 
 | 优先级 | 任务 | 原因 | 做法 |
 |--------|------|------|------|
-| **P0** | **`git push origin main`** | 本地 `ahead 1`，远程未更新 | 重试 push；若需凭证用 PAT/SSH |
-| P1 | 层次化 GDS → 器件级 LVS 清残差 | P6 只剩同构配对问题 | 不 flatten 导出 GDS，或 magic 分 cell 提取 |
-| P2 | 多 RC corner / 逐角 SPEF | 时序签核更真 | OpenRCX 多 corner 或 derate 分角 |
-| P3 | 复杂 SDC（多周期/假路径） | 约束真实性 | 改 `constraints/` |
-| P4 | 清 `scripts/legacy/` 与文档数字对齐 | 交接干净 | 删探测脚本或只留 README 索引 |
+| **P0** | **`git push origin main`** | 本地 `ahead 2` | 重试 push |
+| P1 | 层次提取 deck / 逐 cell CDL LVS | 晶体管拓扑 100% | 见 p6-topology.md |
+| P2 | 真 RCX 多模型（非缩放） | RC corner 更真 | 或 OpenROAD 多 corner RCX |
+| P3 | 启用多周期/更完整约束 | 约束真实性 | 改 `constraints/counter_complex.sdc` |
+| P4 | 清 legacy 探测脚本与文档数字 | 交接干净 | `scripts/legacy/` |
 
 **明确不做**：换 UART/SPI 等新设计（按你的要求）。
 
@@ -78,6 +81,7 @@
 | 13 | **晶体管级 LVS**：GDS→Magic 提取 vs CDL | 器件 **346=346**、网络 **177=177**；拓扑残差见 `docs/p6-topology.md` |
 | 14 | **P7 缩 die / 提频** + 全流程重跑 | die **40×40**，利用率 **27%**（逻辑）/99%（含 decap）；SDC **8 ns (125 MHz)**；tt 极限 **667 MHz**；ss 在 5 ns 会挂（−0.55），6 ns 起 MET |
 | 15 | **全流程重跑 + commit** | `make all/verify/finish` 全绿；commit **`7cabc34`**；**push 未成功**（ahead 1） |
+| 16 | **闭环交付**：`make report`、文档数字对齐、复杂 SDC/RC/签核后仿 | 验证矩阵可一键打印；README/verification 对齐 125 MHz/40 µm |
 
 当前 HEAD 的完整验证链见 §6，未完成项与原因见 §10，下一步见 §11。
 

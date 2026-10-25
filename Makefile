@@ -11,6 +11,9 @@
 #   make density  金属密度填充（density_fill）
 #   make ocv      OCV derate + 8 电压/温度 corner STA
 #   make lvs_dev  晶体管级 LVS（GDS 提取 vs CDL）
+#   make rc       多 RC corner SPEF + 复杂 SDC STA
+#   make psign    签核级后仿（SPEF SDF）
+#   make report   打印验证矩阵（只读产物，不重跑）
 #   make finish   gds + lvs + postsim + corners + spef + em + density
 #   make png      版图分层渲染
 #   make check    环境自检
@@ -21,7 +24,7 @@ SHELL := /bin/bash
 ROOT  := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 S     := $(ROOT)/scripts
 
-.PHONY: all synth floorplan place cts route signoff verify gds lvs postsim corners spef em density ocv lvs_dev finish png check sanitize clean tree help
+.PHONY: all synth floorplan place cts route signoff verify gds lvs postsim corners spef em density ocv lvs_dev rc psign report finish png check sanitize clean tree help
 
 all: synth floorplan place cts route signoff
 
@@ -67,6 +70,15 @@ ocv:
 
 lvs_dev:
 	bash $(S)/run_lvs_device.sh
+
+rc:
+	bash $(S)/run_rc_corners.sh
+
+psign:
+	bash $(S)/run_postsim_signoff.sh
+
+report:
+	bash $(S)/make_report.sh
 
 finish: gds lvs postsim corners spef em density ocv
 

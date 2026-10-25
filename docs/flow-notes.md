@@ -55,7 +55,7 @@
 
 ### 11 多 corner STA
 - `run_corner_sta.sh`：tt/ff/ss 各用对应 liberty 重读 route.odb
-- 10 MHz 下看 setup+hold（真实 SDC）；再跑 1 ns 压力只看 setup
+- 125 MHz 下看 setup+hold（真实 SDC）；再跑 1 ns 压力只看 setup
 - 经验：ss 先挂 setup、ff 先收紧 hold——只跑 tt 看不出来
 
 ## 常见坑

@@ -34,3 +34,5 @@ __pycache__/
 .DS_Store
 Thumbs.db
 *.swp
+sim/out/
+runs/20_postsim_signoff/tb_post
