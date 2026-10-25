@@ -13,10 +13,12 @@
 | 工艺 / 单元库 | SKY130A / `sky130_fd_sc_hd`（volare 预编译版） |
 | 综合面积 | 23 cells，299 µm²（8× `dfrtp_1`） |
 | 布图 / 布局后 | 23 logic + **93 tapcells**，415 µm²，利用率 7%（CTS 后 427 µm²） |
-| 布线 | 0 违例，信号线长 622 µm，via 187 |
-| 电源 | met1 跟随轨 + met4/met5 主干，2/2 电源网全连通；IR drop 最差 **10.1 mV（0.56%）**（via 电阻按 5 Ω 假设） |
+| 布线 | 0 违例，**天线 0 违例**，信号线长 622 µm，via 187 |
+| 填充 | **730 个 fill cell**（fill_8 519 / fill_4 83 / fill_2 64 / fill_1 64） |
+| 电源 | met1 跟随轨 + met4/met5 主干，2/2 电源网全连通；IR drop 最差 **15.5 mV（0.86%）**（via 电阻按 5 Ω 假设） |
 | STA @10 MHz | WNS/TNS = 0（~1 GHz 开始违例） |
-| GDS | 单 top cell `counter`，约 520 KB（met1–met5 + via） |
+| 后仿 | 布线后网表 + SDF（估算寄生），PASS |
+| GDS | 单 top cell `counter`，约 1.9 MB（含填充单元） |
 | DRC | **0 违例**（sky130A.lydrc，166 类规则） |
 | LVS | **Netlists match uniquely**（26 devices / 30 nets） |
 | 形式等价 | 9/9 proven |
@@ -31,7 +33,7 @@
 跑 OpenLane 很容易：一条命令，几十分钟，出一个 GDS。但中间发生了什么、哪一步错了，
 全在 `runs/<design>/logs/` 的几万行里。
 
-这里把 OpenLane 内部**拆成 10 个手写阶段**，每阶段一个脚本、一份产物、一条可核对的判据：
+这里把 OpenLane 内部**拆成 11 个手写阶段**，每阶段一个脚本、一份产物、一条可核对的判据：
 
 | # | 阶段 | 脚本 | 产物 | 判据 |
 |---|------|------|------|------|
@@ -40,11 +42,12 @@
 | 2 | 布图 + tap + PDN | `scripts/02_floorplan.sh` | `runs/02_floorplan/floorplan.def` | die 100×100，93 tapcells，`SPECIALNETS=2` |
 | 3 | 布局 | `scripts/03_place.sh` | `runs/03_place/place.def` | 0 重叠，HPWL 514.9 µm |
 | 4 | CTS | `scripts/04_cts.sh` | `runs/04_cts/cts.def` | 插入 clock buffer，skew 可报告 |
-| 5 | 布线 | `scripts/05_route.sh` | `runs/05_route/route.def` | violations = 0 |
-| 6 | 签核（STA + PDN + IR） | `scripts/06_signoff.sh` | `runs/06_signoff/sta.log`、`pdn_check.log` | WNS/TNS = 0；2/2 网连通；IR 0.56% |
+| 5 | 布线 + 天线 + 填充 | `scripts/05_route.sh` | `runs/05_route/route.def` | violations = 0，天线 0，730 个 fill cell |
+| 6 | 签核（STA + PDN + IR + SDF） | `scripts/06_signoff.sh` | `runs/06_signoff/sta.log`、`pdn_check.log`、`counter.sdf` | WNS/TNS = 0；2/2 网连通；IR 0.86% |
 | 7 | GDS | `scripts/run_gds_drc.sh` | `runs/09_gds/counter.gds` | 单 top cell |
 | 8 | DRC | 同上 | `runs/09_gds/drc.lyrdb` | `<item>` 数量 = 0 |
 | 9 | LVS | `dump_cts_netlist.sh` + `lvs_extract.sh` + `run_lvs.sh` | `runs/10_lvs/lvs.out` | match uniquely |
+| 10 | 后仿 | `dump_route_netlist.sh` + `run_postsim.sh` | `runs/12_postsim/postsim.log` | `PASS` |
 
 ## 2. 5 分钟复现
 
@@ -62,28 +65,29 @@ bash scripts/fetch_pdk.sh
 # 2) 合并 LEF（每个 checkout 只需一次）
 bash scripts/merge_lef.sh
 
-# 3) 后端主流程：综合 → 布图 → 布局 → CTS → 布线 → STA
+# 3) 后端主流程：综合 → 布图(+tap+PDN) → 布局 → CTS → 布线(+天线+填充) → 签核
 make all
 
-# 4) 版图：GDS + DRC
-bash scripts/run_gds_drc.sh
+# 4) 收尾：GDS+DRC、LVS、SDF 后仿（等价于下面三条）
+make finish
 
-# 5) LVS 三连（顺序不能换）
-bash scripts/dump_cts_netlist.sh    # post-CTS 网表 = 金标准
-bash scripts/lvs_extract.sh         # Magic 从 DEF+LEF 提取
-bash scripts/run_lvs.sh             # netgen 比对
+#    或者分开跑：
+#    bash scripts/run_gds_drc.sh      # GDS + DRC
+#    bash scripts/dump_cts_netlist.sh && bash scripts/lvs_extract.sh && bash scripts/run_lvs.sh
+#    bash scripts/dump_route_netlist.sh && bash scripts/run_postsim.sh
 ```
 
 跑完检查：`runs/09_gds/drc.lyrdb` 里 `<item>` 为 0；`runs/10_lvs/lvs.out` 里有
-`Netlists match uniquely.`。
+`Netlists match uniquely.`；`runs/12_postsim/postsim.log` 里有 `PASS`。
 
 > `runs/` 里提交的是当时的真实日志。重跑会改动它们（日志里有绝对路径、GDS 头里有时间戳），
 > 所以 `git status` 出现若干 `runs/` 变更是正常的，不是你没跑对。
 >
 > 另外：提交进仓库的日志做过**路径脱敏**——本机路径被替换成 `/path/to/openlane-lab`
-> 和 `/home/user`，跑出来的数字、时序、违例数都是原样。重跑时自然会出现你自己的路径。
+> 和 `/home/user`，跑出来的数字、时序、违例数都是原样。重跑时自然会出现你自己的路径，
+> **提交前跑一次 `make sanitize`** 就能把本机路径再换回占位符。
 
-## 3. 验证四件套（不需要 PDK）
+## 3. 验证（前面几项不需要 PDK）
 
 ```bash
 bash scripts/run_sim.sh            # RTL 仿真 + 门级仿真，各 256+ 步
@@ -95,24 +99,31 @@ bash scripts/run_timing_sweep.sh   # 时钟 100ns → 0.5ns 扫 WNS
 前三个在 CI 里也跑（见 [`.github/workflows/smoke.yml`](.github/workflows/smoke.yml)），
 所以 clone 下来不装 PDK 也能确认「仿真和等价是对的」。
 
+后仿需要先跑完布线（`make all`），然后：
+
+```bash
+make postsim                       # 布线后网表 + SDF → 时序后仿
+```
+
 ## 4. 目录
 
 ```
 .
 ├── rtl/counter.v              设计：8-bit 自由跑计数器（异步复位）
 ├── constraints/counter.sdc    10 MHz 约束
-├── sim/                       testbench / 变异版本 / 10 个单元功能模型
+├── sim/                       testbench / 变异版本 / 单元模型（带 specify）/ 物理单元桩
 ├── scripts/
 │   ├── env.sh                 唯一的环境入口（PDK 路径、PATH、合并 LEF）
-│   ├── 01..06_*.sh            后端主流程
+│   ├── 01..06_*.sh            后端主流程（06 出 SDF）
 │   ├── run_sim/equiv/mutation/timing_sweep.sh
 │   ├── run_gds_drc.sh         GDS + DRC
 │   ├── dump_cts_netlist.sh / lvs_extract.sh / run_lvs.sh
+│   ├── dump_route_netlist.sh / run_postsim.sh   SDF 后仿
 │   ├── make_gds.py / make_golden.py / fix_ext_power.py
 │   ├── dump_shapes.py / render_from_json.py
 │   └── legacy/                没走通的路径（留作踩坑记录）
 ├── docs/                      流程笔记、验证证据链、工具安装、版图截图
-├── runs/                      各阶段产物（.odb / .spice 不入库）
+├── runs/                      各阶段产物（.odb / .spice / 后仿临时文件不入库）
 ├── Makefile
 └── HANDOFF.md                 完整交接文档（方法流 / 脚本手册 / 踩坑清单）
 ```
@@ -122,16 +133,21 @@ bash scripts/run_timing_sweep.sh   # 时钟 100ns → 0.5ns 扫 WNS
 1. **IR drop 是估计值，不是签核值。** PDN 是真的（met1 跟随轨 + met4/met5 主干），
    `check_power_grid` 确认两个网全部连通；`analyze_power_grid` 也能跑，但 sky130 的 LEF
    **只有层电阻、没有 via 电阻**，所以脚本里按 **5 Ω/个 via** 假设（`set_layer_rc`）。
-   最差压降 10.1 mV / 0.56%，数量级可信，但不能当签核数字。
+   最差压降 15.5 mV / 0.86%，数量级可信，但不能当签核数字。
 2. **LVS 是 LEF 抽象级。** Magic 用 LEF abstract 提取，比的是「实例类型 + 连接关系」，
    不是版图器件级。阱（VPB/VNB）按 tap 约定并进 VPWR/VGND，所以**不逐阱检查**。
    真实 LVS 要从 GDS 提晶体管，还要有完整的器件模型。
-3. **STA 没有真实寄生。** 只有 `estimate_parasitics` 的布线估算，没有 SPEF / RC 提取，也没跑后仿。
-   10 MHz 下 WNS=0 几乎没有信息量（setup slack 97.98 ns）。
-4. **die 100×100，利用率 7%。** 靠 93 个 tap 撑着，面积数字不代表真实设计。真芯片会缩到 30×30 上下。
-5. **单元功能模型是手写的**（`sim/sky130_hd_min.v`，10 个 cell）。它证明逻辑映射正确，
+3. **没有 SPEF / 3D 提取。** OpenROAD 的 `extract_parasitics` 需要 OpenRCX 模型文件，
+   volare 的 sky130A 里没有 `*.model`，所以 STA 和 SDF 都基于
+   `estimate_parasitics -global_routing` 的估算。`write_spef` 也因此跑不了。
+4. **后仿是「估算寄生 + 手写 specify」**：SDF 里的单元延迟来自 liberty，连线延迟来自估算；
+   单元模型里的 specify 弧是我按端口手写的（占位值会被 SDF 覆盖），不是从 liberty 自动生成。
+   它能验证「布线后网表 + 延迟标注」这条链路，但不是签核级时序仿真。
+5. **die 100×100，利用率 7%。** 靠 93 个 tap 和 730 个 fill 撑着，面积数字不代表真实设计。
+6. **单元功能模型是手写的**（`sim/sky130_hd_min.v`，11 个 cell）。它证明逻辑映射正确，
    不等于与 foundry 的 Verilog 模型 bit-exact。
-6. **没有 decap / filler。** tap 有了，但去耦电容和填充单元没插（DRC 不强制，密度规则也不查）。
+7. **没有 decap / 金属填充（density fill）。** fill cell 已插满空 site；decap 和
+   `density_fill`（金属密度）没做——5% 利用率下 IR 只有 0.86%，没有 decap 需求。
 
 ## 6. 来源与致谢
 

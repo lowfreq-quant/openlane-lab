@@ -58,6 +58,7 @@ Generating RTLIL representation for module `\sky130_fd_sc_hd__xor2_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__xnor2_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__a31oi_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__lpflow_isobufsrc_1'.
+Generating RTLIL representation for module `\sky130_fd_sc_hd__buf_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__dfrtp_1'.
 Successfully finished Verilog frontend.
 
@@ -76,6 +77,7 @@ Top module:  \counter
 3.1.2. Analyzing design hierarchy..
 Top module:  \counter
 Removing unused module `\sky130_fd_sc_hd__dfrtp_1'.
+Removing unused module `\sky130_fd_sc_hd__buf_1'.
 Removing unused module `\sky130_fd_sc_hd__lpflow_isobufsrc_1'.
 Removing unused module `\sky130_fd_sc_hd__a31oi_1'.
 Removing unused module `\sky130_fd_sc_hd__xnor2_1'.
@@ -85,7 +87,7 @@ Removing unused module `\sky130_fd_sc_hd__and4_1'.
 Removing unused module `\sky130_fd_sc_hd__nand4_1'.
 Removing unused module `\sky130_fd_sc_hd__nand2_1'.
 Removing unused module `\sky130_fd_sc_hd__clkinv_1'.
-Removed 10 unused modules.
+Removed 11 unused modules.
 
 3.2. Executing PROC pass (convert processes to netlists).
 
@@ -231,6 +233,7 @@ Generating RTLIL representation for module `\sky130_fd_sc_hd__xor2_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__xnor2_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__a31oi_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__lpflow_isobufsrc_1'.
+Generating RTLIL representation for module `\sky130_fd_sc_hd__buf_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__dfrtp_1'.
 Successfully finished Verilog frontend.
 
@@ -268,7 +271,8 @@ Used module:     \sky130_fd_sc_hd__nand4_1
 Used module:     \sky130_fd_sc_hd__nand2_1
 Used module:     \sky130_fd_sc_hd__and4_1
 Used module:     \sky130_fd_sc_hd__clkinv_1
-Removed 0 unused modules.
+Removing unused module `\sky130_fd_sc_hd__buf_1'.
+Removed 1 unused modules.
 
 8.2. Executing PROC pass (convert processes to netlists).
 
@@ -276,7 +280,7 @@ Removed 0 unused modules.
 Cleaned up 0 empty switches.
 
 8.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
-Marked 1 switch rules as full_case in process $proc$/path/to/openlane-lab/sim/sky130_hd_min.v:56$50 in module sky130_fd_sc_hd__dfrtp_1.
+Marked 1 switch rules as full_case in process $proc$/path/to/openlane-lab/sim/sky130_hd_min.v:113$50 in module sky130_fd_sc_hd__dfrtp_1.
 Removed a total of 0 dead cases.
 
 8.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
@@ -286,30 +290,30 @@ Promoted 0 assignments to connections.
 8.2.4. Executing PROC_INIT pass (extract init attributes).
 
 8.2.5. Executing PROC_ARST pass (detect async resets in processes).
-Found async reset \RESET_B in `\sky130_fd_sc_hd__dfrtp_1.$proc$/path/to/openlane-lab/sim/sky130_hd_min.v:56$50'.
+Found async reset \RESET_B in `\sky130_fd_sc_hd__dfrtp_1.$proc$/path/to/openlane-lab/sim/sky130_hd_min.v:113$50'.
 
 8.2.6. Executing PROC_ROM pass (convert switches to ROMs).
 Converted 0 switches.
 
 8.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
-Creating decoders for process `\sky130_fd_sc_hd__dfrtp_1.$proc$/path/to/openlane-lab/sim/sky130_hd_min.v:56$50'.
+Creating decoders for process `\sky130_fd_sc_hd__dfrtp_1.$proc$/path/to/openlane-lab/sim/sky130_hd_min.v:113$50'.
      1/1: $0\Q[0:0]
 
 8.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
 
 8.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
-Creating register for signal `\sky130_fd_sc_hd__dfrtp_1.\Q' using process `\sky130_fd_sc_hd__dfrtp_1.$proc$/path/to/openlane-lab/sim/sky130_hd_min.v:56$50'.
+Creating register for signal `\sky130_fd_sc_hd__dfrtp_1.\Q' using process `\sky130_fd_sc_hd__dfrtp_1.$proc$/path/to/openlane-lab/sim/sky130_hd_min.v:113$50'.
   created $adff cell `$procdff$52' with positive edge clock and negative level reset.
 
 8.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
 
 8.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
-Removing empty process `sky130_fd_sc_hd__dfrtp_1.$proc$/path/to/openlane-lab/sim/sky130_hd_min.v:56$50'.
+Removing empty process `sky130_fd_sc_hd__dfrtp_1.$proc$/path/to/openlane-lab/sim/sky130_hd_min.v:113$50'.
 Cleaned up 0 empty switches.
 
 8.2.12. Executing OPT_EXPR pass (perform const folding).
-Optimizing module counter.
 Optimizing module sky130_fd_sc_hd__dfrtp_1.
+Optimizing module counter.
 Optimizing module sky130_fd_sc_hd__lpflow_isobufsrc_1.
 Optimizing module sky130_fd_sc_hd__a31oi_1.
 Optimizing module sky130_fd_sc_hd__xnor2_1.
@@ -468,24 +472,24 @@ Presumably equivalent wires: clk_gold (\clk_gold), clk_gate (\clk_gate) -> clk
 Presumably equivalent wires: q_gold (\q_gold), q_gate ({ \_30_.Q_gate \_29_.Q_gate \_28_.Q_gate \_27_.Q_gate \_26_.Q_gate \_25_.Q_gate \_24_.Q_gate \_23_.Q_gate }) -> q
 Presumably equivalent wires: rst_n_gold (\rst_n_gold), rst_n_gate (\rst_n_gate) -> rst_n
 Presumably equivalent wires: tick_gold (\tick_gold), tick_gate (\tick_gate) -> tick
-Changing input A of cell $flatten\_08_.$not$/path/to/openlane-lab/sim/sky130_hd_min.v:8$30_gate ($not): \_23_.Q_gate -> \q [0]
-Changing input A of cell $flatten\_09_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:13$31_gate ($and): \_23_.Q_gate -> \q [0]
-Changing input B of cell $flatten\_09_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:13$31_gate ($and): \_24_.Q_gate -> \q [1]
-Changing input B of cell $flatten\_10_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:23$38_gate ($and): \_25_.Q_gate -> \q [2]
-Changing input B of cell $flatten\_10_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:23$39_gate ($and): \_26_.Q_gate -> \q [3]
-Changing input A of cell $flatten\_11_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:13$31_gate ($and): \_27_.Q_gate -> \q [4]
-Changing input A of cell $flatten\_12_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:18$33_gate ($and): \_27_.Q_gate -> \q [4]
-Changing input B of cell $flatten\_12_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:18$33_gate ($and): \_28_.Q_gate -> \q [5]
-Changing input B of cell $flatten\_12_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:18$34_gate ($and): \_29_.Q_gate -> \q [6]
-Changing input B of cell $flatten\_13_.$ternary$/path/to/openlane-lab/sim/sky130_hd_min.v:46$49_gate ($mux): \_30_.Q_gate -> \q [7]
-Changing input A of cell $flatten\_14_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:33$42_gate ($xor): \_23_.Q_gate -> \q [0]
-Changing input B of cell $flatten\_14_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:33$42_gate ($xor): \_24_.Q_gate -> \q [1]
-Changing input A of cell $flatten\_15_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:36$43_gate ($xor): \_25_.Q_gate -> \q [2]
-Changing input B of cell $flatten\_16_.$or$/path/to/openlane-lab/sim/sky130_hd_min.v:41$47_gate ($or): \_26_.Q_gate -> \q [3]
-Changing input A of cell $flatten\_18_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:33$42_gate ($xor): \_27_.Q_gate -> \q [4]
-Changing input A of cell $flatten\_19_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:36$43_gate ($xor): \_28_.Q_gate -> \q [5]
-Changing input B of cell $flatten\_20_.$or$/path/to/openlane-lab/sim/sky130_hd_min.v:41$47_gate ($or): \_29_.Q_gate -> \q [6]
-Changing input A of cell $flatten\_22_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:36$43_gate ($xor): \_30_.Q_gate -> \q [7]
+Changing input A of cell $flatten\_08_.$not$/path/to/openlane-lab/sim/sky130_hd_min.v:16$30_gate ($not): \_23_.Q_gate -> \q [0]
+Changing input A of cell $flatten\_09_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:24$31_gate ($and): \_23_.Q_gate -> \q [0]
+Changing input B of cell $flatten\_09_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:24$31_gate ($and): \_24_.Q_gate -> \q [1]
+Changing input B of cell $flatten\_10_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:44$38_gate ($and): \_25_.Q_gate -> \q [2]
+Changing input B of cell $flatten\_10_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:44$39_gate ($and): \_26_.Q_gate -> \q [3]
+Changing input A of cell $flatten\_11_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:24$31_gate ($and): \_27_.Q_gate -> \q [4]
+Changing input A of cell $flatten\_12_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:33$33_gate ($and): \_27_.Q_gate -> \q [4]
+Changing input B of cell $flatten\_12_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:33$33_gate ($and): \_28_.Q_gate -> \q [5]
+Changing input B of cell $flatten\_12_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:33$34_gate ($and): \_29_.Q_gate -> \q [6]
+Changing input B of cell $flatten\_13_.$ternary$/path/to/openlane-lab/sim/sky130_hd_min.v:91$49_gate ($mux): \_30_.Q_gate -> \q [7]
+Changing input A of cell $flatten\_14_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:64$42_gate ($xor): \_23_.Q_gate -> \q [0]
+Changing input B of cell $flatten\_14_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:64$42_gate ($xor): \_24_.Q_gate -> \q [1]
+Changing input A of cell $flatten\_15_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:71$43_gate ($xor): \_25_.Q_gate -> \q [2]
+Changing input B of cell $flatten\_16_.$or$/path/to/openlane-lab/sim/sky130_hd_min.v:80$47_gate ($or): \_26_.Q_gate -> \q [3]
+Changing input A of cell $flatten\_18_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:64$42_gate ($xor): \_27_.Q_gate -> \q [4]
+Changing input A of cell $flatten\_19_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:71$43_gate ($xor): \_28_.Q_gate -> \q [5]
+Changing input B of cell $flatten\_20_.$or$/path/to/openlane-lab/sim/sky130_hd_min.v:80$47_gate ($or): \_29_.Q_gate -> \q [6]
+Changing input A of cell $flatten\_22_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:71$43_gate ($xor): \_30_.Q_gate -> \q [7]
 Changing input A of cell $eq$/path/to/openlane-lab/rtl/counter.v:16$26_gold ($eq): \q_gold -> \q
 Changing input A of cell $add$/path/to/openlane-lab/rtl/counter.v:13$25_gold ($add): \q_gold -> \q
 
@@ -526,6 +530,6 @@ Found 9 $equiv cells in equiv:
   Of those cells 9 are proven and 0 are unproven.
   Equivalence successfully proven!
 
-End of script. Logfile hash: f3b3733ece, CPU: user 0.05s system 0.00s, MEM: 12.14 MB peak
+End of script. Logfile hash: 316190953d, CPU: user 0.05s system 0.01s, MEM: 11.97 MB peak
 Yosys 0.33 (git sha1 2584903a060)
-Time spent: 21% 11x opt_clean (0 sec), 19% 11x opt_expr (0 sec), ...
+Time spent: 19% 11x opt_expr (0 sec), 19% 11x opt_clean (0 sec), ...

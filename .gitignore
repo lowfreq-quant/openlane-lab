@@ -16,6 +16,9 @@ runs/10_lvs/*.out
 
 # 仿真可执行文件 / 提取中间件
 sim/out/
+# 后仿只保留日志，可执行文件丢弃
+runs/12_postsim/*
+!runs/12_postsim/postsim.log
 *.ext
 *.mag
 *.maglef

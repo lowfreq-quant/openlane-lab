@@ -36,12 +36,22 @@
 ### 05 Route
 - 全局布线规划轨道 → 详细布线金属线
 - 看：`Number of violations = 0`、线长、via 数
+- **天线检查**：`check_antennas -verbose`，长线在等离子刻蚀时会积累电荷，必须 0 违例
+- **填充**：`filler_placement` 把空 site 用 fill cell 填满（本设计 730 个），插完要
+  再 `global_connect` 一次
 - 本 lab 用 `estimate_parasitics -global_routing` 估算寄生，**不是**真实 RC 提取
 
 ### 06 Signoff
 - STA：setup/hold、WNS/TNS
 - PDN 连通性：`check_power_grid -net VPWR/VGND`，应报 `All shapes ... are connected`
+- IR drop：`analyze_power_grid`（先给 via 灌电阻，见 README 局限）
+- SDF：`write_sdf`，给后仿用
 - 注意：GDS / DRC / LVS 不在这一步，走 `run_gds_drc.sh` 和 LVS 三连（见 README §2）
+
+### 07–10 GDS / DRC / LVS / 后仿
+- GDS 由 KLayout 合成（OpenROAD 26Q2 没有 `write_gds`），注意 DEF 层名要映射到 GDS 层号
+- LVS 三连：post-CTS 网表（金标准）→ Magic 提取 → netgen 比对；阱按 tap 约定归一
+- 后仿：布线后网表 + SDF，iverilog 要加 `-gspecify` 才会标注延迟
 
 ## 常见坑
 

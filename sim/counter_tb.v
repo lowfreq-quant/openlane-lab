@@ -4,6 +4,9 @@
 //   2) 每个时钟 q 递增 1
 //   3) q==0xFF 时 tick=1，其余 tick=0
 //   4) 一圈 256 个时钟后 tick 再次为 1
+//
+// 后仿：用 +SDF=<file> 传入 SDF，或编译时 -DSDF 并放在当前目录的 counter.sdf。
+// 带延迟后输出不会在时钟沿立刻稳定，所以采样时间用 SETTLE 控制（默认 1ns）。
 `timescale 1ns/1ps
 module counter_tb;
     reg clk = 0;
@@ -14,6 +17,19 @@ module counter_tb;
     counter dut (.clk(clk), .rst_n(rst_n), .q(q), .tick(tick));
 
     always #50 clk = ~clk;   // 100ns 周期，与 SDC 一致
+
+`ifdef SDF
+    `define SETTLE 20
+    reg [1023:0] sdf_file;
+    initial begin
+        if (!$value$plusargs("SDF=%s", sdf_file))
+            sdf_file = "counter.sdf";
+        $display("SDF annotate: %0s", sdf_file);
+        $sdf_annotate(sdf_file, dut);
+    end
+`else
+    `define SETTLE 1
+`endif
 
     integer errors = 0;
     integer i;
@@ -44,14 +60,14 @@ module counter_tb;
         expect_q = 8'd0;
         for (i = 0; i < 256; i = i + 1) begin
             @(posedge clk);
-            #1; // 让非阻塞赋值生效
+            #(`SETTLE); // 等非阻塞赋值（后仿还要等门延迟）
             expect_q = expect_q + 8'd1;
             expect_tick = (expect_q == 8'hFF);
             check("count step");
         end
 
         // 再多跑一圈，确认 tick 周期性
-        @(posedge clk); #1;
+        @(posedge clk); #(`SETTLE);
         expect_q = 8'd01; expect_tick = 1'b0;
         check("wrap around");
 

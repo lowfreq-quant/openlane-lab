@@ -83,15 +83,17 @@ bash scripts/check_env.sh    # 工具 / PDK 七个文件 / 工程产物，逐条
 ```bash
 bash scripts/merge_lef.sh          # 0. 合并 LEF（每个 checkout 一次）
 bash scripts/01_synth.sh           # 1. 综合
-bash scripts/02_floorplan.sh       # 2. 布图
+bash scripts/02_floorplan.sh       # 2. 布图 + tap + PDN
 bash scripts/03_place.sh           # 3. 布局
 bash scripts/04_cts.sh             # 4. 时钟树
-bash scripts/05_route.sh           # 5. 布线
-bash scripts/06_signoff.sh         # 6. STA
+bash scripts/05_route.sh           # 5. 布线 + 天线 + 填充
+bash scripts/06_signoff.sh         # 6. STA + PDN + IR + SDF
 bash scripts/run_gds_drc.sh        # 7+8. GDS 合成 + DRC
 bash scripts/dump_cts_netlist.sh   # 9a. post-CTS 网表（LVS 金标准）
 bash scripts/lvs_extract.sh        # 9b. Magic 提取版图网表
 bash scripts/run_lvs.sh            # 9c. netgen 比对
+bash scripts/dump_route_netlist.sh # 10a. 布线后网表（后仿用）
+bash scripts/run_postsim.sh        # 10b. SDF 时序后仿
 ```
 
 | 步骤 | 输入 | 输出 | 判据（脚本会自己检查） |
@@ -101,13 +103,13 @@ bash scripts/run_lvs.sh            # 9c. netgen 比对
 | 2 布图 + tap + PDN | 网表 + SDC | `runs/02_floorplan/floorplan.def` | die 100×100，93 tapcells，`SPECIALNETS=2`，否则退出 1 |
 | 3 布局 | floorplan.odb | `runs/03_place/place.def` | 0 重叠，HPWL 514.9 µm |
 | 4 CTS | place.odb | `runs/04_cts/cts.def` | 插入 clkbuf，skew 0.25 ns |
-| 5 布线 | cts.odb | `runs/05_route/route.def` | violations = 0 → 否则脚本退出 1 |
-| 6 签核 | route.odb | `runs/06_signoff/sta.log`、`pdn_check.log` | WNS/TNS = 0；2/2 网连通；IR 0.56% → 否则退出 1 |
+| 5 布线 + 填充 | cts.odb | `runs/05_route/route.def` | violations = 0、天线 0，否则退出 1；730 fill |
+| 6 签核 | route.odb | `runs/06_signoff/sta.log`、`pdn_check.log`、`counter.sdf` | WNS/TNS = 0；2/2 网连通；IR 0.86% → 否则退出 1 |
 | 7 GDS | route.def | `runs/09_gds/counter.gds` | 单 top `counter` |
 | 8 DRC | GDS | `runs/09_gds/drc.lyrdb` | `<item>` = 0 → 否则脚本退出 1 |
 | 9 LVS | ext + golden | `runs/10_lvs/lvs.out` | `Netlists match uniquely` → 否则退出 1 |
 
-`make all` = 1–6。
+`make all` = 1–6，`make finish` = 7–10（gds + lvs + postsim），`make verify` = 验证四件套。
 
 ---
 
@@ -123,8 +125,8 @@ bash scripts/run_lvs.sh            # 9c. netgen 比对
 | `scripts/02_floorplan.sh` | `initialize_floorplan` + `make_tracks` + `place_pins` + **tapcell**（93 个，间距 13 µm）+ **PDN**（`add_global_connection` → `pdngen`：met1 跟随轨 + met4/met5 主干） |
 | `scripts/03_place.sh` | `global_placement -density 0.55` + `detailed_placement` |
 | `scripts/04_cts.sh` | `clock_tree_synthesis -buf_list {buf_1 buf_2}` + 重新合法化 |
-| `scripts/05_route.sh` | `global_route` + `detailed_route`，末尾检查 violations=0 |
-| `scripts/06_signoff.sh` | STA（setup/hold/wns/tns/area）+ PDN 连通性（`check_power_grid`）+ IR drop（`analyze_power_grid`，via 电阻按 5 Ω 假设） |
+| `scripts/05_route.sh` | `global_route` + `detailed_route` + `check_antennas` + `filler_placement`（730 个 fill）；末尾检查 violations=0、天线=0 |
+| `scripts/06_signoff.sh` | STA（setup/hold/wns/tns/area）+ PDN 连通性（`check_power_grid`）+ IR drop（`analyze_power_grid`，via 电阻按 5 Ω 假设）+ 写 SDF（后仿用） |
 | `scripts/common.tcl` | OpenROAD 公共初始化：读合并 LEF + liberty |
 
 ### 4.2 验证（不需要 PDK）
@@ -136,7 +138,7 @@ bash scripts/run_lvs.sh            # 9c. netgen 比对
 | `scripts/run_mutation.sh` | 3 个注入 bug + 对照 | 3 抓到 + 1 通过，否则退出 1 |
 | `scripts/run_timing_sweep.sh` | 周期 100→0.5 ns 扫 STA | ≥2 ns MET；1 ns 起违例 |
 
-支撑文件：`sim/counter_tb.v`（自检 testbench）、`sim/counter_bug.v`（`BUG_RESET`/`BUG_STEP`/`BUG_TICK`）、`sim/sky130_hd_min.v`（10 个单元功能模型）。
+支撑文件：`sim/counter_tb.v`（自检 testbench，支持 `+SDF`）、`sim/counter_bug.v`（`BUG_RESET`/`BUG_STEP`/`BUG_TICK`）、`sim/sky130_hd_min.v`（11 个单元模型，带 specify 块）、`sim/sky130_physical_stubs.v`（fill/tap 空模块）。
 
 ### 4.3 GDS / DRC / LVS
 
@@ -153,14 +155,26 @@ bash scripts/run_lvs.sh            # 9c. netgen 比对
 
 顺序不能换：`dump_cts_netlist.sh` → `lvs_extract.sh` → `run_lvs.sh`。
 
-### 4.4 版图可视化
+### 4.4 后仿（SDF）
+
+| 脚本 | 说明 |
+|------|------|
+| `scripts/dump_route_netlist.sh` | route.odb → `counter_route.v`（含 CTS buffer、tap、fill） |
+| `scripts/run_postsim.sh` | 编译 `-gspecify` + `+SDF=` 做时序后仿，要求 `PASS` |
+| `sim/sky130_physical_stubs.v` | fill/tap 的空模块，只为让后仿网表编译通过 |
+
+前提：`06_signoff.sh` 生成 `runs/06_signoff/counter.sdf`（`write_sdf`）。
+注意：SDF 里的连线延迟来自估算寄生，单元延迟来自 liberty；模型里的 specify 弧是手写的
+（占位值，会被 SDF 覆盖）。见 §10 局限。
+
+### 4.5 版图可视化
 
 | 脚本 | 说明 |
 |------|------|
 | `scripts/dump_shapes.py` | KLayout 导出 `shapes.json`（逐层多边形） |
-| `scripts/render_from_json.py` | PIL 分 14 组画 PNG → `runs/11_layout_png/` |
+| `scripts/render_from_json.py` | PIL 分 15 组画 PNG → `runs/11_layout_png/` |
 
-### 4.5 环境 / PDK
+### 4.6 环境 / PDK
 
 | 脚本 | 说明 |
 |------|------|
@@ -205,11 +219,13 @@ bash scripts/run_lvs.sh            # 9c. netgen 比对
 | STA @10 MHz | WNS/TNS = 0 | `runs/06_signoff/sta.log` |
 | 时钟扫描 | 2 ns MET；1 ns WNS=-0.13；0.5 ns -0.63 | `runs/08_timing_sweep/sta_*.log` |
 | 布图 | 93 tapcells；`SPECIALNETS=2`，met1 轨 30 条 + met4/met5 主干各 6 条 | `runs/02_floorplan/floorplan.def` |
-| 布线 | violations = 0，信号线长 622 µm，via 187 | `runs/05_route/openroad.log` |
-| 电源 | **2/2 电源网连通**；IR drop 最差 10.1 mV / 0.56% | `runs/06_signoff/pdn_check.log` |
-| GDS | 单 top `counter`，约 520 KB（met1–met5 + via） | `runs/09_gds/klayout_gds.log` |
+| 布线 | violations = 0，天线 0，信号线长 622 µm，via 187 | `runs/05_route/openroad.log` |
+| 填充 | 730 个 fill cell（fill_8 519 / fill_4 83 / fill_2 64 / fill_1 64） | `runs/05_route/route.def` |
+| 电源 | **2/2 电源网连通**；IR drop 最差 15.5 mV / 0.86% | `runs/06_signoff/pdn_check.log` |
+| GDS | 单 top `counter`，约 1.9 MB（含 fill，met1–met5 + via） | `runs/09_gds/klayout_gds.log` |
 | DRC | **0 违例**（166 类规则） | `runs/09_gds/drc.lyrdb` |
 | LVS | **match uniquely**（26 devices / 30 nets，阱并进电源） | `runs/10_lvs/lvs.out` |
+| 后仿 | 布线后网表 + SDF，**PASS** | `runs/12_postsim/postsim.log` |
 
 ---
 
@@ -250,6 +266,15 @@ bash scripts/run_lvs.sh            # 9c. netgen 比对
     并在 `lvs_extra.tcl` 里只声明 VPWR/VGND 为全局网。
 19. **tap cell 要在 PDN 之前插**，且 `add_global_connection` 要放在 tapcell 之后，
     否则新插的 tap 电源脚接不上网格。
+20. **fill cell 插完要再 `global_connect` 一次**，否则新实例的电源脚是浮的，
+    `check_power_grid` 会报不连通。
+21. **`write_verilog -noattr` 是 yosys 的参数，不是 OpenROAD 的**：OpenROAD 会照打
+    `ROUTE_NETLIST_OK` 但文件根本没写出来（后面 grep 才炸）。去掉 `-noattr` 就行。
+22. **iverilog 默认丢掉 specify 块**，于是 `$sdf_annotate` 直接不执行（"specify blocks are
+    being omitted"）。要真做 SDF 后仿：模型里写 `specify` 块 + 编译加 `-gspecify`。
+23. **PowerShell 写文件别用 `Set-Content -Encoding UTF8`**：PS 5.1 会加 BOM，
+    脚本第一行变 `﻿#!/usr/bin/env ...`，bash 直接报 "No such file or directory"。
+    用 `UTF8Encoding($false)` 或让工具写。
 
 ---
 
@@ -313,15 +338,19 @@ bash scripts/run_sim.sh && bash scripts/run_equiv.sh && bash scripts/run_mutatio
 ## 10. 已知局限
 
 1. **IR drop 是估计值**：PDN 真实存在、连通性已验证；`analyze_power_grid` 能跑，
-   但 via 电阻是按 5 Ω 假设灌进去的（LEF 只带层电阻），所以 10.1 mV / 0.56% 只能看数量级。
+   但 via 电阻是按 5 Ω 假设灌进去的（LEF 只带层电阻），所以 15.5 mV / 0.86% 只能看数量级。
 2. **LVS 是 LEF 抽象级**：Magic 用 LEF abstract 提取，比的是实例+连接，不是晶体管级版图；
    阱（VPB/VNB）按 tap 约定并进电源，不逐阱检查。
-3. **没有真实寄生**：只有 `estimate_parasitics -global_routing`，无 SPEF、无后仿。
-4. **10 MHz + 7% 利用率**：时序与面积数字没有工程意义，只是跑通流程。
-5. **单元功能模型手写**：`sim/sky130_hd_min.v` 只覆盖用到的 10 个 cell。
-6. **没有 decap / filler**：tap 有了，去耦电容和填充单元没插。
+3. **没有 SPEF / 3D 提取**：`extract_parasitics` 需要 OpenRCX 模型文件，volare 的 sky130A
+   里没有 `*.model`；STA 和 SDF 都基于 `estimate_parasitics -global_routing` 的估算。
+4. **后仿是「估算寄生 + 手写 specify」**：SDF 的连线延迟来自估算，单元延迟来自 liberty；
+   模型里的 specify 弧是手写的占位值（被 SDF 覆盖），不是从 liberty 自动生成。
+5. **10 MHz + 7% 利用率**：时序与面积数字没有工程意义，只是跑通流程。
+6. **单元模型手写**：`sim/sky130_hd_min.v` 只覆盖用到的 11 个 cell。
+7. **没有 decap / 金属密度填充**：fill cell 已填满空 site；decap 和 `density_fill` 没做，
+   5% 利用率下 IR 只有 0.86%，没有 decap 需求。
 
-要往"真设计"走，按这个顺序补：decap/filler → SPEF/后仿 → 用真实 RC 出 IR → 换 UART/SPI → 缩 die 提频率。
+要往"真设计"走，按这个顺序补：OpenRCX 模型 → SPEF/真提取 → 金属密度填充 → 换 UART/SPI → 缩 die 提频率。
 
 ---
 
@@ -343,13 +372,16 @@ bash scripts/run_sim.sh && bash scripts/run_equiv.sh && bash scripts/run_mutatio
 - [x] GDS + DRC(0) + LVS(match uniquely)
 - [x] PDN：met1 跟随轨 + met4/met5 主干，`check_power_grid` 2/2 连通
 - [x] tap cell：93 个，间距 13 µm，阱按 tap 约定并进电源
-- [x] IR drop：最差 10.1 mV / 0.56%（via 电阻 5 Ω 假设）
+- [x] IR drop：最差 15.5 mV / 0.86%（via 电阻 5 Ω 假设）
+- [x] 天线检查：0 违例
+- [x] 填充：730 个 fill cell，插完重新 global_connect
+- [x] 后仿：布线后网表 + SDF（`-gspecify`），PASS
 - [x] 路径去硬编码，clone 到任意目录可跑
 - [x] 仓库整理：`.gitignore` / `LICENSE` / legacy 归档 / CI
 - [x] 文档：README / HANDOFF / tools / flow-notes / verification / first-run-report
-- [ ] 用真实 RC（而非假设的 via 电阻）重算 IR / EM
-- [ ] 后仿 / SPEF（未做）
-- [ ] decap / filler（未做）
-- [ ] 更大设计 UART/SPI（未做）
+- [ ] OpenRCX 模型 → SPEF / 真提取（PDK 未带）
+- [ ] 金属密度填充（`density_fill`，需要 rules 文件）
+- [ ] decap（当前 IR 0.86%，暂无需求）
+- [ ] 更大设计 UART/SPI（按你的要求不做）
 
 有问题先查 §7 坑列表；脚本细节见 §4；验证结论见 §6。
