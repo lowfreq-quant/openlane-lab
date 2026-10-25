@@ -17,7 +17,7 @@ RTL → 综合 → Floorplan → Place → CTS → Route → STA → GDS → DRC
 
 目标不是"一键流片"，而是**每一步命令可见、结果可解释、判据可核对**。
 
-公开仓库 https://github.com/<你的账号>/openlane-lab（推送后替换）。
+公开仓库：https://github.com/lowfreq-quant/openlane-lab
 
 ---
 

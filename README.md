@@ -1,5 +1,7 @@
 # openlane-lab — 用开源工具链把 RTL 走到 GDS
 
+[![smoke](https://github.com/lowfreq-quant/openlane-lab/actions/workflows/smoke.yml/badge.svg)](https://github.com/lowfreq-quant/openlane-lab/actions/workflows/smoke.yml)
+
 **不用 Docker，不用 OpenLane 黑盒。** 8-bit 计数器，SkyWater SKY130（`sky130_fd_sc_hd`），
 在 WSL2 里一步步跑完综合 → 布图（含 PDN）→ 布局 → CTS → 布线 → STA → GDS → DRC → LVS，
 每一步的命令、输入、输出、日志都留在仓库里。
