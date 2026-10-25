@@ -1,12 +1,63 @@
 # openlane-lab 交接文档
 
 > SkyWater SKY130 数字后端全流程实验工程
-> **状态：RTL→GDS→DRC(0)→LVS→PDN→IR→EM→SPEF→OCV→后仿→密度填充→decap→P7 工程化 die/频率**
-> 更新：2026-10-25（P6 拓扑结论 + P7 缩 die/提频）
+> **状态：RTL→GDS→DRC(0)→LVS→PDN→IR→EM→SPEF→OCV→后仿→密度填充→decap→工程化 die/频率，全流程重跑通过**
+> 更新：2026-10-25 · commit `7cabc34`（**本地已提交，push 未成功**）
 
 ---
 
-## 0. 进展纪要（做过什么）
+## 0. 当前状态（一屏看完）
+
+### 已取得的进展（HEAD 验证链）
+
+| 层级 | 结果 | 入口 |
+|------|------|------|
+| 功能 / 门级仿真 | PASS | `make verify` |
+| 形式等价 | proven | `make verify` |
+| 变异测试 | 4/4 | `make verify` |
+| 综合→布线 | 23 逻辑 cell，面积约 299 µm² | `make all` |
+| 布局 | **40×40 die，逻辑利用率 27%** | `02_floorplan.sh` |
+| 时序 | **SDC 8 ns (125 MHz)**，三角 + OCV 8 角 **全 MET** | `make corners` / `make ocv` |
+| 频率边界 | tt **667 MHz MET**，833 MHz 违例；ss 5 ns 会挂 | `make spef` / `runs/18_p7` |
+| 真寄生 | OpenRCX SPEF，0 unannotated | `make spef` |
+| GDS | 单 top `counter` | `make gds` |
+| DRC | **0 / 166 类** | `make gds` |
+| LVS | **cell-level match uniquely**（26 器件 / 30 网） | `make lvs` |
+| 晶体管 LVS | 346=346 / 177=177，拓扑残差已定性 | `make lvs_dev` |
+| 后仿 | SDF annotate PASS | `make postsim` |
+| PDN / IR | 2/2 连通；IR 约 1.6% / 4.1%（小 die 后 VGND 变差） | `06_signoff.sh` |
+| EM | Imax ≈ 典型 Jmax 的 8.6% | `make em` |
+| 密度填充 | 金属 fill（小 die 后约 4900） | `make density` |
+| decap | 451 decap + fill 铺满空 site | `05_route.sh` |
+
+### 还没干的
+
+| 项 | 状态 | 说明 |
+|----|------|------|
+| **push 到 GitHub** | **未完成** | commit `7cabc34` 已在本地；`git push` 超时/失败，仍是 `ahead 1` |
+| 晶体管 LVS 100% 拓扑 match | 未完成 | 见 `docs/p6-topology.md`；需层次化 GDS 或更强 permute |
+| 后仿签核级 | 未完成 | 单元延迟 liberty + 估算/RCX 线延迟；无 SDF 反标到 liberty 自动 specify |
+| RC / 多 corner 寄生 | 未完成 | SPEF 单提取角，无 RC corner 组合 |
+| OCV 逐角 derate 表 | 未完成 | 现为全局 early/late derate |
+| 复杂约束 | 未做 | 单时钟，无多周期/假路径/复杂 IO |
+| GDS 层次化提取 LVS | 未做 | 现为扁平 GDS |
+| 更大设计 / UART 等 | 明确不做 | 按你的要求 |
+
+### 下一步建议（按优先级）
+
+| 优先级 | 任务 | 原因 | 做法 |
+|--------|------|------|------|
+| **P0** | **`git push origin main`** | 本地 `ahead 1`，远程未更新 | 重试 push；若需凭证用 PAT/SSH |
+| P1 | 层次化 GDS → 器件级 LVS 清残差 | P6 只剩同构配对问题 | 不 flatten 导出 GDS，或 magic 分 cell 提取 |
+| P2 | 多 RC corner / 逐角 SPEF | 时序签核更真 | OpenRCX 多 corner 或 derate 分角 |
+| P3 | 复杂 SDC（多周期/假路径） | 约束真实性 | 改 `constraints/` |
+| P4 | 清 `scripts/legacy/` 与文档数字对齐 | 交接干净 | 删探测脚本或只留 README 索引 |
+
+**明确不做**：换 UART/SPI 等新设计（按你的要求）。
+
+---
+
+## 0b. 进展纪要（做过什么）
 
 按时间顺序，每一轮都留了 commit 和可核对的产物：
 
@@ -26,6 +77,7 @@
 | 12 | **OCV + 8 corner**：`set_timing_derate` + 8 套 liberty | tt/ss × 电压温度全 **MET**（10 MHz） |
 | 13 | **晶体管级 LVS**：GDS→Magic 提取 vs CDL | 器件 **346=346**、网络 **177=177**；拓扑残差见 `docs/p6-topology.md` |
 | 14 | **P7 缩 die / 提频** + 全流程重跑 | die **40×40**，利用率 **27%**（逻辑）/99%（含 decap）；SDC **8 ns (125 MHz)**；tt 极限 **667 MHz**；ss 在 5 ns 会挂（−0.55），6 ns 起 MET |
+| 15 | **全流程重跑 + commit** | `make all/verify/finish` 全绿；commit **`7cabc34`**；**push 未成功**（ahead 1） |
 
 当前 HEAD 的完整验证链见 §6，未完成项与原因见 §10，下一步见 §11。
 
@@ -378,15 +430,15 @@ make verify                        # 仿真 + 等价 + 变异
 bash scripts/run_timing_sweep.sh   # 时钟扫描（可选）
 ```
 
-成功标志：`PASS` ×4、`Equivalence successfully proven!`、`[PASS] DRC 0 违例`、
-`[PASS] LVS: Netlists match uniquely`、`[PASS] 10 MHz 下 tt/ff/ss ... 全部 MET`。
+成功标志：`PASS`（仿真/变异）、`Equivalence successfully proven!`、`[PASS] DRC 0 违例`、
+`[PASS] LVS: Netlists match uniquely`、corners/OCV 在 **constraints/counter.sdc（8 ns）** 下全 MET。
 
 ---
 
 ## 10. 已知局限
 
-1. **IR drop 是估计值**：PDN 真实存在、连通性已验证；`analyze_power_grid` 能跑，
-   但 via 电阻是按 5 Ω 假设灌进去的（LEF 只带层电阻），所以 15.5 mV / 0.86% 只能看数量级。
+1. **IR drop 是估计值**：PDN 连通 2/2；via 电阻按 **5 Ω** 假设（LEF 无 via R）。
+   小 die 重跑后约 **VPWR 28 mV / 1.6%**，**VGND 74 mV / 4.1%**（比大 die 时差，因电源路径变短变密）。
 2. **LVS 两级**：签核判据是 **cell-level**（`make lvs`，match uniquely）。
    晶体管级（`make lvs_dev`）已能对齐器件数 346=346、网络数 177=177，
    但扁平 GDS 提取 vs CDL 的内部节点拓扑仍有残差（见 §11 P6）。
@@ -394,24 +446,17 @@ bash scripts/run_timing_sweep.sh   # 时钟扫描（可选）
    corners / signoff SDF / postsim 在 SPEF 存在时用 `read_spef`。
 4. **后仿不是签核级**：单元延迟来自 liberty；模型 specify 弧是手写占位（被 SDF 覆盖）。
 5. **OCV 为 8 个典型电压温度角 + 全局 derate**：无 RC corner、无逐角 derate 表。
-6. **约束很简单**：只有一个时钟，没有多周期/假路径/复杂 IO 时序；频率也只到 10 MHz。
+6. **约束很简单**：只有一个时钟，没有多周期/假路径/复杂 IO 时序；目标频率 **125 MHz**（tt 极限约 667 MHz）。
 7. **单元模型手写**：`sim/sky130_hd_min.v` 只覆盖用到的 11 个 cell。
-8. **decap / 密度填充已做**：451 decap + 56 fill；金属 fill 22085（`make density`）。
+8. **decap / 密度填充已做**：451 decap + fill；金属 fill 小 die 后约 **4900**（大 die 时 22085）。
 
 ---
 
-## 11. 下一步计划（按优先级）
+## 11. 下一步计划
 
-| 优先级 | 任务 | 为什么 | 阻塞 / 做法 |
-|--------|------|--------|-------------|
-| P0 | 把当前多 corner 改动提交并推送 | 保持仓库与本地一致 | 已完成 / 待推 |
-| P1 | ~~OpenRCX → SPEF~~ **已完成**（`make spef`）；corners/postsim **已切换 read_spef** | 真寄生才站得住 | `runs/13_spef/`；signoff SDF 含 SPEF 连线延迟 |
-| P2 | ~~EM 分析~~ **已完成**（`make em`） | 电源签核另一半 | `runs/14_em/`；Imax≈3.9 µA ≈ 典型限值 2.8% |
-| P3 | ~~金属密度填充~~ **已完成**（`make density`） | CMP/密度 | `runs/15_density/`；**22085 fills**；schema 关键：`width`/`height` 必须是**数组** |
-| P4 | ~~decap~~ **已完成**（改 `05_route.sh`） | 电源完整性 | 451 decap + 56 fill |
-| P5 | ~~OCV / 更多 corner~~ **已完成**（`make ocv`） | 时序签核 | `runs/16_ocv/`；8 corner 全 MET |
-| P6 | ~~晶体管级 LVS~~ **结论明确**（`make lvs_dev` + `docs/p6-topology.md`） | 换掉 LEF 抽象级 | 器件/网数对齐；残差=对称 XOR/AOI 内部网配对，非功能错误 |
-| P7 | ~~缩 die / 提频~~ **已完成** | 工程数字 | 40×40 / 27% util；SDC 125 MHz（全角 MET）；tt 极限 667 MHz |
+**已迁移到文首 §0「当前状态」**——含「已取得 / 还没干 / 下一步」三张表。
+
+摘要：P0 = **push `7cabc34`**；其余见 §0 优先级表。
 
 **明确不做**：换 UART/SPI 等新设计（按你的要求）。
 
@@ -450,6 +495,10 @@ bash scripts/run_timing_sweep.sh   # 时钟扫描（可选）
 - [x] decap（P4）— 451 个 decap 实例
 - [x] OCV / 更多 corner（P5）— `make ocv`，8 角全 MET
 - [x] 晶体管级 LVS（P6）— 器件/网数对齐；见 `docs/p6-topology.md`
-- [x] P7 缩 die/提频 — 40×40、27% util、SDC 200 MHz、667 MHz 边界
+- [x] P7 缩 die/提频 — 40×40、27% util、SDC **125 MHz**、tt 极限 667 MHz
+- [x] 全流程重跑 — `make all/verify/finish` 全绿
+- [ ] **push 到 GitHub** — commit `7cabc34` 本地已有，push 超时/失败
+- [ ] 晶体管 LVS 拓扑 100% match（层次化 GDS）
+- [ ] 多 RC corner / 复杂 SDC
 
-有问题先查 §7 坑列表；脚本细节见 §4；验证结论见 §6；下一步见 §11。
+有问题先查 §7 坑列表；脚本细节见 §4；验证结论见 §6；**当前状态与下一步见 §0**。
