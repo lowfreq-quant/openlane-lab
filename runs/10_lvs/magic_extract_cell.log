@@ -52,11 +52,13 @@ LEF read, Line 286 (Message): Unknown keyword "ANTENNADIFFSIDEAREARATIO" in LEF 
 LEF read: Processed 69777 lines.
 Reading DEF data from file /path/to/openlane-lab/runs/05_route/route.def.
 This action cannot be undone.
+  Processed 4 vias total.
   Processed 1 non-default rules total.
   Processed 26 subcell instances total.
-  Processed 11 pins total.
+  Processed 13 pins total.
+  Processed 2 special nets total.
   Processed 28 nets total.
-DEF read: Processed 519 lines.
+DEF read: Processed 1096 lines.
 Warning:  Extract option "do unique" disabled because "extract unique" was run.
 Processing counter
 Extracting sky130_fd_sc_hd__a31oi_1 into sky130_fd_sc_hd__a31oi_1.ext:

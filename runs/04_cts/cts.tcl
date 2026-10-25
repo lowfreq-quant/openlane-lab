@@ -14,7 +14,7 @@ clock_tree_synthesis \
 # 插完 buffer 要重新合法化
 detailed_placement
 estimate_parasitics -placement
-report_checks -path_delay max -fields {slew capacitance input_pins nets} -format full_clock_expanded
+report_checks -path_delay max -fields {slew capacitance} -format full_clock_expanded
 report_clock_skew
 
 write_db $::env(OUT)/cts.odb

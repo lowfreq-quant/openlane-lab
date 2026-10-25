@@ -8,7 +8,7 @@ if {[info exists ::env(SDC)] && [file exists $::env(SDC)]} {
 # 全局布局 → 详细布局
 global_placement -density 0.55
 estimate_parasitics -placement
-report_checks -path_delay max -fields {slew capacitance input_pins nets} -format full_clock_expanded
+report_checks -path_delay max -fields {slew capacitance} -format full_clock_expanded
 
 detailed_placement
 check_placement -verbose

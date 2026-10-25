@@ -17,7 +17,10 @@
 - 决定 die/core 大小、IO 位置、布线轨道（真实流程还有电源网格）
 - 利用率（utilization）通常 30%–70%，太高难布线，太低浪费面积
 - 看：`report_design_area`、DEF 里的 `DIEAREA`
-- **本 lab 跳过了 PDN**：没有电源环/网格，所以后面也没有 IR drop / EM 签核
+- **PDN 在这一步做**：`add_global_connection` → `set_voltage_domain` → `define_pdn_grid`
+  → `add_pdn_stripe`（met1 followpin + met4/met5 主干）→ `pdngen`
+- 看：DEF 里有没有 `SPECIALNETS`；跑 `check_power_grid` 看电源网是否全连通
+- 注意：本 lab 不做 IR drop（PDK 没带 RC 参数），只做连通性检查
 
 ### 03 Place
 - `global_placement`：解析解，可能重叠
@@ -35,6 +38,7 @@
 
 ### 06 Signoff
 - STA：setup/hold、WNS/TNS
+- PDN 连通性：`check_power_grid -net VPWR/VGND`，应报 `All shapes ... are connected`
 - 注意：GDS / DRC / LVS 不在这一步，走 `run_gds_drc.sh` 和 LVS 三连（见 README §2）
 
 ## 常见坑
@@ -46,6 +50,9 @@
 5. **`report_checks -fields nets`**：OpenROAD 26Q2 不认 `nets` 字段，会打印
    `unknown field nets` 但报告照出 → 用 `-fields {slew capacitance}` 更干净
 6. **合并 LEF 放 /tmp**：多个 checkout 会互相覆盖 → 本项目放 `runs/lef/`
+7. **PDN 顺序错**：没先 `add_global_connection` 就 `pdngen`，网格是空壳；
+   `define_pdn_grid` 不加 `-pins` 就没有顶层电源端子，`check_power_grid` 会报 PSM-0025
+8. **IR drop 直接跑会失败**：LEF 没电阻参数 → `PSM-0021`，要先用 `set_layer_rc` 灌 RC
 
 ## 和 OpenLane 对照
 

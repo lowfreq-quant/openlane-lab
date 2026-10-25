@@ -134,10 +134,11 @@ q[5]                                       |q[5]
 q[3]                                       |q[3]                                       
 q[6]                                       |q[6]                                       
 q[7]                                       |q[7]                                       
+VGND                                       |(no matching pin)                          
+VPWR                                       |(no matching pin)                          
 rst_n                                      |rst_n                                      
 q[1]                                       |q[1]                                       
 q[4]                                       |q[4]                                       
 ---------------------------------------------------------------------------------------
-Cell pin lists are equivalent.
-Device classes counter and counter are equivalent.
+Cell pin lists for counter and counter altered to match.
 Circuits match uniquely.

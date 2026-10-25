@@ -46,8 +46,28 @@ if [[ -f "$RT/route_drc.rpt" ]]; then
   fi
 fi
 
+# --- PDN 连通性（电源网格是否真的连到每个实例的电源脚）---
+cat > "$OUT/pdn_check.tcl" <<'EOF'
+source $::env(SCRIPTS_DIR)/common.tcl
+read_db $::env(RT)/route.odb
+foreach n {VPWR VGND} {
+  if {[catch {check_power_grid -net $n} err]} {
+    puts "PDN_CHECK_FAIL $n: $err"
+  }
+}
+puts "PDN_CHECK_DONE"
+EOF
+SCRIPTS_DIR="$ROOT/scripts" RT="$RT" OUT="$OUT" \
+  openroad -no_init -exit "$OUT/pdn_check.tcl" 2>&1 | tee "$OUT/pdn_check.log" >/dev/null
+if grep -q 'PDN_CHECK_FAIL' "$OUT/pdn_check.log"; then
+  echo "[ERROR] PDN 连通性检查失败：" >&2
+  grep 'PDN_CHECK_FAIL' "$OUT/pdn_check.log" >&2
+  exit 1
+fi
+pdn_ok=$(grep -c 'All shapes on net .* are connected' "$OUT/pdn_check.log" || true)
+echo "[DONE] PDN: ${pdn_ok:-0}/2 个电源网所有图形连通（check_power_grid）"
+
 wns=$(grep -E '^wns ' "$OUT/sta.log" | tail -1 | awk '{print $3}')
 tns=$(grep -E '^tns ' "$OUT/sta.log" | tail -1 | awk '{print $3}')
-echo ""
 echo "[DONE] STA: WNS=${wns:-?} TNS=${tns:-?}  报告: $OUT/sta.log"
 echo "       版图签核下一步: bash scripts/run_gds_drc.sh"

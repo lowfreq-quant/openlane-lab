@@ -1,7 +1,7 @@
-﻿# openlane-lab — 用开源工具链把 RTL 走到 GDS
+# openlane-lab — 用开源工具链把 RTL 走到 GDS
 
 **不用 Docker，不用 OpenLane 黑盒。** 8-bit 计数器，SkyWater SKY130（`sky130_fd_sc_hd`），
-在 WSL2 里一步步跑完综合 → 布图 → 布局 → CTS → 布线 → STA → GDS → DRC → LVS，
+在 WSL2 里一步步跑完综合 → 布图（含 PDN）→ 布局 → CTS → 布线 → STA → GDS → DRC → LVS，
 每一步的命令、输入、输出、日志都留在仓库里。
 
 ![版图渲染](docs/img/layout_overview.png)
@@ -10,17 +10,18 @@
 |------|------|
 | 工艺 / 单元库 | SKY130A / `sky130_fd_sc_hd`（volare 预编译版） |
 | 综合面积 | 23 cells，299 µm²（8× `dfrtp_1`） |
-| 布线 | 0 违例，线长 609 µm，via 179 |
+| 布线 | 0 违例，信号线长 611 µm，via 194 |
+| 电源 | met1 跟随轨 + met4/met5 主干，2 个电源网 **全部连通**（`check_power_grid`） |
 | STA @10 MHz | WNS/TNS = 0（~1 GHz 开始违例） |
-| GDS | 单 top cell `counter`，约 250 KB（含 met1/2/3 + via 绕线） |
+| GDS | 单 top cell `counter`，约 370 KB（met1–met5 + via） |
 | DRC | **0 违例**（sky130A.lydrc，166 类规则） |
 | LVS | **Netlists match uniquely**（26 devices / 32 nets） |
 | 形式等价 | 9/9 proven |
 | 变异测试 | 3/3 注入 bug 被 testbench 抓到 |
 
-| 器件层（nwell/diff/poly/implant） | 绕线层（met1/met2/met3 + via） | 全栈叠加 |
+| 器件层（nwell/diff/poly/implant） | 绕线层（met1/met2/met3 + via） | 电源网络（met1 轨 + met4/met5 主干） |
 |---|---|---|
-| ![器件层](docs/img/layer_device.png) | ![绕线层](docs/img/layer_routing.png) | ![全栈](docs/img/layout_full.png) |
+| ![器件层](docs/img/layer_device.png) | ![绕线层](docs/img/layer_routing.png) | ![电源网络](docs/img/layer_pdn.png) |
 
 ## 1. 这个 lab 想解决什么
 
@@ -33,11 +34,11 @@
 |---|------|------|------|------|
 | 0 | 合并 LEF | `scripts/merge_lef.sh` | `runs/lef/*.lef` | 13 层 + 441 cells 能读入 |
 | 1 | 综合 | `scripts/01_synth.sh` | `runs/01_synth/counter_synth.v` | 23 cells / 299 µm² |
-| 2 | 布图 | `scripts/02_floorplan.sh` | `runs/02_floorplan/floorplan.def` | die 100×100，pin 放得下 |
+| 2 | 布图 + PDN | `scripts/02_floorplan.sh` | `runs/02_floorplan/floorplan.def` | die 100×100，`SPECIALNETS=2` |
 | 3 | 布局 | `scripts/03_place.sh` | `runs/03_place/place.def` | 0 重叠，HPWL 492.6 µm |
 | 4 | CTS | `scripts/04_cts.sh` | `runs/04_cts/cts.def` | 插入 clock buffer，skew 可报告 |
 | 5 | 布线 | `scripts/05_route.sh` | `runs/05_route/route.def` | violations = 0 |
-| 6 | STA | `scripts/06_signoff.sh` | `runs/06_signoff/sta.log` | WNS/TNS = 0 |
+| 6 | 签核（STA + PDN） | `scripts/06_signoff.sh` | `runs/06_signoff/sta.log`、`pdn_check.log` | WNS/TNS = 0；2/2 电源网连通 |
 | 7 | GDS | `scripts/run_gds_drc.sh` | `runs/09_gds/counter.gds` | 单 top cell |
 | 8 | DRC | 同上 | `runs/09_gds/drc.lyrdb` | `<item>` 数量 = 0 |
 | 9 | LVS | `dump_cts_netlist.sh` + `lvs_extract.sh` + `run_lvs.sh` | `runs/10_lvs/lvs.out` | match uniquely |
@@ -112,8 +113,11 @@ bash scripts/run_timing_sweep.sh   # 时钟 100ns → 0.5ns 扫 WNS
 
 ## 5. 已知局限（先声明，别当它是可流片设计）
 
-1. **没有 PDN。** `route.def` 里没有 `SPECIALNETS`，标准单元的 VPWR/VGND 引脚**没有连成电网**。
-   所以没有 IR drop、EM 检查；LVS 里的电源是靠 `fix_ext_power.py` 按名字短接**假定**的。
+1. **有 PDN，但没有 IR drop / EM。** 电源网格是 met1 跟随轨 + met4/met5 主干，
+   `check_power_grid` 确认两个网全部连通；但 PDK 的 LEF 不带电阻参数，
+   `analyze_power_grid` 会报 `PSM-0021 Resistance map contains invalid values`，
+   所以压降/电迁移没算。另外 LVS 里的电源仍是 `fix_ext_power.py` 按名字短接**假定**的
+   （Magic 的提取网表没有把电源轨并进顶层网）。
 2. **LVS 是 LEF 抽象级。** Magic 用 LEF abstract 提取，比的是「实例类型 + 连接关系」，
    不是版图器件级。真实 LVS 要从 GDS 提晶体管，还要有完整的器件模型。
 3. **STA 没有真实寄生。** 只有 `estimate_parasitics` 的布线估算，没有 SPEF / RC 提取，也没跑后仿。
@@ -121,6 +125,7 @@ bash scripts/run_timing_sweep.sh   # 时钟 100ns → 0.5ns 扫 WNS
 4. **die 100×100，利用率 5%。** 教学用，面积/功耗数字不代表真实设计。真芯片会缩到 30×30 上下。
 5. **单元功能模型是手写的**（`sim/sky130_hd_min.v`，10 个 cell）。它证明逻辑映射正确，
    不等于与 foundry 的 Verilog 模型 bit-exact。
+6. **没有 tap cell / decap。** 防闩锁的 well tap 没插，这也是 IR drop 之外的空白。
 
 ## 6. 来源与致谢
 

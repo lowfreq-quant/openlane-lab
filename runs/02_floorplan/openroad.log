@@ -22,4 +22,5 @@ Using 2 tracks default min distance between IO pins.
 [INFO PPL-0005] Slots per section         200
 [INFO PPL-0008] Successfully assigned pins to sections.
 [INFO PPL-0012] I/O nets HPWL: 577.69 um.
+[INFO PDN-0001] Inserting grid: stdcell
 Design area 299 um^2 5% utilization.

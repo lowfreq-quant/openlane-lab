@@ -93,7 +93,6 @@ Iteration | Overflow |     HPWL (um) |  HPWL(%) |   Penalty | Group
 [INFO GPL-1009]     - For 50% usage of free space: 0.0993
 [INFO GPL-1014] Final placement area: 311.64 (+0.00%)
 [WARNING EST-0018] wire capacitance for corner default is zero. Use the set_wire_rc command to set wire resistance and capacitance.
-[WARNING STA-0168] unknown field nets.
 Startpoint: rst_n (input port clocked by clk)
 Endpoint: _23_ (recovery check against rising-edge clock clk)
 Path Group: asynchronous
@@ -133,11 +132,8 @@ Path Type: max
                    0.00    0.00   clock network delay (ideal)
            0.00    0.00    0.00 ^ _23_/CLK (sky130_fd_sc_hd__dfrtp_1)
    0.01    0.14    0.37    0.37 ^ _23_/Q (sky130_fd_sc_hd__dfrtp_1)
-           0.14    0.00    0.37 ^ _10_/A (sky130_fd_sc_hd__and4_1)
    0.01    0.15    0.27    0.64 ^ _10_/X (sky130_fd_sc_hd__and4_1)
-           0.15    0.00    0.64 ^ _12_/D (sky130_fd_sc_hd__nand4_1)
    0.01    0.13    0.16    0.80 v _12_/Y (sky130_fd_sc_hd__nand4_1)
-           0.13    0.00    0.80 v _13_/SLEEP (sky130_fd_sc_hd__lpflow_isobufsrc_1)
    0.00    0.04    0.10    0.90 ^ _13_/X (sky130_fd_sc_hd__lpflow_isobufsrc_1)
            0.04    0.00    0.90 ^ tick (out)
                            0.90   data arrival time

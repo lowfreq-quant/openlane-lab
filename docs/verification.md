@@ -21,13 +21,15 @@
 | 6 | 布线 DRC | 布出来的线有没有短路/间距问题 | **0 violations** | `runs/05_route/openroad.log` |
 | 7 | 版图 DRC | GDS 能不能制造 | **0 违例 / 166 类规则** | `runs/09_gds/drc.lyrdb` |
 | 8 | LVS | 版图连接 = 网表连接吗 | **match uniquely**（26 dev / 32 nets） | `runs/10_lvs/lvs.out` |
-| 9 | 后仿 / 提取 | 带真实寄生还对吗 | **未做** | — |
+| 9 | PDN 连通 | 电源网格连到每个电源脚了吗 | **2/2 网全部连通** | `runs/06_signoff/pdn_check.log` |
+| 10 | IR drop / EM | 压降、电迁移够不够 | **未做**（PDK 无 RC 参数） | — |
+| 11 | 后仿 / 提取 | 带真实寄生还对吗 | **未做** | — |
 
-前 8 层都跑通了。这说明：
+前 9 层都跑通了。这说明：
 
 - 规格自洽（每拍 +1，满一圈 tick）
 - 综合映射到 sky130 后功能一致（仿真 + 形式证明 + 变异测试三重）
-- 物理实现可制造（0 DRC）、连接与网表一致（LVS）
+- 物理实现可制造（0 DRC）、连接与网表一致（LVS）、电源网是通的（PDN check）
 
 ## 各层怎么复现
 
@@ -56,18 +58,22 @@ bash scripts/dump_cts_netlist.sh && bash scripts/lvs_extract.sh && bash scripts/
 
 ## 为什么还不能称「流片级」
 
-1. **没有 PDN**：单元电源引脚没有连成电网，IR drop / EM 完全没查。
+1. **有 PDN，但没有 IR drop / EM**：`check_power_grid` 证明两个电源网全连通，
+   但 PDK 的 LEF 不带电阻参数，`analyze_power_grid` 报 `PSM-0021`，压降算不出来。
 2. **LVS 是 LEF 抽象级**：Magic 用 LEF abstract 提取，比的是实例+连接，不是版图器件。
    netgen 日志里每个 cell 都是 `contains no devices` / `N disconnected pins`，正是这个原因。
+   另外 LVS 的电源还是按名字短接**假定**的，不是从电源轨追出来的。
 3. **没有真实寄生**：只有布线估算，没有 SPEF，也没有后仿。
 4. **约束很简单**：只有一个时钟，没有多周期/假路径/复杂 IO 时序。
 5. **单元模型手写**：门级仿真用的 `sim/sky130_hd_min.v` 只覆盖 10 个 cell，
    证明逻辑映射对，不等于与 foundry 模型 bit-exact。
 6. **10 MHz / 5% 利用率**：数字没有工程意义，只证明流程通。
+7. **没有 tap cell / decap**：防闩锁的 well tap 没插。
 
 ## 建议的下一步
 
-1. 加 PDN（`add_global_connection` + `pdngen`），再跑 IR drop。
+1. 用 `set_layer_rc` 灌 RC，再跑 `analyze_power_grid` 出 IR drop / EM。
 2. 提取 SPEF 做真 STA，再跑门级 + SDF 后仿。
-3. 换 UART/SPI 这类有真实 IO 的设计。
-4. 缩 die（30×30 附近）看拥塞和 slack 怎么退化。
+3. 插 tap cell / decap（`tapcell` + `decap`），再看面积和 DRC。
+4. 换 UART/SPI 这类有真实 IO 的设计。
+5. 缩 die（30×30 附近）看拥塞和 slack 怎么退化。
