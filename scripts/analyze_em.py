@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """汇总 EM 报告：按层最大边电流，并对照 sky130 典型 Jmax 数量级"""
-import csv, sys
+import csv, os, sys
 from collections import defaultdict
 from pathlib import Path
 
-OUT = Path("/path/to/openlane-lab/runs/14_em")
+OUT = Path(os.environ.get("ROOT") or Path(__file__).resolve().parents[1]) / "runs" / "14_em"
 
 # sky130 典型最大电流密度（数量级参考，非签核用官方表）
 # 来源：公开技术文档常见量级 A/um @ 110C 附近；仅作“是否离谱”判断

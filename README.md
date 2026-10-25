@@ -12,16 +12,20 @@
 |------|------|
 | 工艺 / 单元库 | SKY130A / `sky130_fd_sc_hd`（volare 预编译版） |
 | 综合面积 | 23 cells，299 µm²（8× `dfrtp_1`） |
-| 布图 / 布局后 | 23 logic + **93 tapcells**，415 µm²，利用率 7%（CTS 后 427 µm²） |
-| 布线 | 0 违例，**天线 0 违例**，信号线长 622 µm，via 187 |
-| 填充 | **730 个 fill cell**（fill_8 519 / fill_4 83 / fill_2 64 / fill_1 64） |
-| 电源 | met1 跟随轨 + met4/met5 主干，2/2 电源网全连通；IR drop VPWR **28 mV（1.6%）** / VGND **74 mV（4.1%）**（via 电阻按 5 Ω 假设） |
+| 布图 / 布局 | **die 40×40**，逻辑 317 µm²，利用率 27%（含 decap 后 1146 µm² / 99%） |
+| 布线 | 0 违例，**天线 0 违例**，线长 575 µm，via 182 |
+| 填充 | **68 decap + 7 fill**；金属密度填充另出 `runs/15_density/route_filled.def`（4900 个 fill 矩形） |
+| 电源 | PDN 2/2 网连通；IR drop VPWR **28 mV（1.6%）** / VGND **74 mV（4.1%）**（via 电阻按 5 Ω 假设） |
+| 真寄生 | OpenRCX `extract_parasitics` → SPEF，**0 unannotated** |
 | STA @125 MHz | WNS/TNS = 0（tt 极限约 667 MHz） |
-| 多工艺角 | tt / ff / ss 在 125 MHz（SDC 8 ns）下 setup+hold **全部 MET**；ss setup 最紧（slack≈2.6 ns）；1 ns 压力 ss −3.0、tt −0.3，ff 仍 MET |
-| 后仿 | 布线后网表 + SDF（估算寄生），PASS |
-| GDS | 单 top cell `counter`，约 1.9 MB（含填充单元） |
+| 多工艺角 | tt/ff/ss @125 MHz setup+hold **全 MET**（ss setup 最紧 2.57 ns，ff hold 最紧 0.05 ns）；1 ns 压力 ss −2.99、tt −0.31、ff 仍 MET |
+| OCV | 8 个电压温度角 + 全局 derate，**全 MET** |
+| RC corner | 5 种 SPEF（min/nom/max…）+ 复杂 SDC，**全 MET** |
+| EM | 最坏边电流约典型 Jmax 的 **8.6%**（教学量级，非 foundry 签核） |
+| 后仿 | SPEF SDF，tt/ff/ss 三角 **PASS** |
+| GDS | 单 top cell `counter`，约 558 KB |
 | DRC | **0 违例**（sky130A.lydrc，166 类规则） |
-| LVS | **Netlists match uniquely**（26 devices / 30 nets） |
+| LVS | cell 级 **match uniquely**（26 devices / 30 nets）；器件级 346=346 / 177=177，拓扑残差见 `docs/p6-topology.md` |
 | 形式等价 | 9/9 proven |
 | 变异测试 | 3/3 注入 bug 被 testbench 抓到 |
 
@@ -34,22 +38,34 @@
 跑 OpenLane 很容易：一条命令，几十分钟，出一个 GDS。但中间发生了什么、哪一步错了，
 全在 `runs/<design>/logs/` 的几万行里。
 
-这里把 OpenLane 内部**拆成 11 个手写阶段**，每阶段一个脚本、一份产物、一条可核对的判据：
+这里把 OpenLane 内部**拆成 12 个手写阶段**（再加 6 个扩展签核项），每阶段一个脚本、一份产物、一条可核对的判据：
 
 | # | 阶段 | 脚本 | 产物 | 判据 |
 |---|------|------|------|------|
 | 0 | 合并 LEF | `scripts/merge_lef.sh` | `runs/lef/*.lef` | 13 层 + 441 cells 能读入 |
 | 1 | 综合 | `scripts/01_synth.sh` | `runs/01_synth/counter_synth.v` | 23 cells / 299 µm² |
-| 2 | 布图 + tap + PDN | `scripts/02_floorplan.sh` | `runs/02_floorplan/floorplan.def` | die 100×100，93 tapcells，`SPECIALNETS=2` |
-| 3 | 布局 | `scripts/03_place.sh` | `runs/03_place/place.def` | 0 重叠，HPWL 514.9 µm |
+| 2 | 布图 + tap + PDN | `scripts/02_floorplan.sh` | `runs/02_floorplan/floorplan.def` | die 40×40，14 tapcells，`SPECIALNETS=2` |
+| 3 | 布局 | `scripts/03_place.sh` | `runs/03_place/place.def` | 0 重叠，逻辑 317 µm² / 27% |
 | 4 | CTS | `scripts/04_cts.sh` | `runs/04_cts/cts.def` | 插入 clock buffer，skew 可报告 |
-| 5 | 布线 + 天线 + 填充 | `scripts/05_route.sh` | `runs/05_route/route.def` | violations = 0，天线 0，730 个 fill cell |
-| 6 | 签核（STA + PDN + IR + SDF） | `scripts/06_signoff.sh` | `runs/06_signoff/sta.log`、`pdn_check.log`、`counter.sdf` | WNS/TNS = 0；2/2 网连通；IR 约 1.6%/4.1% |
+| 5 | 布线 + 天线 + 填充 | `scripts/05_route.sh` | `runs/05_route/route.def` | violations = 0，天线 0，68 decap + 7 fill |
+| 6 | 签核（STA + PDN + IR + SDF） | `scripts/06_signoff.sh` | `runs/06_signoff/sta.log`、`pdn_check.log`、`counter.sdf` | WNS/TNS = 0；2/2 网连通；IR 1.6%/4.1% |
 | 7 | GDS | `scripts/run_gds_drc.sh` | `runs/09_gds/counter.gds` | 单 top cell |
 | 8 | DRC | 同上 | `runs/09_gds/drc.lyrdb` | `<item>` 数量 = 0 |
 | 9 | LVS | `dump_cts_netlist.sh` + `lvs_extract.sh` + `run_lvs.sh` | `runs/10_lvs/lvs.out` | match uniquely |
 | 10 | 后仿 | `dump_route_netlist.sh` + `run_postsim.sh` | `runs/12_postsim/postsim.log` | `PASS` |
 | 11 | 多 corner STA | `scripts/run_corner_sta.sh` | `runs/13_corners/sta_<corner>_*.log` | 125 MHz 下 tt/ff/ss 全 MET |
+
+扩展签核（`make finish` 会一起跑）：
+
+| 项 | 脚本 | 产物 | 结果 |
+|----|------|------|------|
+| OpenRCX SPEF | `run_spef.sh` | `runs/13_spef/counter.spef` | 0 unannotated；1 ns 估算 −0.27 vs SPEF −0.34 |
+| EM | `run_em.sh` + `analyze_em.py` | `runs/14_em/em.log` | 最坏 ≈ 8.6% 典型 Jmax |
+| 金属密度填充 | `run_density_fill.sh` | `runs/15_density/route_filled.def` | 4900 个 fill 矩形（未进最终 GDS） |
+| OCV | `run_ocv_sta.sh` | `runs/16_ocv/` | 8 角全 MET |
+| 晶体管级 LVS | `run_lvs_device.sh` | `runs/17_lvs_device/lvs_dev.out` | 346=346 / 177=177，拓扑残差 |
+| RC corner | `run_rc_corners.sh` | `runs/19_rc_corners/` | 5 情景全 MET |
+| 签核后仿 | `run_postsim_signoff.sh` | `runs/20_postsim_signoff/` | SPEF SDF 三角 PASS |
 
 ## 2. 5 分钟复现
 
@@ -70,17 +86,25 @@ bash scripts/merge_lef.sh
 # 3) 后端主流程：综合 → 布图(+tap+PDN) → 布局 → CTS → 布线(+天线+填充) → 签核
 make all
 
-# 4) 收尾：GDS+DRC、LVS、SDF 后仿（等价于下面三条）
+# 4) 收尾：GDS+DRC、LVS、后仿、多 corner、SPEF、EM、密度填充、OCV
 make finish
 
 #    或者分开跑：
-#    bash scripts/run_gds_drc.sh      # GDS + DRC
-#    bash scripts/dump_cts_netlist.sh && bash scripts/lvs_extract.sh && bash scripts/run_lvs.sh
-#    bash scripts/dump_route_netlist.sh && bash scripts/run_postsim.sh
+#    make gds            # GDS + DRC
+#    make lvs            # cell 级 LVS
+#    make postsim        # SDF 后仿
+#    make corners        # tt/ff/ss 多工艺角
+#    make spef           # OpenRCX SPEF + 估算对比
+#    make em             # EM 分析
+#    make density        # 金属密度填充
+#    make ocv            # OCV 8 角
+#    make psign          # 签核后仿（SPEF SDF）
+#    make report         # 一键打印验证矩阵
 ```
 
 跑完检查：`runs/09_gds/drc.lyrdb` 里 `<item>` 为 0；`runs/10_lvs/lvs.out` 里有
-`Netlists match uniquely.`；`runs/12_postsim/postsim.log` 里有 `PASS`。
+`Netlists match uniquely.`；`runs/12_postsim/postsim.log` 里有 `PASS`；
+`runs/13_spef/spef.log` 里 `Found 0 unannotated drivers.`
 
 > `runs/` 里提交的是当时的真实日志。重跑会改动它们（日志里有绝对路径、GDS 头里有时间戳），
 > 所以 `git status` 出现若干 `runs/` 变更是正常的，不是你没跑对。
@@ -101,12 +125,15 @@ bash scripts/run_timing_sweep.sh   # 时钟 100ns → 0.5ns 扫 WNS
 前三个在 CI 里也跑（见 [`.github/workflows/smoke.yml`](.github/workflows/smoke.yml)），
 所以 clone 下来不装 PDK 也能确认「仿真和等价是对的」。
 
-后仿和多 corner STA 需要先跑完布线（`make all`），然后：
+后仿、多 corner、SPEF/OCV 需要先跑完布线（`make all`），然后：
 
 ```bash
 make postsim                       # 布线后网表 + SDF → 时序后仿
-make corners                       # tt/ff/ss 三工艺角（10 MHz setup+hold，外加 1 ns 压力）
-make finish                        # 上面两项 + GDS/DRC + LVS 一起跑
+make corners                       # tt/ff/ss 三工艺角（125 MHz setup+hold，外加 1 ns 压力）
+make spef                          # OpenRCX 真寄生 → SPEF
+make ocv                           # 8 个电压温度角
+make finish                        # 上面全部 + GDS/DRC + LVS 一起跑
+make report                        # 只读产物，打印验证矩阵
 ```
 
 ## 4. 目录
@@ -123,6 +150,12 @@ make finish                        # 上面两项 + GDS/DRC + LVS 一起跑
 │   ├── run_gds_drc.sh         GDS + DRC
 │   ├── dump_cts_netlist.sh / lvs_extract.sh / run_lvs.sh
 │   ├── dump_route_netlist.sh / run_postsim.sh   SDF 后仿
+│   ├── run_corner_sta.sh      多 corner STA
+│   ├── run_spef.sh / run_em.sh / analyze_em.py  SPEF / EM
+│   ├── run_density_fill.sh    金属密度填充
+│   ├── run_ocv_sta.sh / run_rc_corners.sh       OCV / RC corner
+│   ├── run_lvs_device.sh / run_postsim_signoff.sh
+│   ├── make_report.sh         验证矩阵
 │   ├── make_gds.py / make_golden.py / fix_ext_power.py
 │   ├── dump_shapes.py / render_from_json.py
 │   └── legacy/                没走通的路径（留作踩坑记录）
@@ -138,22 +171,22 @@ make finish                        # 上面两项 + GDS/DRC + LVS 一起跑
    `check_power_grid` 确认两个网全部连通；`analyze_power_grid` 也能跑，但 sky130 的 LEF
    **只有层电阻、没有 via 电阻**，所以脚本里按 **5 Ω/个 via** 假设（`set_layer_rc`）。
    压降 VPWR 28 mV/1.6%、VGND 74 mV/4.1%，数量级可信，但不能当签核数字。
-2. **LVS 是 LEF 抽象级。** Magic 用 LEF abstract 提取，比的是「实例类型 + 连接关系」，
-   不是版图器件级。阱（VPB/VNB）按 tap 约定并进 VPWR/VGND，所以**不逐阱检查**。
-   真实 LVS 要从 GDS 提晶体管，还要有完整的器件模型。
-3. **没有 SPEF / 3D 提取。** OpenROAD 的 `extract_parasitics` 需要 OpenRCX 模型文件，
-   volare 的 sky130A 里没有 `*.model`，所以 STA 和 SDF 都基于
-   `estimate_parasitics -global_routing` 的估算。`write_spef` 也因此跑不了。
-4. **后仿是「估算寄生 + 手写 specify」**：SDF 里的单元延迟来自 liberty，连线延迟来自估算；
-   单元模型里的 specify 弧是我按端口手写的（占位值会被 SDF 覆盖），不是从 liberty 自动生成。
-   它能验证「布线后网表 + 延迟标注」这条链路，但不是签核级时序仿真。
-5. **多 corner 只覆盖 3 个典型点。** tt/ff/ss 各一个电压温度组合，没有 OCV/derate、
-   没有 RC corner 组合、没有逐电压扫描。
-6. **die 40×40，逻辑利用率 27%**（含 decap 后 site 铺满）；decap 451 + fill。
-7. **单元功能模型是手写的**（`sim/sky130_hd_min.v`，11 个 cell）。它证明逻辑映射正确，
-   不等于与 foundry 的 Verilog 模型 bit-exact。
-7. **没有 decap / 金属填充（density fill）。** fill cell 已插满空 site；decap 和
-   decap 与 `density_fill` **已做**（见 make density / 05_route.sh）。
+2. **LVS 有两级，签核判据取 cell 级。** `make lvs` 是 LEF 抽象级（实例+连接），
+   match uniquely；`make lvs_dev` 的晶体管级能对齐器件数 **346=346**、网络数 **177=177**，
+   但扁平 GDS 提取与 CDL 的内部节点拓扑仍有残差（见 [`docs/p6-topology.md`](docs/p6-topology.md)）。
+   阱（VPB/VNB）按 tap 约定并进 VPWR/VGND，所以**不逐阱检查**。
+3. **SPEF 只有一套 RCX 模型。** `make spef` 用 PDK 的 `rcx_rules.info` 做 OpenRCX 提取
+   （0 unannotated），但 RC corner 是在同一模型上缩放出来的，不是多套真实 RCX 模型。
+4. **后仿的单元模型是手写的。** SDF 的单元延迟来自 liberty、连线延迟来自 SPEF；
+   `sim/sky130_hd_min.v` 里的 specify 弧是按端口手写的占位值（会被 SDF 覆盖），
+   不是从 liberty 自动生成。
+5. **OCV 是全局 derate。** 8 个电压温度角 + 一组 early/late derate，没有逐角 derate 表。
+6. **金属密度填充没进最终 GDS。** `make density` 产出 `runs/15_density/route_filled.def`
+   （4900 个 fill 矩形），但 GDS/DRC 仍用 `runs/05_route/route.def`——
+   即填充做了、但没参与版图签核。
+7. **约束仍然简单。** 只有一个时钟；`counter_complex.sdc` 有假路径/IO 预算，但主流程没用多周期路径。
+8. **die 只有 40×40，目标 125 MHz。** 数字规模小，tt 极限约 667 MHz，ss 在 5 ns 会挂。
+9. **单元功能模型手写**（11 个 cell），证明逻辑映射正确，但不等于与 foundry 模型 bit-exact。
 
 ## 6. 来源与致谢
 

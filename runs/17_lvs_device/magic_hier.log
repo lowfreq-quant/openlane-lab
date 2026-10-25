@@ -13,10 +13,10 @@ Sourcing design .magicrc for technology sky130A ...
 2 Magic internal units = 1 Lambda
 Could not find file '/usr/local/pdk/volare/sky130/build/7519dfb04400f224f140749cda44ee7de6f5e095/sky130A/libs.tech/magic/sky130A.tech' in any of these directories:
          . $CAD_ROOT/magic/sys $CAD_ROOT/magic/sys/current
-Error parsing "/home/ty/.volare/sky130A/libs.tech/magic/sky130A.magicrc": couldn't read file "/usr/local/pdk/volare/sky130/build/7519dfb04400f224f140749cda44ee7de6f5e095/sky130A/libs.tech/magic/sky130A.tcl": no such file or directory
-Bad local startup file "/home/ty/.volare/sky130A/libs.tech/magic/sky130A.magicrc", continuing without.
+Error parsing "/home/user/.volare/sky130A/libs.tech/magic/sky130A.magicrc": couldn't read file "/usr/local/pdk/volare/sky130/build/7519dfb04400f224f140749cda44ee7de6f5e095/sky130A/libs.tech/magic/sky130A.tcl": no such file or directory
+Bad local startup file "/home/user/.volare/sky130A/libs.tech/magic/sky130A.magicrc", continuing without.
 Scaled tech values by 2 / 1 to match internal grid scaling
-Loading "/mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/17_lvs_device/extract_hier.tcl" from command line.
+Loading "/path/to/openlane-lab/runs/17_lvs_device/extract_hier.tcl" from command line.
 Input style sky130(vendor): scaleFactor=2, multiplier=2
 The following types are not handled by extraction and will be treated as non-electrical types:
     mvobsactive ubm 

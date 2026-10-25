@@ -23,15 +23,15 @@
 
 
 -- Running command `
-  read_verilog -DFUNCTIONAL /path/to/openlane-lab/sim/sky130_hd_min.v;
-  read_verilog /path/to/openlane-lab/rtl/counter.v;
+  read_verilog -DFUNCTIONAL /mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v;
+  read_verilog /mnt/c/Users/ty/Downloads/asic/openlane-lab/rtl/counter.v;
   prep -top counter -flatten;
   async2sync;
   opt_clean;
   design -stash gold;
 
-  read_verilog -DFUNCTIONAL /path/to/openlane-lab/sim/sky130_hd_min.v;
-  read_verilog /path/to/openlane-lab/runs/01_synth/counter_synth.v;
+  read_verilog -DFUNCTIONAL /mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v;
+  read_verilog /mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/01_synth/counter_synth.v;
   prep -top counter -flatten;
   async2sync;
   opt_clean;
@@ -47,8 +47,8 @@
   equiv_status -assert;
 ' --
 
-1. Executing Verilog-2005 frontend: /path/to/openlane-lab/sim/sky130_hd_min.v
-Parsing Verilog input from `/path/to/openlane-lab/sim/sky130_hd_min.v' to AST representation.
+1. Executing Verilog-2005 frontend: /mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v
+Parsing Verilog input from `/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v' to AST representation.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__clkinv_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__nand2_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__nand4_1'.
@@ -62,8 +62,8 @@ Generating RTLIL representation for module `\sky130_fd_sc_hd__buf_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__dfrtp_1'.
 Successfully finished Verilog frontend.
 
-2. Executing Verilog-2005 frontend: /path/to/openlane-lab/rtl/counter.v
-Parsing Verilog input from `/path/to/openlane-lab/rtl/counter.v' to AST representation.
+2. Executing Verilog-2005 frontend: /mnt/c/Users/ty/Downloads/asic/openlane-lab/rtl/counter.v
+Parsing Verilog input from `/mnt/c/Users/ty/Downloads/asic/openlane-lab/rtl/counter.v' to AST representation.
 Generating RTLIL representation for module `\counter'.
 Successfully finished Verilog frontend.
 
@@ -95,7 +95,7 @@ Removed 11 unused modules.
 Cleaned up 0 empty switches.
 
 3.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
-Marked 1 switch rules as full_case in process $proc$/path/to/openlane-lab/rtl/counter.v:9$23 in module counter.
+Marked 1 switch rules as full_case in process $proc$/mnt/c/Users/ty/Downloads/asic/openlane-lab/rtl/counter.v:9$23 in module counter.
 Removed a total of 0 dead cases.
 
 3.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
@@ -105,25 +105,25 @@ Promoted 0 assignments to connections.
 3.2.4. Executing PROC_INIT pass (extract init attributes).
 
 3.2.5. Executing PROC_ARST pass (detect async resets in processes).
-Found async reset \rst_n in `\counter.$proc$/path/to/openlane-lab/rtl/counter.v:9$23'.
+Found async reset \rst_n in `\counter.$proc$/mnt/c/Users/ty/Downloads/asic/openlane-lab/rtl/counter.v:9$23'.
 
 3.2.6. Executing PROC_ROM pass (convert switches to ROMs).
 Converted 0 switches.
 
 3.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
-Creating decoders for process `\counter.$proc$/path/to/openlane-lab/rtl/counter.v:9$23'.
+Creating decoders for process `\counter.$proc$/mnt/c/Users/ty/Downloads/asic/openlane-lab/rtl/counter.v:9$23'.
      1/1: $0\q[7:0]
 
 3.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
 
 3.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
-Creating register for signal `\counter.\q' using process `\counter.$proc$/path/to/openlane-lab/rtl/counter.v:9$23'.
+Creating register for signal `\counter.\q' using process `\counter.$proc$/mnt/c/Users/ty/Downloads/asic/openlane-lab/rtl/counter.v:9$23'.
   created $adff cell `$procdff$27' with positive edge clock and negative level reset.
 
 3.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
 
 3.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
-Removing empty process `counter.$proc$/path/to/openlane-lab/rtl/counter.v:9$23'.
+Removing empty process `counter.$proc$/mnt/c/Users/ty/Downloads/asic/openlane-lab/rtl/counter.v:9$23'.
 Cleaned up 0 empty switches.
 
 3.2.12. Executing OPT_EXPR pass (perform const folding).
@@ -175,7 +175,7 @@ Optimizing module counter.
 3.7.8. Finished OPT passes. (There is nothing left to do.)
 
 3.8. Executing WREDUCE pass (reducing word size of cells).
-Removed top 7 bits (of 8) from port B of cell counter.$add$/path/to/openlane-lab/rtl/counter.v:13$25 ($add).
+Removed top 7 bits (of 8) from port B of cell counter.$add$/mnt/c/Users/ty/Downloads/asic/openlane-lab/rtl/counter.v:13$25 ($add).
 
 3.9. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \counter..
@@ -222,8 +222,8 @@ Replacing counter.$procdff$27 ($adff): ARST=\rst_n, D=$0\q[7:0], Q=\q
 5. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \counter..
 
-6. Executing Verilog-2005 frontend: /path/to/openlane-lab/sim/sky130_hd_min.v
-Parsing Verilog input from `/path/to/openlane-lab/sim/sky130_hd_min.v' to AST representation.
+6. Executing Verilog-2005 frontend: /mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v
+Parsing Verilog input from `/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v' to AST representation.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__clkinv_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__nand2_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__nand4_1'.
@@ -237,8 +237,8 @@ Generating RTLIL representation for module `\sky130_fd_sc_hd__buf_1'.
 Generating RTLIL representation for module `\sky130_fd_sc_hd__dfrtp_1'.
 Successfully finished Verilog frontend.
 
-7. Executing Verilog-2005 frontend: /path/to/openlane-lab/runs/01_synth/counter_synth.v
-Parsing Verilog input from `/path/to/openlane-lab/runs/01_synth/counter_synth.v' to AST representation.
+7. Executing Verilog-2005 frontend: /mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/01_synth/counter_synth.v
+Parsing Verilog input from `/mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/01_synth/counter_synth.v' to AST representation.
 Generating RTLIL representation for module `\counter'.
 Successfully finished Verilog frontend.
 
@@ -280,7 +280,7 @@ Removed 1 unused modules.
 Cleaned up 0 empty switches.
 
 8.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
-Marked 1 switch rules as full_case in process $proc$/path/to/openlane-lab/sim/sky130_hd_min.v:113$50 in module sky130_fd_sc_hd__dfrtp_1.
+Marked 1 switch rules as full_case in process $proc$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:113$50 in module sky130_fd_sc_hd__dfrtp_1.
 Removed a total of 0 dead cases.
 
 8.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
@@ -290,25 +290,25 @@ Promoted 0 assignments to connections.
 8.2.4. Executing PROC_INIT pass (extract init attributes).
 
 8.2.5. Executing PROC_ARST pass (detect async resets in processes).
-Found async reset \RESET_B in `\sky130_fd_sc_hd__dfrtp_1.$proc$/path/to/openlane-lab/sim/sky130_hd_min.v:113$50'.
+Found async reset \RESET_B in `\sky130_fd_sc_hd__dfrtp_1.$proc$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:113$50'.
 
 8.2.6. Executing PROC_ROM pass (convert switches to ROMs).
 Converted 0 switches.
 
 8.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
-Creating decoders for process `\sky130_fd_sc_hd__dfrtp_1.$proc$/path/to/openlane-lab/sim/sky130_hd_min.v:113$50'.
+Creating decoders for process `\sky130_fd_sc_hd__dfrtp_1.$proc$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:113$50'.
      1/1: $0\Q[0:0]
 
 8.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
 
 8.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
-Creating register for signal `\sky130_fd_sc_hd__dfrtp_1.\Q' using process `\sky130_fd_sc_hd__dfrtp_1.$proc$/path/to/openlane-lab/sim/sky130_hd_min.v:113$50'.
+Creating register for signal `\sky130_fd_sc_hd__dfrtp_1.\Q' using process `\sky130_fd_sc_hd__dfrtp_1.$proc$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:113$50'.
   created $adff cell `$procdff$52' with positive edge clock and negative level reset.
 
 8.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
 
 8.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
-Removing empty process `sky130_fd_sc_hd__dfrtp_1.$proc$/path/to/openlane-lab/sim/sky130_hd_min.v:113$50'.
+Removing empty process `sky130_fd_sc_hd__dfrtp_1.$proc$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:113$50'.
 Cleaned up 0 empty switches.
 
 8.2.12. Executing OPT_EXPR pass (perform const folding).
@@ -472,26 +472,26 @@ Presumably equivalent wires: clk_gold (\clk_gold), clk_gate (\clk_gate) -> clk
 Presumably equivalent wires: q_gold (\q_gold), q_gate ({ \_30_.Q_gate \_29_.Q_gate \_28_.Q_gate \_27_.Q_gate \_26_.Q_gate \_25_.Q_gate \_24_.Q_gate \_23_.Q_gate }) -> q
 Presumably equivalent wires: rst_n_gold (\rst_n_gold), rst_n_gate (\rst_n_gate) -> rst_n
 Presumably equivalent wires: tick_gold (\tick_gold), tick_gate (\tick_gate) -> tick
-Changing input A of cell $flatten\_08_.$not$/path/to/openlane-lab/sim/sky130_hd_min.v:16$30_gate ($not): \_23_.Q_gate -> \q [0]
-Changing input A of cell $flatten\_09_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:24$31_gate ($and): \_23_.Q_gate -> \q [0]
-Changing input B of cell $flatten\_09_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:24$31_gate ($and): \_24_.Q_gate -> \q [1]
-Changing input B of cell $flatten\_10_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:44$38_gate ($and): \_25_.Q_gate -> \q [2]
-Changing input B of cell $flatten\_10_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:44$39_gate ($and): \_26_.Q_gate -> \q [3]
-Changing input A of cell $flatten\_11_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:24$31_gate ($and): \_27_.Q_gate -> \q [4]
-Changing input A of cell $flatten\_12_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:33$33_gate ($and): \_27_.Q_gate -> \q [4]
-Changing input B of cell $flatten\_12_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:33$33_gate ($and): \_28_.Q_gate -> \q [5]
-Changing input B of cell $flatten\_12_.$and$/path/to/openlane-lab/sim/sky130_hd_min.v:33$34_gate ($and): \_29_.Q_gate -> \q [6]
-Changing input B of cell $flatten\_13_.$ternary$/path/to/openlane-lab/sim/sky130_hd_min.v:91$49_gate ($mux): \_30_.Q_gate -> \q [7]
-Changing input A of cell $flatten\_14_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:64$42_gate ($xor): \_23_.Q_gate -> \q [0]
-Changing input B of cell $flatten\_14_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:64$42_gate ($xor): \_24_.Q_gate -> \q [1]
-Changing input A of cell $flatten\_15_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:71$43_gate ($xor): \_25_.Q_gate -> \q [2]
-Changing input B of cell $flatten\_16_.$or$/path/to/openlane-lab/sim/sky130_hd_min.v:80$47_gate ($or): \_26_.Q_gate -> \q [3]
-Changing input A of cell $flatten\_18_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:64$42_gate ($xor): \_27_.Q_gate -> \q [4]
-Changing input A of cell $flatten\_19_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:71$43_gate ($xor): \_28_.Q_gate -> \q [5]
-Changing input B of cell $flatten\_20_.$or$/path/to/openlane-lab/sim/sky130_hd_min.v:80$47_gate ($or): \_29_.Q_gate -> \q [6]
-Changing input A of cell $flatten\_22_.$xor$/path/to/openlane-lab/sim/sky130_hd_min.v:71$43_gate ($xor): \_30_.Q_gate -> \q [7]
-Changing input A of cell $eq$/path/to/openlane-lab/rtl/counter.v:16$26_gold ($eq): \q_gold -> \q
-Changing input A of cell $add$/path/to/openlane-lab/rtl/counter.v:13$25_gold ($add): \q_gold -> \q
+Changing input A of cell $flatten\_08_.$not$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:16$30_gate ($not): \_23_.Q_gate -> \q [0]
+Changing input A of cell $flatten\_09_.$and$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:24$31_gate ($and): \_23_.Q_gate -> \q [0]
+Changing input B of cell $flatten\_09_.$and$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:24$31_gate ($and): \_24_.Q_gate -> \q [1]
+Changing input B of cell $flatten\_10_.$and$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:44$38_gate ($and): \_25_.Q_gate -> \q [2]
+Changing input B of cell $flatten\_10_.$and$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:44$39_gate ($and): \_26_.Q_gate -> \q [3]
+Changing input A of cell $flatten\_11_.$and$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:24$31_gate ($and): \_27_.Q_gate -> \q [4]
+Changing input A of cell $flatten\_12_.$and$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:33$33_gate ($and): \_27_.Q_gate -> \q [4]
+Changing input B of cell $flatten\_12_.$and$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:33$33_gate ($and): \_28_.Q_gate -> \q [5]
+Changing input B of cell $flatten\_12_.$and$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:33$34_gate ($and): \_29_.Q_gate -> \q [6]
+Changing input B of cell $flatten\_13_.$ternary$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:91$49_gate ($mux): \_30_.Q_gate -> \q [7]
+Changing input A of cell $flatten\_14_.$xor$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:64$42_gate ($xor): \_23_.Q_gate -> \q [0]
+Changing input B of cell $flatten\_14_.$xor$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:64$42_gate ($xor): \_24_.Q_gate -> \q [1]
+Changing input A of cell $flatten\_15_.$xor$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:71$43_gate ($xor): \_25_.Q_gate -> \q [2]
+Changing input B of cell $flatten\_16_.$or$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:80$47_gate ($or): \_26_.Q_gate -> \q [3]
+Changing input A of cell $flatten\_18_.$xor$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:64$42_gate ($xor): \_27_.Q_gate -> \q [4]
+Changing input A of cell $flatten\_19_.$xor$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:71$43_gate ($xor): \_28_.Q_gate -> \q [5]
+Changing input B of cell $flatten\_20_.$or$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:80$47_gate ($or): \_29_.Q_gate -> \q [6]
+Changing input A of cell $flatten\_22_.$xor$/mnt/c/Users/ty/Downloads/asic/openlane-lab/sim/sky130_hd_min.v:71$43_gate ($xor): \_30_.Q_gate -> \q [7]
+Changing input A of cell $eq$/mnt/c/Users/ty/Downloads/asic/openlane-lab/rtl/counter.v:16$26_gold ($eq): \q_gold -> \q
+Changing input A of cell $add$/mnt/c/Users/ty/Downloads/asic/openlane-lab/rtl/counter.v:13$25_gold ($add): \q_gold -> \q
 
 12. Executing HIERARCHY pass (managing design hierarchy).
 
@@ -532,4 +532,4 @@ Found 9 $equiv cells in equiv:
 
 End of script. Logfile hash: 316190953d, CPU: user 0.04s system 0.01s, MEM: 12.25 MB peak
 Yosys 0.33 (git sha1 2584903a060)
-Time spent: 21% 11x opt_clean (0 sec), 20% 11x opt_expr (0 sec), ...
+Time spent: 21% 11x opt_clean (0 sec), 18% 11x opt_expr (0 sec), ...

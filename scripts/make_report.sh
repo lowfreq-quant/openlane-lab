@@ -27,8 +27,8 @@ if grep -q 'Equivalence successfully proven' runs/07_equiv/equiv.log 2>/dev/null
 else
   warn "形式等价未跑（make verify）"
 fi
-if [[ -f sim/out/mutation_summary.txt ]] && grep -q 'CAUGHT\|OK-' sim/out/mutation_summary.txt 2>/dev/null; then
-  pass "变异测试 $(grep -c 'CAUGHT\|OK-' sim/out/mutation_summary.txt) 项符合预期"
+if [[ -f sim/out/mutation_summary.txt ]] && grep -qE 'CAUGHT|OK-|抓到 bug|正确设计通过' sim/out/mutation_summary.txt 2>/dev/null; then
+  pass "变异测试 $(grep -cE 'CAUGHT|OK-|抓到 bug|正确设计通过' sim/out/mutation_summary.txt) 项符合预期"
 elif [[ -f runs/01_synth/counter_synth.v ]]; then
   warn "变异测试摘要缺失（可 make verify）"
 else

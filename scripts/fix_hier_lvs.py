@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """层次提取网表电源归一 + 生成 CDL golden"""
+import os
 from pathlib import Path
 import re
 
-out = Path("/mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/17_lvs_device")
+ROOT = Path(os.environ.get("ROOT") or Path(__file__).resolve().parents[1])
+out = ROOT / "runs" / "17_lvs_device"
 src = (out / "counter_hier_ext.spice").read_text()
 
 def fix(n: str) -> str:
@@ -52,8 +54,8 @@ print("fixed extract:", len(fixed), "lines")
 
 # golden
 for cand in [
-    Path("/mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/10_lvs/counter_cts.v"),
-    Path("/mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/01_synth/counter_synth.v"),
+    ROOT / "runs/10_lvs/counter_cts.v",
+    ROOT / "runs/01_synth/counter_synth.v",
 ]:
     if cand.exists():
         v = cand.read_text()
@@ -62,7 +64,7 @@ for cand in [
 else:
     raise SystemExit("no netlist")
 
-cdl = Path("/home/ty/.volare/sky130A/libs.ref/sky130_fd_sc_hd/cdl/sky130_fd_sc_hd.cdl").read_text()
+cdl = Path("/home/user/.volare/sky130A/libs.ref/sky130_fd_sc_hd/cdl/sky130_fd_sc_hd.cdl").read_text()
 subckts = {}
 for m in re.finditer(r"\.SUBCKT\s+(\S+)\s+(.+)", cdl, re.I):
     subckts[m.group(1)] = m.group(2).split()

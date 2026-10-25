@@ -2,7 +2,7 @@
 
 > SkyWater SKY130 数字后端全流程实验工程
 > **状态：RTL→GDS→DRC(0)→LVS→PDN→IR→EM→SPEF→OCV→后仿→密度填充→decap→工程化 die/频率，全流程重跑通过**
-> 更新：2026-10-25 · commit `7cabc34`（**本地已提交，push 未成功**）
+> 更新：2026-10-25 · 已推送 GitHub（HEAD 见 `git log`）
 
 ---
 
@@ -30,14 +30,14 @@
 | 后仿 | SDF annotate PASS | `make postsim` |
 | PDN / IR | 2/2 连通；IR 约 1.6% / 4.1%（小 die 后 VGND 变差） | `06_signoff.sh` |
 | EM | Imax ≈ 典型 Jmax 的 8.6% | `make em` |
-| 密度填充 | 金属 fill（小 die 后约 4900） | `make density` |
-| decap | 451 decap + fill 铺满空 site | `05_route.sh` |
+| 密度填充 | 金属 fill 4900 个矩形（**独立 DEF，未并入最终 GDS/DRC**） | `make density` |
+| decap | **68 decap + 7 fill**（route.def；缩 die 前的 451 是大 die 时期的数） | `05_route.sh` |
 
 ### 还没干的
 
 | 项 | 状态 | 说明 |
 |----|------|------|
-| **push 到 GitHub** | **未完成** | commit `7cabc34` 已在本地；`git push` 超时/失败，仍是 `ahead 1` |
+| **push 到 GitHub** | **已完成** | 本轮已 push（HEAD 见 `git log`） |
 | 晶体管 LVS 100% 拓扑 match | 未完成 | 层次 GDS 已试；Magic 顶层提取缺端口；见 `docs/p6-topology.md` |
 | 后仿签核级 | **部分完成** | SPEF SDF 后仿 PASS；多角 STA 另见 `make ocv` |
 | RC / 多 corner 寄生 | **部分完成** | `make rc` 5 情景；仍为单 RCX 模型+缩放 |
@@ -50,7 +50,7 @@
 
 | 优先级 | 任务 | 原因 | 做法 |
 |--------|------|------|------|
-| **P0** | **`git push origin main`** | 本地 `ahead 2` | 重试 push |
+| **P0** | ~~`git push origin main`~~ | 已完成 | — |
 | P1 | 层次提取 deck / 逐 cell CDL LVS | 晶体管拓扑 100% | 见 p6-topology.md |
 | P2 | 真 RCX 多模型（非缩放） | RC corner 更真 | 或 OpenROAD 多 corner RCX |
 | P3 | 启用多周期/更完整约束 | 约束真实性 | 改 `constraints/counter_complex.sdc` |
@@ -75,8 +75,8 @@
 | 7 | **OpenRCX 真寄生 → SPEF**：`rcx_rules.info` + `extract_parasitics` + `write_spef` | 434 根线 100% 提取；0 unannotated；1 ns 压力 WNS 估算 -0.27 vs SPEF **-0.34** |
 | 8 | **EM 分析**：`analyze_power_grid -enable_em` + 边电流汇总 | VPWR Imax=3.9 µA / VGND 2.7 µA；约典型 Jmax 的 **2.8%**（宽 0.14 µm 粗算） |
 | 9 | **P1 收尾**：corners / signoff / postsim 全面 `read_spef` | 1 ns tt WNS 估算 -0.27 → SPEF **-0.34**；SDF 后仿 PASS |
-| 10 | **金属密度填充**：官方 `fill.json` schema + `density_fill` | **22085** 个 fill（met1–met5）；rules 见 `scripts/sky130_density_fill.json` |
-| 11 | **decap**：`filler_placement` 加入 decap_3/4/6/8/12 | **451 decap + 56 fill** = 507 filler；利用率 99% |
+| 10 | **金属密度填充**：官方 `fill.json` schema + `density_fill` | 大 die 时 **22085**、缩到 40 µm 后 **4900** 个 fill（met1–met5）；独立 DEF |
+| 11 | **decap**：`filler_placement` 加入 decap_3/4/6/8/12 | 大 die 时 451 decap；缩 die 后 **68 decap + 7 fill**，铺满 99% |
 | 12 | **OCV + 8 corner**：`set_timing_derate` + 8 套 liberty | tt/ss × 电压温度全 **MET**（10 MHz） |
 | 13 | **晶体管级 LVS**：GDS→Magic 提取 vs CDL | 器件 **346=346**、网络 **177=177**；拓扑残差见 `docs/p6-topology.md` |
 | 14 | **P7 缩 die / 提频** + 全流程重跑 | die **40×40**，利用率 **27%**（逻辑）/99%（含 decap）；SDC **8 ns (125 MHz)**；tt 极限 **667 MHz**；ss 在 5 ns 会挂（−0.55），6 ns 起 MET |
@@ -293,19 +293,20 @@ SDF 的连线延迟来自**估算寄生**，单元延迟来自 liberty；模型�
 
 | 端口 | 方向 | 说明 |
 |------|------|------|
-| `clk` | in | 时钟（SDC：100 ns = 10 MHz） |
+| `clk` | in | 时钟（SDC：8 ns = 125 MHz） |
 | `rst_n` | in | 低有效**异步**复位（文件头注释写"同步"，以代码为准） |
 | `q[7:0]` | out | 计数值 |
 | `tick` | out | `q==0xFF` 时为 1 |
 
 综合：8×`dfrtp_1` + 组合门 = 23 cells / 299 µm²。
-CTS 后 26 cells（+3 clock buffer）/ 427 µm²，利用率 7%（427/6277）。
+CTS 后 26 cells（+3 clock buffer）；40×40 die 下逻辑 **317 µm²（27%）**，
+填满 decap/fill 后 **1146 µm²（99%）**。
 
-约束见 `constraints/counter.sdc`。
+约束见 `constraints/counter.sdc`（另有 `counter_complex.sdc` 给 RC corner 用）。
 
 ---
 
-## 6. 验证结论（2026-10-25 全量重跑）
+## 6. 验证结论（2026-10-25 全量重跑，die 40×40 / 125 MHz）
 
 | 层级 | 结果 | 证据 |
 |------|------|------|
@@ -313,36 +314,41 @@ CTS 后 26 cells（+3 clock buffer）/ 427 µm²，利用率 7%（427/6277）。
 | 门级仿真 | PASS | `sim/out/gate_sim.log` |
 | 形式等价 | 9/9 proven | `runs/07_equiv/equiv.log` |
 | 变异测试 | 3/3 抓到 + 对照 OK | `sim/out/mutation_summary.txt` |
-| STA @10 MHz (tt) | WNS/TNS = 0；setup slack 96.69，hold 0.23 | `runs/06_signoff/sta.log` |
-| **多 corner @10 MHz** | **tt/ff/ss 全部 MET**（见下表） | `runs/13_corners/` |
-| 时钟扫描 (tt) | 2 ns MET；1 ns −0.27；0.5 ns −0.77 | `runs/08_timing_sweep/sta_*.log` |
-| 布图 | 93 tapcells；`SPECIALNETS=2`，met1 轨 30 条 + met4/met5 主干各 6 条 | `runs/02_floorplan/floorplan.def` |
-| 布线 | violations = 0，天线 0，信号线长 622 µm，via 187 | `runs/05_route/openroad.log` |
-| 填充 | 730 个 fill cell（fill_8 519 / fill_4 83 / fill_2 64 / fill_1 64） | `runs/05_route/route.def` |
-| 电源 | **2/2 电源网连通**；IR drop 15.5 mV / 0.86%（VGND 14.5 mV / 0.80%） | `runs/06_signoff/pdn_check.log` |
-| GDS | 单 top `counter`，约 1.9 MB（含 fill，met1–met5 + via） | `runs/09_gds/klayout_gds.log` |
+| STA @125 MHz (tt) | WNS/TNS = 0；setup 4.68 / hold 0.23 | `runs/06_signoff/sta.log` |
+| **多 corner @125 MHz** | **tt/ff/ss 全部 MET**（见下表） | `runs/13_corners/` |
+| 频率边界 (tt) | **1.5 ns / 667 MHz MET**；1.2 ns −0.17；1.0 ns −0.37 | `runs/18_p7/` |
+| 真寄生 | OpenRCX SPEF，**0 unannotated**；1 ns −0.34（估算 −0.27） | `runs/13_spef/` |
+| OCV | 8 个电压温度角 + 全局 derate，**全 MET** | `runs/16_ocv/` |
+| RC corner | 5 情景 SPEF + 复杂 SDC，**全 MET** | `runs/19_rc_corners/` |
+| 布图 | die 40×40；14 tapcells；`SPECIALNETS=2` | `runs/02_floorplan/floorplan.def` |
+| 布线 | violations = 0，天线 0，线长 575 µm，via 182 | `runs/05_route/openroad.log` |
+| 填充 | 68 decap + 7 fill；金属 density fill 另出 4900 个矩形 | `runs/05_route/route.def`、`runs/15_density/` |
+| 电源 | **2/2 电源网连通**；IR VPWR 28 mV/1.6%、VGND 74 mV/4.1% | `runs/06_signoff/pdn_check.log` |
+| EM | 最坏边电流 ≈ **8.6%** 典型 Jmax（教学量级） | `runs/14_em/` |
+| GDS | 单 top `counter`，约 558 KB | `runs/09_gds/klayout_gds.log` |
 | DRC | **0 违例**（166 类规则） | `runs/09_gds/drc.lyrdb` |
-| LVS | **match uniquely**（26 devices / 30 nets，阱并进电源） | `runs/10_lvs/lvs.out` |
-| 后仿 | 布线后网表 + SDF，**PASS** | `runs/12_postsim/postsim.log` |
+| LVS（cell） | **match uniquely**（26 devices / 30 nets） | `runs/10_lvs/lvs.out` |
+| LVS（device） | 器件 **346=346**、网络 **177=177**，拓扑残差 | `runs/17_lvs_device/lvs_dev.out` |
+| 后仿 | SPEF SDF，tt/ff/ss 三角 **PASS** | `runs/20_postsim_signoff/` |
 
-### 多 corner 明细（10 MHz，真实 SDC）
+### 多 corner 明细（125 MHz，真实 SDC）
 
-| corner | setup slack | hold slack | WNS/TNS | 结论 |
-|--------|-------------|------------|---------|------|
-| tt | 96.69 ns | 0.23 ns | 0.00 / 0.00 | MET |
-| ff | 97.09 ns | **0.05 ns** | 0.00 / 0.00 | MET（hold 最紧） |
-| ss | **94.61 ns** | 0.84 ns | 0.00 / 0.00 | MET（setup 最紧） |
+| corner | setup slack | hold slack | 结论 |
+|--------|-------------|------------|------|
+| tt | 4.68 ns | 0.23 ns | MET |
+| ff | 5.09 ns | **0.05 ns** | MET（hold 最紧） |
+| ss | **2.57 ns** | 0.84 ns | MET（setup 最紧） |
 
 ### 频率压力（1 ns，只看 setup）
 
 | corner | setup WNS | 结论 |
 |--------|-----------|------|
-| tt | −0.27 | 违例 |
-| ff | +0.19 | MET（快的 corner 还能撑） |
-| ss | −2.88 | 违例（慢的 corner 最先挂） |
+| tt | −0.31 | 违例 |
+| ff | +0.17 | MET（快的 corner 还能撑） |
+| ss | −2.99 | 违例（慢的 corner 最先挂） |
 
-**结论**：这颗 8-bit 计数器在 10 MHz 下三 corner 全过，真正的边界是 ss 的 setup；
-往上压频率时 **ss 先挂、ff 的 hold 先收紧**——这就是多 corner 的意义。
+**结论**：125 MHz 下三 corner 全过，真正的边界是 ss 的 setup（2.57 ns）；
+往上压频率时 **ss 先挂、ff 的 hold 先收紧**。tt 的极限在 1.5 ns 附近（约 667 MHz）。
 
 ---
 
@@ -397,6 +403,11 @@ openlane-lab/
 │   ├── dump_cts_netlist.sh / lvs_extract.sh / run_lvs.sh / make_golden.py / fix_ext_power.py
 │   ├── dump_route_netlist.sh / run_postsim.sh     SDF 后仿
 │   ├── run_corner_sta.sh                          多 corner STA
+│   ├── run_spef.sh / run_em.sh / analyze_em.py    SPEF / EM
+│   ├── run_density_fill.sh / sky130_density_fill.json
+│   ├── run_ocv_sta.sh / run_rc_corners.sh          OCV / RC corner
+│   ├── run_lvs_device.sh / run_postsim_signoff.sh  器件级 LVS / 签核后仿
+│   ├── make_report.sh                             验证矩阵
 │   ├── dump_shapes.py / render_from_json.py
 │   ├── check_env.sh / fetch_pdk.sh / install_openroad_nix.sh / sanitize_repo.sh
 │   └── legacy/            没走通的路径（留作踩坑记录）
@@ -404,6 +415,7 @@ openlane-lab/
 │   ├── tools.md           工具安装与版本
 │   ├── flow-notes.md      每阶段的直觉与检查点
 │   ├── verification.md    验证证据链
+│   ├── p6-topology.md     晶体管级 LVS 拓扑残差分析
 │   ├── first-run-report.md 首跑记录
 │   └── img/               版图截图（README 用）
 └── runs/
@@ -414,7 +426,15 @@ openlane-lab/
     ├── 10_lvs/            ext / golden / lvs.out
     ├── 11_layout_png/     分层渲染（不入库，精选图在 docs/img）
     ├── 12_postsim/        后仿日志（只提交 postsim.log）
-    └── 13_corners/        多 corner STA 报告
+    ├── 13_corners/        多 corner STA
+    ├── 13_spef/           OpenRCX SPEF + 估算对比
+    ├── 14_em/             EM 报告
+    ├── 15_density/        金属密度填充 DEF
+    ├── 16_ocv/            OCV 8 角
+    ├── 17_lvs_device/     晶体管级 LVS
+    ├── 18_p7/             缩 die / 提频扫描
+    ├── 19_rc_corners/     RC corner SPEF + STA
+    └── 20_postsim_signoff/ 签核后仿
 ```
 
 ---
@@ -452,7 +472,9 @@ bash scripts/run_timing_sweep.sh   # 时钟扫描（可选）
 5. **OCV 为 8 个典型电压温度角 + 全局 derate**：无 RC corner、无逐角 derate 表。
 6. **约束很简单**：只有一个时钟，没有多周期/假路径/复杂 IO 时序；目标频率 **125 MHz**（tt 极限约 667 MHz）。
 7. **单元模型手写**：`sim/sky130_hd_min.v` 只覆盖用到的 11 个 cell。
-8. **decap / 密度填充已做**：451 decap + fill；金属 fill 小 die 后约 **4900**（大 die 时 22085）。
+8. **decap / 密度填充已做，但金属填充没进最终 GDS**：route.def 里 **68 decap + 7 fill**；
+   金属 `density_fill` 单独产出 `runs/15_density/route_filled.def`（4900 个矩形），
+   GDS/DRC 仍用 route.def，所以密度填充尚未参与版图签核。
 
 ---
 
@@ -460,7 +482,8 @@ bash scripts/run_timing_sweep.sh   # 时钟扫描（可选）
 
 **已迁移到文首 §0「当前状态」**——含「已取得 / 还没干 / 下一步」三张表。
 
-摘要：P0 = **push `7cabc34`**；其余见 §0 优先级表。
+摘要：push 已完成（P0）；剩余优先级最高的是 **晶体管 LVS 拓扑 100%** 和
+**把金属填充并入最终 GDS/DRC**，见 §0 优先级表。
 
 **明确不做**：换 UART/SPI 等新设计（按你的要求）。
 
@@ -481,28 +504,27 @@ bash scripts/run_timing_sweep.sh   # 时钟扫描（可选）
 - [x] 环境：WSL + Nix OpenROAD/Magic + volare sky130
 - [x] 主流程 01–06 可重复执行，脚本自带判据
 - [x] 验证：仿真 / 门级 / 等价 / 变异 / STA / 时钟扫描
-- [x] GDS + DRC(0) + LVS(match uniquely)
-- [x] PDN：met1 跟随轨 + met4/met5 主干，`check_power_grid` 2/2 连通
-- [x] tap cell：93 个，间距 13 µm，阱按 tap 约定并进电源
-- [x] IR drop：15.5 mV / 0.86%（via 电阻 5 Ω 假设）
+- [x] GDS + DRC(0) + LVS(cell-level match)
+- [x] PDN：2/2 连通；IR VPWR 28 mV/1.6%、VGND 74 mV/4.1%
+- [x] tap cell：14 个（40×40 die），阱按 tap 约定并进电源
 - [x] 天线检查：0 违例
-- [x] 填充：730 个 fill cell，插完重新 `global_connect`
-- [x] 后仿：布线后网表 + SDF（`-gspecify`），PASS
-- [x] 多 corner：tt/ff/ss @10 MHz 全 MET；1 ns 时 ss 先挂
+- [x] decap + fill：68 + 7，铺满空 site
+- [x] 金属密度填充：4900 个矩形（独立 DEF，未并入最终 GDS）
+- [x] SPEF：OpenRCX 提取，0 unannotated
+- [x] EM：最坏 ≈ 8.6% 典型 Jmax
+- [x] OCV：8 角全 MET
+- [x] RC corner：5 情景全 MET
+- [x] 多 corner：tt/ff/ss @125 MHz 全 MET；1 ns 时 ss 先挂
+- [x] 后仿：SPEF SDF，tt/ff/ss PASS
+- [x] 晶体管级 LVS：346=346 / 177=177，拓扑残差已定性
+- [x] P7 缩 die/提频：40×40、27%、125 MHz、tt 极限 667 MHz
+- [x] 全流程重跑（`make all/verify/finish`）
 - [x] 路径去硬编码，clone 到任意目录可跑
-- [x] 仓库整理：`.gitignore` / `.gitattributes` / `LICENSE` / legacy 归档 / CI / 日志脱敏
-- [x] 文档：README / HANDOFF / tools / flow-notes / verification / first-run-report
-- [x] OpenRCX 模型 → SPEF / 真提取（P1）— `make spef`，`runs/13_spef/counter.spef`
-- [x] corners / postsim 切换 `read_spef`（P1 收尾）— 1 ns tt WNS -0.34；后仿 PASS
-- [x] EM（P2）— `make em`，`runs/14_em/`，Imax≈3.9 µA ≈ 典型限值 2.8%
-- [x] 金属密度填充（P3）— `make density`，22085 fills
-- [x] decap（P4）— 451 个 decap 实例
-- [x] OCV / 更多 corner（P5）— `make ocv`，8 角全 MET
-- [x] 晶体管级 LVS（P6）— 器件/网数对齐；见 `docs/p6-topology.md`
-- [x] P7 缩 die/提频 — 40×40、27% util、SDC **125 MHz**、tt 极限 667 MHz
-- [x] 全流程重跑 — `make all/verify/finish` 全绿
-- [ ] **push 到 GitHub** — commit `7cabc34` 本地已有，push 超时/失败
+- [x] 仓库整理：`.gitignore` / `.gitattributes` / `LICENSE` / legacy / CI / 日志脱敏
+- [x] **push 到 GitHub（本轮完成）**
 - [ ] 晶体管 LVS 拓扑 100% match（层次化 GDS）
-- [ ] 多 RC corner / 复杂 SDC
+- [ ] 金属填充并入最终 GDS/DRC
+- [ ] 逐角 derate 表 / 真 RCX 多模型
+- [ ] 多周期等复杂约束
 
 有问题先查 §7 坑列表；脚本细节见 §4；验证结论见 §6；**当前状态与下一步见 §0**。

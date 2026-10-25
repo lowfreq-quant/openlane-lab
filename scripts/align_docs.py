@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """对齐文档中的过时数字（40um die / 125 MHz 签核结果）"""
+import os
 from pathlib import Path
 
-ROOT = Path("/mnt/c/Users/ty/Downloads/asic/openlane-lab")
+ROOT = Path(os.environ.get("ROOT") or Path(__file__).resolve().parents[1])
 
 REPLACEMENTS = [
     # 频率 / 周期

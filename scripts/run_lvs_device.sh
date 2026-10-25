@@ -47,10 +47,12 @@ echo "提取: $(wc -l < "$OUT/counter_dev_ext.spice") 行"
 
 echo "=== 2) 电源脚归一 ==="
 python3 - <<'PY'
+import os
 import re
 from pathlib import Path
-src = Path("/path/to/openlane-lab/runs/17_lvs_device/counter_dev_ext.spice")
-dst = Path("/path/to/openlane-lab/runs/17_lvs_device/counter_dev_ext_fix.spice")
+base = Path(os.environ["ROOT"]) / "runs" / "17_lvs_device"
+src = base / "counter_dev_ext.spice"
+dst = base / "counter_dev_ext_fix.spice"
 
 def fix(n: str) -> str:
     n = n.strip()
@@ -99,19 +101,21 @@ echo "=== 3) 源网表：CDL + post-CTS 顶层 ==="
 # 用 make_golden 若已有；否则从 counter_cts.v 生成
 if [[ ! -f "$OUT/counter_golden_dev.spice" ]]; then
   python3 - <<'PY'
+import os
 import re
 from pathlib import Path
-out = Path("/path/to/openlane-lab/runs/17_lvs_device")
+root = Path(os.environ["ROOT"])
+out = root / "runs" / "17_lvs_device"
 # 优先 post-CTS
 for cand in [
-    Path("/path/to/openlane-lab/runs/10_lvs/counter_cts.v"),
-    Path("/path/to/openlane-lab/runs/01_synth/counter_synth.v"),
+    root / "runs/10_lvs/counter_cts.v",
+    root / "runs/01_synth/counter_synth.v",
 ]:
     if cand.exists():
         v = cand.read_text(); vpath = cand; break
 else:
     raise SystemExit("no netlist")
-cdl = Path("/home/user/.volare/sky130A/libs.ref/sky130_fd_sc_hd/cdl/sky130_fd_sc_hd.cdl").read_text()
+cdl = Path(os.environ["SC_CDL"]).read_text()
 subckts = {}
 for m in re.finditer(r'\.SUBCKT\s+(\S+)\s+(.+)', cdl, re.I):
     subckts[m.group(1)] = m.group(2).split()

@@ -9,13 +9,15 @@ OUT=runs/17_lvs_device
 cp -f "$OUT/counter_hier_ext.spice" "$OUT/counter_hier_raw.spice"
 
 python3 - <<'PY'
+import os
 from pathlib import Path
 import re
-out = Path("/mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/17_lvs_device")
-cdl = Path("/home/ty/.volare/sky130A/libs.ref/sky130_fd_sc_hd/cdl/sky130_fd_sc_hd.cdl").read_text()
+root = Path(os.environ["ROOT"])
+out = root / "runs" / "17_lvs_device"
+cdl = Path(os.environ["SC_CDL"]).read_text()
 for cand in [
-    Path("/mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/10_lvs/counter_cts.v"),
-    Path("/mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/01_synth/counter_synth.v"),
+    root / "runs/10_lvs/counter_cts.v",
+    root / "runs/01_synth/counter_synth.v",
 ]:
     if cand.exists():
         v = cand.read_text(); vpath = cand; break

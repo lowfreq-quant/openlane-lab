@@ -1,12 +1,14 @@
 # make_gds_hier.py — 层次化 GDS（保留标准单元边界）供器件级 LVS
 # 用法: klayout -b -r make_gds_hier.py
 import pya, os, sys
+from pathlib import Path
 
+ROOT = Path(os.environ.get("ROOT") or Path(__file__).resolve().parents[1])
 PDK = os.environ.get("PDK_ROOT", os.path.expanduser("~/.volare")) + "/sky130A"
-LEF = "/mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef"
+LEF = str(ROOT / "runs/lef/sky130_fd_sc_hd_merged.lef")
 CELL_GDS = f"{PDK}/libs.ref/sky130_fd_sc_hd/gds/sky130_fd_sc_hd.gds"
-DEF = "/mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/05_route/route.def"
-OUT = "/mnt/c/Users/ty/Downloads/asic/openlane-lab/runs/17_lvs_device/counter_hier.gds"
+DEF = str(ROOT / "runs/05_route/route.def")
+OUT = str(ROOT / "runs/17_lvs_device/counter_hier.gds")
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 
 opt = pya.LoadLayoutOptions()

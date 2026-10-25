@@ -58,6 +58,19 @@
 - 125 MHz 下看 setup+hold（真实 SDC）；再跑 1 ns 压力只看 setup
 - 经验：ss 先挂 setup、ff 先收紧 hold——只跑 tt 看不出来
 
+### 12–18 扩展签核
+- **SPEF**（`run_spef.sh`）：PDK 的 `libs.tech/openlane/rcx_rules.info` 交给
+  `extract_parasitics`，再 `write_spef`；0 unannotated 才算过
+- **EM**（`run_em.sh` + `analyze_em.py`）：`analyze_power_grid -enable_em` 后
+  按层统计边电流，对照典型 Jmax 看数量级
+- **金属密度填充**（`run_density_fill.sh`）：`density_fill -rules fill.json`，
+  产物是独立 DEF，目前没并进 GDS/DRC
+- **OCV**（`run_ocv_sta.sh`）：`set_timing_derate` + 多套 liberty 跑 8 个电压温度角
+- **RC corner**（`run_rc_corners.sh`）：同一 SPEF 上缩放 R/C 出 5 个情景
+- **晶体管级 LVS**（`run_lvs_device.sh`）：GDS → Magic 提取 vs CDL；
+  器件/网数能对上，但拓扑有残差（`docs/p6-topology.md`）
+- **签核后仿**（`run_postsim_signoff.sh`）：SPEF SDF × tt/ff/ss
+
 ## 常见坑
 
 1. **PDK 路径不对**：工具能跑但单元库是空的 → 检查 `PDK_ROOT`，跑 `scripts/check_env.sh`

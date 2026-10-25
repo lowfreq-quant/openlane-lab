@@ -1,5 +1,5 @@
-source /home/ty/.volare/sky130A/libs.tech/netgen/sky130A_setup.tcl
-source /mnt/c/Users/ty/Downloads/asic/openlane-lab/scripts/lvs_extra.tcl
+source /home/user/.volare/sky130A/libs.tech/netgen/sky130A_setup.tcl
+source /path/to/openlane-lab/scripts/lvs_extra.tcl
 
 # 忽略 fill/tap/decap 类
 foreach c {
