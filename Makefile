@@ -6,7 +6,12 @@
 #   make lvs      post-CTS 网表 → 提取 → netgen
 #   make postsim  布线后网表 + SDF 时序后仿
 #   make corners  多工艺角 STA（tt/ff/ss）
-#   make finish   gds + lvs + postsim + corners（一条龙收尾）
+#   make spef     OpenRCX 真寄生 → SPEF（替代估算）+ 1ns 压力对比
+#   make em       电迁移分析（analyze_power_grid -enable_em）
+#   make density  金属密度填充（density_fill）
+#   make ocv      OCV derate + 8 电压/温度 corner STA
+#   make lvs_dev  晶体管级 LVS（GDS 提取 vs CDL）
+#   make finish   gds + lvs + postsim + corners + spef + em + density
 #   make png      版图分层渲染
 #   make check    环境自检
 #   make sanitize 把 runs/ 日志里的本机路径换成占位符（提交前跑）
@@ -16,7 +21,7 @@ SHELL := /bin/bash
 ROOT  := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 S     := $(ROOT)/scripts
 
-.PHONY: all synth floorplan place cts route signoff verify gds lvs postsim corners finish png check sanitize clean tree help
+.PHONY: all synth floorplan place cts route signoff verify gds lvs postsim corners spef em density ocv lvs_dev finish png check sanitize clean tree help
 
 all: synth floorplan place cts route signoff
 
@@ -47,7 +52,23 @@ postsim:
 corners:
 	bash $(S)/run_corner_sta.sh
 
-finish: gds lvs postsim corners
+spef:
+	bash $(S)/run_spef.sh
+
+em:
+	bash $(S)/run_em.sh
+	python3 $(S)/analyze_em.py
+
+density:
+	bash $(S)/run_density_fill.sh
+
+ocv:
+	bash $(S)/run_ocv_sta.sh
+
+lvs_dev:
+	bash $(S)/run_lvs_device.sh
+
+finish: gds lvs postsim corners spef em density ocv
 
 png:
 	klayout -b -r $(S)/dump_shapes.py

@@ -7,15 +7,15 @@ Components of this program may be licensed under more restrictive licenses which
 SLACK_MAX_BEGIN
 Group                                  Slack
 --------------------------------------------
-asynchronous                           98.43
-clk                                    94.61
+asynchronous                            6.43
+clk                                     2.57
 
 SLACK_MAX_END
 SLACK_MIN_BEGIN
 Group                                  Slack
 --------------------------------------------
 asynchronous                            0.84
-clk                                     1.13
+clk                                     1.15
 
 SLACK_MIN_END
 wns max 0.00

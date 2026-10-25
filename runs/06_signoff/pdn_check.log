@@ -13,11 +13,11 @@ Net              : VPWR
 Corner           : default
 Total power      : 2.16e-05 W
 Supply voltage   : 1.80e+00 V
-Worstcase voltage: 1.78e+00 V
-Average voltage  : 1.79e+00 V
-Average IR drop  : 7.05e-03 V
-Worstcase IR drop: 1.55e-02 V
-Percentage drop  : 0.86 %
+Worstcase voltage: 1.77e+00 V
+Average voltage  : 1.78e+00 V
+Average IR drop  : 1.68e-02 V
+Worstcase IR drop: 2.82e-02 V
+Percentage drop  : 1.57 %
 ######################################
 [INFO PSM-0040] All shapes on net VGND are connected.
 ########## IR report #################
@@ -25,10 +25,10 @@ Net              : VGND
 Corner           : default
 Total power      : 2.16e-05 W
 Supply voltage   : 0.00e+00 V
-Worstcase voltage: 1.45e-02 V
-Average voltage  : 7.06e-03 V
-Average IR drop  : 7.06e-03 V
-Worstcase IR drop: 1.45e-02 V
-Percentage drop  : 0.80 %
+Worstcase voltage: 7.42e-02 V
+Average voltage  : 6.37e-02 V
+Average IR drop  : 6.37e-02 V
+Worstcase IR drop: 7.42e-02 V
+Percentage drop  : 4.12 %
 ######################################
 PDN_CHECK_DONE

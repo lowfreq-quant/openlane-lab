@@ -27,10 +27,10 @@ Number of viarulegen: 25
 [INFO DRT-0150] Reading design.
 
 Design:                   counter
-Die area:                 ( 0 0 ) ( 100000 100000 )
+Die area:                 ( 0 0 ) ( 40000 40000 )
 Number of track patterns: 12
 Number of DEF vias:       0
-Number of components:     119
+Number of components:     40
 Number of terminals:      13
 Number of snets:          2
 Number of nets:           28
@@ -46,7 +46,7 @@ Number of nets:           28
     default via: M4M5_PR
 [INFO DRT-0162] Library cell analysis.
 [INFO DRT-0163] Instance analysis.
-[INFO DRT-0164] Number of unique instances = 18.
+[INFO DRT-0164] Number of unique instances = 19.
 [INFO DRT-0168] Init region query.
 [INFO DRT-0024]   Complete FR_MASTERSLICE.
 [INFO DRT-0024]   Complete Fr_VIA.
@@ -63,26 +63,26 @@ Number of nets:           28
 [INFO DRT-0024]   Complete met5.
 [INFO DRT-0033] FR_MASTERSLICE shape region query size = 0.
 [INFO DRT-0033] FR_VIA shape region query size = 0.
-[INFO DRT-0033] li1 shape region query size = 1327.
-[INFO DRT-0033] mcon shape region query size = 754.
-[INFO DRT-0033] met1 shape region query size = 470.
-[INFO DRT-0033] via shape region query size = 450.
-[INFO DRT-0033] met2 shape region query size = 281.
-[INFO DRT-0033] via2 shape region query size = 360.
-[INFO DRT-0033] met3 shape region query size = 270.
-[INFO DRT-0033] via3 shape region query size = 360.
-[INFO DRT-0033] met4 shape region query size = 114.
-[INFO DRT-0033] via4 shape region query size = 18.
-[INFO DRT-0033] met5 shape region query size = 30.
+[INFO DRT-0033] li1 shape region query size = 1011.
+[INFO DRT-0033] mcon shape region query size = 596.
+[INFO DRT-0033] met1 shape region query size = 231.
+[INFO DRT-0033] via shape region query size = 130.
+[INFO DRT-0033] met2 shape region query size = 89.
+[INFO DRT-0033] via2 shape region query size = 104.
+[INFO DRT-0033] met3 shape region query size = 78.
+[INFO DRT-0033] via3 shape region query size = 104.
+[INFO DRT-0033] met4 shape region query size = 35.
+[INFO DRT-0033] via4 shape region query size = 5.
+[INFO DRT-0033] met5 shape region query size = 11.
 [INFO DRT-0165] Start pin access.
-[INFO DRT-0078]   Complete 121 pins.
-[INFO DRT-0081]   Complete 18 unique inst patterns.
-[INFO DRT-0084]   Complete 13 groups.
-#scanned instances     = 119
-#unique  instances     = 18
-#stdCellGenAp          = 420
+[INFO DRT-0078]   Complete 130 pins.
+[INFO DRT-0081]   Complete 19 unique inst patterns.
+[INFO DRT-0084]   Complete 16 groups.
+#scanned instances     = 40
+#unique  instances     = 19
+#stdCellGenAp          = 473
 #stdCellValidPlanarAp  = 8
-#stdCellValidViaAp     = 315
+#stdCellValidViaAp     = 361
 #stdCellPinNoAp        = 0
 #stdCellPinCnt         = 90
 #instTermValidViaApCnt = 0
@@ -91,13 +91,13 @@ Number of nets:           28
 #macroValidViaAp       = 0
 #macroNoAp             = 0
 [INFO DRT-0166] Complete pin access.
-[INFO DRT-0267] cpu time = 00:00:06, elapsed time = 00:00:02, memory = 218.29 (MB), peak = 222.68 (MB)
+[INFO DRT-0267] cpu time = 00:00:04, elapsed time = 00:00:01, memory = 218.51 (MB), peak = 222.91 (MB)
 
-[INFO DRT-0157] Number of guides:     198
+[INFO DRT-0157] Number of guides:     200
 
 [INFO DRT-0169] Post process guides.
-[INFO DRT-0176] GCELLGRID X 0 DO 14 STEP 6900 ;
-[INFO DRT-0177] GCELLGRID Y 0 DO 14 STEP 6900 ;
+[INFO DRT-0176] GCELLGRID X 0 DO 5 STEP 6900 ;
+[INFO DRT-0177] GCELLGRID Y 0 DO 5 STEP 6900 ;
 [INFO DRT-0028]   Complete FR_MASTERSLICE.
 [INFO DRT-0028]   Complete Fr_VIA.
 [INFO DRT-0028]   Complete li1.
@@ -127,135 +127,112 @@ Number of nets:           28
 [INFO DRT-0035]   Complete met5 (guide).
 [INFO DRT-0036] FR_MASTERSLICE guide region query size = 0.
 [INFO DRT-0036] FR_VIA guide region query size = 0.
-[INFO DRT-0036] li1 guide region query size = 63.
+[INFO DRT-0036] li1 guide region query size = 65.
 [INFO DRT-0036] mcon guide region query size = 0.
-[INFO DRT-0036] met1 guide region query size = 58.
+[INFO DRT-0036] met1 guide region query size = 60.
 [INFO DRT-0036] via guide region query size = 0.
-[INFO DRT-0036] met2 guide region query size = 37.
+[INFO DRT-0036] met2 guide region query size = 31.
 [INFO DRT-0036] via2 guide region query size = 0.
-[INFO DRT-0036] met3 guide region query size = 2.
+[INFO DRT-0036] met3 guide region query size = 0.
 [INFO DRT-0036] via3 guide region query size = 0.
 [INFO DRT-0036] met4 guide region query size = 0.
 [INFO DRT-0036] via4 guide region query size = 0.
 [INFO DRT-0036] met5 guide region query size = 0.
 [INFO DRT-0179] Init gr pin query.
-[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 218.35 (MB), peak = 222.68 (MB)
+[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 218.64 (MB), peak = 222.91 (MB)
 [INFO DRT-0245] skipped writing guide updates to database.
 [INFO DRT-0181] Start track assignment.
-[INFO DRT-0184] Done with 100 vertical wires in 1 frboxes and 60 horizontal wires in 1 frboxes.
-[INFO DRT-0186] Done with 8 vertical wires in 1 frboxes and 21 horizontal wires in 1 frboxes.
+[INFO DRT-0184] Done with 96 vertical wires in 1 frboxes and 60 horizontal wires in 1 frboxes.
+[INFO DRT-0186] Done with 8 vertical wires in 1 frboxes and 22 horizontal wires in 1 frboxes.
 [INFO DRT-0182] Complete track assignment.
-[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 219.57 (MB), peak = 222.68 (MB)
+[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 219.21 (MB), peak = 222.91 (MB)
 [INFO DRT-0187] Start routing data preparation.
-[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 219.57 (MB), peak = 222.68 (MB)
+[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 219.21 (MB), peak = 222.91 (MB)
 [INFO DRT-0194] Start detail routing.
 [INFO DRT-0195] Start 0th optimization iteration.
-    Completing 20% with 0 violations.
-    elapsed time = 00:00:00, memory = 227.47 (MB).
-    Completing 50% with 4 violations.
-    elapsed time = 00:00:00, memory = 227.48 (MB).
-    Completing 70% with 4 violations.
-    elapsed time = 00:00:00, memory = 236.23 (MB).
-    Completing 100% with 14 violations.
-    elapsed time = 00:00:00, memory = 236.23 (MB).
-[INFO DRT-0199]   Number of violations = 27.
-Viol/Layer         li1   met1   met2
-Metal Spacing        0      5      3
-Recheck              1     10      2
-Short                0      6      0
-[INFO DRT-0267] cpu time = 00:00:01, elapsed time = 00:00:02, memory = 598.41 (MB), peak = 597.84 (MB)
-Total wire length = 634 um.
+    Completing 100% with 3 violations.
+    elapsed time = 00:00:00, memory = 230.23 (MB).
+[INFO DRT-0199]   Number of violations = 3.
+Viol/Layer        met1
+Metal Spacing        1
+Short                2
+[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 592.21 (MB), peak = 591.49 (MB)
+Total wire length = 575 um.
 Total wire length on LAYER li1 = 0 um.
-Total wire length on LAYER met1 = 245 um.
-Total wire length on LAYER met2 = 350 um.
-Total wire length on LAYER met3 = 38 um.
+Total wire length on LAYER met1 = 292 um.
+Total wire length on LAYER met2 = 255 um.
+Total wire length on LAYER met3 = 27 um.
 Total wire length on LAYER met4 = 0 um.
 Total wire length on LAYER met5 = 0 um.
-Total number of vias = 193.
-Up-via summary (total 193):
+Total number of vias = 191.
+Up-via summary (total 191):
 
 ----------------------
  FR_MASTERSLICE      0
             li1     84
-           met1    101
-           met2      8
+           met1    104
+           met2      3
            met3      0
            met4      0
 ----------------------
-               193
+               191
 
 
 [INFO DRT-0195] Start 1st optimization iteration.
-    Completing 10% with 27 violations.
-    elapsed time = 00:00:00, memory = 598.41 (MB).
-    Completing 20% with 27 violations.
-    elapsed time = 00:00:00, memory = 598.41 (MB).
-    Completing 30% with 27 violations.
-    elapsed time = 00:00:00, memory = 598.41 (MB).
-    Completing 40% with 27 violations.
-    elapsed time = 00:00:00, memory = 598.41 (MB).
-    Completing 50% with 27 violations.
-    elapsed time = 00:00:00, memory = 598.41 (MB).
-    Completing 60% with 27 violations.
-    elapsed time = 00:00:00, memory = 598.41 (MB).
-    Completing 70% with 27 violations.
-    elapsed time = 00:00:00, memory = 598.41 (MB).
-    Completing 80% with 27 violations.
-    elapsed time = 00:00:01, memory = 599.84 (MB).
     Completing 100% with 0 violations.
-    elapsed time = 00:00:01, memory = 599.84 (MB).
+    elapsed time = 00:00:00, memory = 602.81 (MB).
 [INFO DRT-0199]   Number of violations = 0.
-[INFO DRT-0267] cpu time = 00:00:01, elapsed time = 00:00:02, memory = 600.80 (MB), peak = 600.21 (MB)
-Total wire length = 623 um.
+[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 603.80 (MB), peak = 602.99 (MB)
+Total wire length = 576 um.
 Total wire length on LAYER li1 = 0 um.
-Total wire length on LAYER met1 = 251 um.
-Total wire length on LAYER met2 = 333 um.
-Total wire length on LAYER met3 = 38 um.
+Total wire length on LAYER met1 = 296 um.
+Total wire length on LAYER met2 = 252 um.
+Total wire length on LAYER met3 = 27 um.
 Total wire length on LAYER met4 = 0 um.
 Total wire length on LAYER met5 = 0 um.
-Total number of vias = 187.
-Up-via summary (total 187):
+Total number of vias = 182.
+Up-via summary (total 182):
 
 ----------------------
  FR_MASTERSLICE      0
             li1     84
-           met1     96
-           met2      7
+           met1     95
+           met2      3
            met3      0
            met4      0
 ----------------------
-               187
+               182
 
 
 [INFO DRT-0198] Complete detail routing.
-Total wire length = 623 um.
+Total wire length = 576 um.
 Total wire length on LAYER li1 = 0 um.
-Total wire length on LAYER met1 = 251 um.
-Total wire length on LAYER met2 = 333 um.
-Total wire length on LAYER met3 = 38 um.
+Total wire length on LAYER met1 = 296 um.
+Total wire length on LAYER met2 = 252 um.
+Total wire length on LAYER met3 = 27 um.
 Total wire length on LAYER met4 = 0 um.
 Total wire length on LAYER met5 = 0 um.
-Total number of vias = 187.
-Up-via summary (total 187):
+Total number of vias = 182.
+Up-via summary (total 182):
 
 ----------------------
  FR_MASTERSLICE      0
             li1     84
-           met1     96
-           met2      7
+           met1     95
+           met2      3
            met3      0
            met4      0
 ----------------------
-               187
+               182
 
 
-[INFO DRT-0267] cpu time = 00:00:03, elapsed time = 00:00:04, memory = 600.87 (MB), peak = 600.21 (MB)
+[INFO DRT-0267] cpu time = 00:00:01, elapsed time = 00:00:01, memory = 603.80 (MB), peak = 602.99 (MB)
 
 [INFO DRT-0180] Post processing.
 [INFO ANT-0002] Found 0 net violations.
 [INFO ANT-0001] Found 0 pin violations.
 Startpoint: rst_n (input port clocked by clk)
-Endpoint: _23_ (recovery check against rising-edge clock clk)
+Endpoint: _25_ (recovery check against rising-edge clock clk)
 Path Group: asynchronous
 Path Type: max
 
@@ -265,21 +242,21 @@ Path Type: max
                    0.00    0.00   clock network delay (ideal)
                    2.00    2.00 ^ input external delay
    0.04    0.00    0.00    2.00 ^ rst_n (in)
-           0.00    0.00    2.00 ^ _23_/RESET_B (sky130_fd_sc_hd__dfrtp_1)
+           0.00    0.00    2.00 ^ _25_/RESET_B (sky130_fd_sc_hd__dfrtp_1)
                            2.00   data arrival time
 
-           0.00  100.00  100.00   clock clk (rise edge)
-                   0.00  100.00   clock network delay (ideal)
-                  -0.25   99.75   clock uncertainty
-                   0.00   99.75   clock reconvergence pessimism
-                          99.75 ^ _23_/CLK (sky130_fd_sc_hd__dfrtp_1)
-                   0.23   99.98   library recovery time
-                          99.98   data required time
+           0.00    5.00    5.00   clock clk (rise edge)
+                   0.00    5.00   clock network delay (ideal)
+                  -0.25    4.75   clock uncertainty
+                   0.00    4.75   clock reconvergence pessimism
+                           4.75 ^ _25_/CLK (sky130_fd_sc_hd__dfrtp_1)
+                   0.23    4.98   library recovery time
+                           4.98   data required time
 -----------------------------------------------------------------------
-                          99.98   data required time
+                           4.98   data required time
                           -2.00   data arrival time
 -----------------------------------------------------------------------
-                          97.98   slack (MET)
+                           2.98   slack (MET)
 
 
 Startpoint: _23_ (rising edge-triggered flip-flop clocked by clk)
@@ -292,25 +269,25 @@ Path Type: max
            0.00    0.00    0.00   clock clk (rise edge)
                    0.00    0.00   clock network delay (ideal)
            0.00    0.00    0.00 ^ _23_/CLK (sky130_fd_sc_hd__dfrtp_1)
-   0.02    0.18    0.41    0.41 ^ _23_/Q (sky130_fd_sc_hd__dfrtp_1)
-   0.02    0.20    0.32    0.73 ^ _10_/X (sky130_fd_sc_hd__and4_1)
-   0.01    0.16    0.19    0.92 v _12_/Y (sky130_fd_sc_hd__nand4_1)
-   0.00    0.08    0.14    1.06 ^ _13_/X (sky130_fd_sc_hd__lpflow_isobufsrc_1)
-           0.08    0.00    1.06 ^ tick (out)
-                           1.06   data arrival time
+   0.02    0.16    0.39    0.39 ^ _23_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.02    0.18    0.30    0.70 ^ _10_/X (sky130_fd_sc_hd__and4_1)
+   0.01    0.16    0.19    0.89 v _12_/Y (sky130_fd_sc_hd__nand4_1)
+   0.00    0.06    0.11    1.00 ^ _13_/X (sky130_fd_sc_hd__lpflow_isobufsrc_1)
+           0.06    0.00    1.00 ^ tick (out)
+                           1.00   data arrival time
 
-           0.00  100.00  100.00   clock clk (rise edge)
-                   0.00  100.00   clock network delay (ideal)
-                  -0.25   99.75   clock uncertainty
-                   0.00   99.75   clock reconvergence pessimism
-                  -2.00   97.75   output external delay
-                          97.75   data required time
+           0.00    5.00    5.00   clock clk (rise edge)
+                   0.00    5.00   clock network delay (ideal)
+                  -0.25    4.75   clock uncertainty
+                   0.00    4.75   clock reconvergence pessimism
+                  -2.00    2.75   output external delay
+                           2.75   data required time
 -----------------------------------------------------------------------
-                          97.75   data required time
-                          -1.06   data arrival time
+                           2.75   data required time
+                          -1.00   data arrival time
 -----------------------------------------------------------------------
-                          96.69   slack (MET)
+                           1.75   slack (MET)
 
 
-[INFO DPL-0001] Placed 730 filler instances.
-Design area 427 um^2 7% utilization.
+[INFO DPL-0001] Placed 75 filler instances.
+Design area 1146 um^2 99% utilization.

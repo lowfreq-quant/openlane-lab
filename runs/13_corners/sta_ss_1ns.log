@@ -8,8 +8,8 @@ SLACK_MAX_BEGIN
 Group                                  Slack
 --------------------------------------------
 asynchronous                            1.53
-clk                                    -2.88
+clk                                    -2.99
 
 SLACK_MAX_END
-wns max -2.88
-tns max -19.74
+wns max -2.99
+tns max -20.26

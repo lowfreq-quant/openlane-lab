@@ -1,0 +1,50 @@
+OpenROAD 26Q2 
+Features included (+) or not (-): +GPU +GUI +Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0227] LEF file: /path/to/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef, created 13 layers, 25 vias, 441 library cells
+[WARNING STA-1171] /home/user/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib line 23, default_fanout_load is 0.0.
+PDK loaded from /home/user/.volare/sky130A  (merged LEF: /path/to/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef)
+======== EM net=VPWR ========
+[INFO PSM-0040] All shapes on net VPWR are connected.
+########## IR report #################
+Net              : VPWR
+Corner           : default
+Total power      : 2.16e-05 W
+Supply voltage   : 1.80e+00 V
+Worstcase voltage: 1.77e+00 V
+Average voltage  : 1.78e+00 V
+Average IR drop  : 1.68e-02 V
+Worstcase IR drop: 2.82e-02 V
+Percentage drop  : 1.57 %
+######################################
+########## EM analysis ###############
+Net                : VPWR
+Corner             : default
+Maximum current    : 3.78e-06 A
+Average current    : 7.57e-07 A
+Number of resistors: 121
+######################################
+EM_OK VPWR -> /path/to/openlane-lab/runs/14_em/em_VPWR.rpt
+======== EM net=VGND ========
+[INFO PSM-0040] All shapes on net VGND are connected.
+########## IR report #################
+Net              : VGND
+Corner           : default
+Total power      : 2.16e-05 W
+Supply voltage   : 0.00e+00 V
+Worstcase voltage: 7.42e-02 V
+Average voltage  : 6.37e-02 V
+Average IR drop  : 6.37e-02 V
+Worstcase IR drop: 7.42e-02 V
+Percentage drop  : 4.12 %
+######################################
+########## EM analysis ###############
+Net                : VGND
+Corner             : default
+Maximum current    : 1.20e-05 A
+Average current    : 1.25e-06 A
+Number of resistors: 137
+######################################
+EM_OK VGND -> /path/to/openlane-lab/runs/14_em/em_VGND.rpt
+EM_DONE

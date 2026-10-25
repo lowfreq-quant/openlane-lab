@@ -1,0 +1,71 @@
+
+Magic 8.3 revision 681 - Compiled on Tue Jan  1 00:00:00 UTC 1980.
+Starting magic under Tcl interpreter
+Using the terminal as the console.
+WARNING: RLIMIT_NOFILE is above 1024 and Tcl_Version<9 this may cause runtime issues [rlim_cur=10240]
+Using NULL graphics device.
+Processing system .magicrc file
+Switching to WIRING tool.
+Switching to NETLIST tool.
+Switching to PICK tool.
+Switching to BOX tool.
+Sourcing design .magicrc for technology sky130A ...
+2 Magic internal units = 1 Lambda
+Could not find file '/usr/local/pdk/volare/sky130/build/7519dfb04400f224f140749cda44ee7de6f5e095/sky130A/libs.tech/magic/sky130A.tech' in any of these directories:
+         . $CAD_ROOT/magic/sys $CAD_ROOT/magic/sys/current
+Error parsing "/home/user/.volare/sky130A/libs.tech/magic/sky130A.magicrc": couldn't read file "/usr/local/pdk/volare/sky130/build/7519dfb04400f224f140749cda44ee7de6f5e095/sky130A/libs.tech/magic/sky130A.tcl": no such file or directory
+Bad local startup file "/home/user/.volare/sky130A/libs.tech/magic/sky130A.magicrc", continuing without.
+Scaled tech values by 2 / 1 to match internal grid scaling
+Loading "/path/to/openlane-lab/runs/17_lvs_device/extract.tcl" from command line.
+Input style sky130(vendor): scaleFactor=2, multiplier=2
+The following types are not handled by extraction and will be treated as non-electrical types:
+    mvobsactive ubm 
+Scaled tech values by 2 / 1 to match internal grid scaling
+Warning: Calma reading is not undoable!  I hope that's OK.
+Library written using GDS-II Release 6.0
+Library name: LIB
+Reading "counter".
+Extracting counter into counter.ext:
+Processing counter
+Warning:  Ports "Y" and "B" are electrically shorted.
+Warning:  Ports "B1" and "Q" are electrically shorted.
+Warning:  Ports "B1" and "D" are electrically shorted.
+Warning:  Ports "D" and "X" are electrically shorted.
+Warning:  Ports "A2" and "B" are electrically shorted.
+Warning:  Ports "A2" and "Q" are electrically shorted.
+Warning:  Ports "D" and "Y" are electrically shorted.
+Warning:  Ports "Q" and "A" are electrically shorted.
+Warning:  Ports "Y" and "D" are electrically shorted.
+Warning:  Ports "C" and "Q" are electrically shorted.
+Warning:  Ports "C" and "B1" are electrically shorted.
+Warning:  Ports "X" and "D" are electrically shorted.
+Warning:  Ports "Y" and "B" are electrically shorted.
+Warning:  Ports "A1" and "A" are electrically shorted.
+Warning:  Ports "A1" and "Q" are electrically shorted.
+Warning:  Ports "A3" and "A" are electrically shorted.
+Warning:  Ports "A3" and "B" are electrically shorted.
+Warning:  Ports "A3" and "X" are electrically shorted.
+Warning:  Ports "A3" and "D" are electrically shorted.
+Warning:  Ports "A" and "X" are electrically shorted.
+Warning:  Ports "A" and "Q" are electrically shorted.
+Warning:  Ports "A" and "C" are electrically shorted.
+Warning:  Ports "A" and "A3" are electrically shorted.
+Warning:  Ports "Y" and "D" are electrically shorted.
+Warning:  Ports "CLK" and "X" are electrically shorted.
+Warning:  Ports "X" and "CLK" are electrically shorted.
+Warning:  Ports "Y" and "D" are electrically shorted.
+Warning:  Ports "X" and "D" are electrically shorted.
+Warning:  Ports "Y" and "D" are electrically shorted.
+Warning:  Ports "A" and "Q" are electrically shorted.
+Warning:  Ports "A" and "A1" are electrically shorted.
+Warning:  Ports "SLEEP" and "Y" are electrically shorted.
+Warning:  Ports "A" and "Y" are electrically shorted.
+Warning:  Ports "A" and "B" are electrically shorted.
+Warning:  Ports "A" and "SLEEP" are electrically shorted.
+Warning:  Ports "A" and "Q" are electrically shorted.
+Warning:  Ports "A" and "B" are electrically shorted.
+Warning:  Ports "A" and "A2" are electrically shorted.
+Warning:  Ports "Y" and "B" are electrically shorted.
+Warning:  Ports "VPWR" and "VPB" are electrically shorted.
+Warning:  Ports "VNB" and "VGND" are electrically shorted.
+exttospice finished.

@@ -8,89 +8,89 @@ PDK loaded from /home/user/.volare/sky130A  (merged LEF: /path/to/openlane-lab/r
 [INFO GPL-0001] ---- Initialize GPL Main Data Structures
 [INFO GPL-0002] DBU: 1000
 [INFO GPL-0003] SiteSize: (  0.460  2.720 ) um
-[INFO GPL-0004] CoreBBox: ( 10.120 10.880 ) ( 89.700 89.760 ) um
+[INFO GPL-0004] CoreBBox: (  2.300  2.720 ) ( 37.720 35.360 ) um
 [INFO GPL-0036] Movable instances area:        299.037 um^2
-[INFO GPL-0037] Total instances area:          415.398 um^2
+[INFO GPL-0037] Total instances area:          316.554 um^2
 [INFO GPL-0035] Pin density area adjust:        12.606 um^2
 [INFO GPL-0032] ---- Initialize Region: Top-level
-[INFO GPL-0006] Number of instances:               116
+[INFO GPL-0006] Number of instances:                37
 [INFO GPL-0007] Movable instances:                  23
-[INFO GPL-0008] Fixed instances:                    93
+[INFO GPL-0008] Fixed instances:                    14
 [INFO GPL-0009] Dummy instances:                     0
 [INFO GPL-0010] Number of nets:                     25
 [INFO GPL-0011] Number of pins:                     95
-[INFO GPL-0012] Die BBox:  (  0.000  0.000 ) ( 100.000 100.000 ) um
-[INFO GPL-0013] Core BBox: ( 10.120 10.880 ) ( 89.700 89.760 ) um
-[INFO GPL-0016] Core area:                    6277.270 um^2
+[INFO GPL-0012] Die BBox:  (  0.000  0.000 ) ( 40.000 40.000 ) um
+[INFO GPL-0013] Core BBox: (  2.300  2.720 ) ( 37.720 35.360 ) um
+[INFO GPL-0016] Core area:                    1156.109 um^2
 [INFO GPL-0014] Region name: top-level.
-[INFO GPL-0015] Region area:                  6277.270 um^2
-[INFO GPL-0017] Fixed instances area:          116.362 um^2
+[INFO GPL-0015] Region area:                  1156.109 um^2
+[INFO GPL-0017] Fixed instances area:           17.517 um^2
 [INFO GPL-0018] Movable instances area:        311.643 um^2
-[INFO GPL-0019] Utilization:                     5.058 %
+[INFO GPL-0019] Utilization:                    27.371 %
 [INFO GPL-0020] Standard cells area:           311.643 um^2
 [INFO GPL-0021] Large instances area:            0.000 um^2
 [INFO GPL-0005] ---- Execute Conjugate Gradient Initial Placement.
 [INFO GPL-0051] Source of initial instance position counters:
 	Odb location = 0	Core center = 23	Region center = 0
-[InitialPlace]  Iter: 1 conjugate gradient residual: 0.00000005 HPWL: 708860
-[InitialPlace]  Iter: 2 conjugate gradient residual: 0.00000011 HPWL: 366407
-[InitialPlace]  Iter: 3 conjugate gradient residual: 0.00000004 HPWL: 364813
-[InitialPlace]  Iter: 4 conjugate gradient residual: 0.00000003 HPWL: 368225
-[InitialPlace]  Iter: 5 conjugate gradient residual: 0.00000003 HPWL: 367955
+[InitialPlace]  Iter: 1 conjugate gradient residual: 0.00000004 HPWL: 374900
+[InitialPlace]  Iter: 2 conjugate gradient residual: 0.00000005 HPWL: 277441
+[InitialPlace]  Iter: 3 conjugate gradient residual: 0.00000008 HPWL: 275940
+[InitialPlace]  Iter: 4 conjugate gradient residual: 0.00000004 HPWL: 277735
+[InitialPlace]  Iter: 5 conjugate gradient residual: 0.00000009 HPWL: 277666
 [INFO GPL-0033] ---- Initialize Nesterov Region: Top-level
 [INFO GPL-0023] Placement target density:       0.5500
 [INFO GPL-0024] Movable insts average area:     13.550 um^2
 [INFO GPL-0025] Ideal bin area:                 24.636 um^2
-[INFO GPL-0026] Ideal bin count:                   254
-[INFO GPL-0027] Total bin area:               6277.270 um^2
-[INFO GPL-0028] Bin count (X, Y):           8 ,      8
-[INFO GPL-0029] Bin size (W * H):       9.947 *  9.860 um
-[INFO GPL-0030] Number of bins:                     64
+[INFO GPL-0026] Ideal bin count:                    46
+[INFO GPL-0027] Total bin area:               1156.109 um^2
+[INFO GPL-0028] Bin count (X, Y):           4 ,      4
+[INFO GPL-0029] Bin size (W * H):       8.855 *  8.160 um
+[INFO GPL-0030] Number of bins:                     16
 [INFO GPL-0007] ---- Execute Nesterov Global Placement.
 [INFO GPL-0031] HPWL: Half-Perimeter Wirelength
 Iteration | Overflow |     HPWL (um) |  HPWL(%) |   Penalty | Group
 ---------------------------------------------------------------
-        0 |   0.3752 |  2.816280e+02 |   +0.00% |  4.81e-13 |      
-       10 |   0.3646 |  2.812600e+02 |   -0.13% |  7.83e-13 |      
-       20 |   0.3646 |  2.811680e+02 |   -0.03% |  1.28e-12 |      
-       30 |   0.3646 |  2.811450e+02 |   -0.01% |  2.08e-12 |      
-       40 |   0.3646 |  2.811650e+02 |   +0.01% |  3.39e-12 |      
-       50 |   0.3646 |  2.811570e+02 |   -0.00% |  5.52e-12 |      
-       60 |   0.3646 |  2.811820e+02 |   +0.01% |  8.98e-12 |      
-       70 |   0.3646 |  2.811780e+02 |   -0.00% |  1.46e-11 |      
-       80 |   0.3646 |  2.811960e+02 |   +0.01% |  2.38e-11 |      
-       90 |   0.3646 |  2.812110e+02 |   +0.01% |  3.88e-11 |      
-      100 |   0.3646 |  2.812340e+02 |   +0.01% |  6.32e-11 |      
-      110 |   0.3646 |  2.814150e+02 |   +0.06% |  1.03e-10 |      
-      120 |   0.3646 |  2.816260e+02 |   +0.07% |  1.68e-10 |      
-      130 |   0.3646 |  2.817260e+02 |   +0.04% |  2.73e-10 |      
-      140 |   0.3646 |  2.815340e+02 |   -0.07% |  4.45e-10 |      
-      150 |   0.3646 |  2.813370e+02 |   -0.07% |  7.25e-10 |      
-      160 |   0.3646 |  2.815930e+02 |   +0.09% |  1.18e-09 |      
-      170 |   0.3646 |  2.813200e+02 |   -0.10% |  1.92e-09 |      
-      180 |   0.3645 |  2.814530e+02 |   +0.05% |  3.13e-09 |      
-      190 |   0.3644 |  2.816380e+02 |   +0.07% |  5.11e-09 |      
-      200 |   0.3643 |  2.820210e+02 |   +0.14% |  8.32e-09 |      
-      210 |   0.3641 |  2.827410e+02 |   +0.26% |  1.35e-08 |      
-      220 |   0.3635 |  2.842130e+02 |   +0.52% |  2.21e-08 |      
-      230 |   0.3627 |  2.862870e+02 |   +0.73% |  3.59e-08 |      
-      240 |   0.3460 |  2.967360e+02 |   +3.65% |  5.86e-08 |      
-      250 |   0.3185 |  3.121590e+02 |   +5.20% |  8.63e-08 |      
-      260 |   0.2645 |  3.297200e+02 |   +5.63% |  1.27e-07 |      
-      270 |   0.2260 |  3.422370e+02 |   +3.80% |  1.87e-07 |      
-      280 |   0.1849 |  3.528650e+02 |   +3.11% |  2.76e-07 |      
-      290 |   0.1413 |  3.630890e+02 |   +2.90% |  4.06e-07 |      
-      300 |   0.1007 |  3.725120e+02 |   +2.60% |  5.98e-07 |      
-      301 |   0.0975 |  3.756980e+02 |          |  6.47e-07 |      
+        0 |   0.5184 |  1.785610e+02 |   +0.00% |  3.36e-13 |      
+       10 |   0.5101 |  1.783370e+02 |   -0.13% |  5.48e-13 |      
+       20 |   0.5109 |  1.781210e+02 |   -0.12% |  8.92e-13 |      
+       30 |   0.5098 |  1.782520e+02 |   +0.07% |  1.45e-12 |      
+       40 |   0.5102 |  1.782030e+02 |   -0.03% |  2.37e-12 |      
+       50 |   0.5101 |  1.782090e+02 |   +0.00% |  3.86e-12 |      
+       60 |   0.5101 |  1.782210e+02 |   +0.01% |  6.28e-12 |      
+       70 |   0.5101 |  1.782160e+02 |   -0.00% |  1.02e-11 |      
+       80 |   0.5100 |  1.782130e+02 |   -0.00% |  1.67e-11 |      
+       90 |   0.5100 |  1.782260e+02 |   +0.01% |  2.72e-11 |      
+      100 |   0.5099 |  1.782370e+02 |   +0.01% |  4.42e-11 |      
+      110 |   0.5098 |  1.782490e+02 |   +0.01% |  7.20e-11 |      
+      120 |   0.5097 |  1.782620e+02 |   +0.01% |  1.17e-10 |      
+      130 |   0.5096 |  1.782710e+02 |   +0.01% |  1.91e-10 |      
+      140 |   0.5094 |  1.783120e+02 |   +0.02% |  3.11e-10 |      
+      150 |   0.5093 |  1.783480e+02 |   +0.02% |  5.07e-10 |      
+      160 |   0.5091 |  1.784150e+02 |   +0.04% |  8.26e-10 |      
+      170 |   0.5092 |  1.785040e+02 |   +0.05% |  1.35e-09 |      
+      180 |   0.5083 |  1.788110e+02 |   +0.17% |  2.19e-09 |      
+      190 |   0.5067 |  1.793580e+02 |   +0.31% |  3.57e-09 |      
+      200 |   0.5053 |  1.802070e+02 |   +0.47% |  5.82e-09 |      
+      210 |   0.5045 |  1.859330e+02 |   +3.18% |  9.47e-09 |      
+      220 |   0.5031 |  1.995890e+02 |   +7.34% |  1.54e-08 |      
+      230 |   0.4757 |  2.210170e+02 |  +10.74% |  2.51e-08 |      
+      240 |   0.3945 |  2.318870e+02 |   +4.92% |  4.09e-08 |      
+      250 |   0.3325 |  2.466450e+02 |   +6.36% |  6.54e-08 |      
+      260 |   0.2818 |  2.540160e+02 |   +2.99% |  9.63e-08 |      
+      270 |   0.2321 |  2.611920e+02 |   +2.83% |  1.42e-07 |      
+      280 |   0.1779 |  2.682470e+02 |   +2.70% |  2.09e-07 |      
+      290 |   0.1357 |  2.768590e+02 |   +3.21% |  3.08e-07 |      
+      300 |   0.1032 |  2.844970e+02 |   +2.76% |  4.53e-07 |      
+      302 |   0.0974 |  2.859010e+02 |          |  5.09e-07 |      
 ---------------------------------------------------------------
-[INFO GPL-1001] Global placement finished at iteration 301
+[INFO GPL-1001] Global placement finished at iteration 302
 [INFO GPL-1002] Placed Cell Area              311.6433
-[INFO GPL-1003] Available Free Area          6160.9088
-[INFO GPL-1004] Minimum Feasible Density        0.0600 (cell_area / free_area)
+[INFO GPL-1003] Available Free Area          1138.5920
+[INFO GPL-1004] Minimum Feasible Density        0.2800 (cell_area / free_area)
 [INFO GPL-1006]   Suggested Target Densities:
-[INFO GPL-1007]     - For 90% usage of free space: 0.0562
-[INFO GPL-1008]     - For 80% usage of free space: 0.0632
-[INFO GPL-1009]     - For 50% usage of free space: 0.1012
+[INFO GPL-1007]     - For 90% usage of free space: 0.3041
+[INFO GPL-1008]     - For 80% usage of free space: 0.3421
+[INFO GPL-1009]     - For 50% usage of free space: 0.5474
 [INFO GPL-1014] Final placement area: 311.64 (+0.00%)
 [WARNING EST-0018] wire capacitance for corner default is zero. Use the set_wire_rc command to set wire resistance and capacitance.
 Startpoint: rst_n (input port clocked by clk)
@@ -107,18 +107,18 @@ Path Type: max
            0.00    0.00    2.00 ^ _23_/RESET_B (sky130_fd_sc_hd__dfrtp_1)
                            2.00   data arrival time
 
-           0.00  100.00  100.00   clock clk (rise edge)
-                   0.00  100.00   clock network delay (ideal)
-                  -0.25   99.75   clock uncertainty
-                   0.00   99.75   clock reconvergence pessimism
-                          99.75 ^ _23_/CLK (sky130_fd_sc_hd__dfrtp_1)
-                   0.23   99.98   library recovery time
-                          99.98   data required time
+           0.00    5.00    5.00   clock clk (rise edge)
+                   0.00    5.00   clock network delay (ideal)
+                  -0.25    4.75   clock uncertainty
+                   0.00    4.75   clock reconvergence pessimism
+                           4.75 ^ _23_/CLK (sky130_fd_sc_hd__dfrtp_1)
+                   0.23    4.98   library recovery time
+                           4.98   data required time
 -----------------------------------------------------------------------
-                          99.98   data required time
+                           4.98   data required time
                           -2.00   data arrival time
 -----------------------------------------------------------------------
-                          97.98   slack (MET)
+                           2.98   slack (MET)
 
 
 Startpoint: _23_ (rising edge-triggered flip-flop clocked by clk)
@@ -138,17 +138,17 @@ Path Type: max
            0.04    0.00    0.90 ^ tick (out)
                            0.90   data arrival time
 
-           0.00  100.00  100.00   clock clk (rise edge)
-                   0.00  100.00   clock network delay (ideal)
-                  -0.25   99.75   clock uncertainty
-                   0.00   99.75   clock reconvergence pessimism
-                  -2.00   97.75   output external delay
-                          97.75   data required time
+           0.00    5.00    5.00   clock clk (rise edge)
+                   0.00    5.00   clock network delay (ideal)
+                  -0.25    4.75   clock uncertainty
+                   0.00    4.75   clock reconvergence pessimism
+                  -2.00    2.75   output external delay
+                           2.75   data required time
 -----------------------------------------------------------------------
-                          97.75   data required time
+                           2.75   data required time
                           -0.90   data arrival time
 -----------------------------------------------------------------------
-                          96.85   slack (MET)
+                           1.85   slack (MET)
 
 
 [INFO DPL-0005] Max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
@@ -163,11 +163,11 @@ Total Placement Failures:          0
 ---------------------------------------
 Placement Analysis
 ---------------------------------
-total displacement        121.0 u
-average displacement        1.0 u
-max displacement            8.1 u
-original HPWL             376.4 u
-legalized HPWL            514.9 u
-delta HPWL                   37 %
+total displacement        120.1 u
+average displacement        3.2 u
+max displacement            8.7 u
+original HPWL             287.4 u
+legalized HPWL            448.6 u
+delta HPWL                   56 %
 
-Design area 415 um^2 7% utilization.
+Design area 317 um^2 27% utilization.

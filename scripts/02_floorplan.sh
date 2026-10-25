@@ -27,8 +27,8 @@ read_sdc $::env(SDC)
 # 裸 die：site=unithd（sky130_fd_sc_hd 的行高）
 initialize_floorplan \
   -site unithd \
-  -die_area {0 0 100 100} \
-  -core_area {10 10 90 90}
+  -die_area {0 0 40 40} \
+  -core_area {2 2 38 38}
 
 # 必须先有轨道，place_pins 才有地方放
 make_tracks

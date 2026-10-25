@@ -31,9 +31,14 @@ check_antennas -verbose
 estimate_parasitics -global_routing
 report_checks -path_delay max -fields {slew capacitance} -format full_clock_expanded
 
-# 填充单元：把空 site 用 fill cell 填满，保证密度/平坦化
+# 填充单元：decap（电源去耦）+ fill（平坦化），填满空 site
 # 填完重新 global_connect，否则新实例的电源脚不接网格
 filler_placement -prefix FILLER_ {
+  sky130_fd_sc_hd__decap_12
+  sky130_fd_sc_hd__decap_8
+  sky130_fd_sc_hd__decap_6
+  sky130_fd_sc_hd__decap_4
+  sky130_fd_sc_hd__decap_3
   sky130_fd_sc_hd__fill_8
   sky130_fd_sc_hd__fill_4
   sky130_fd_sc_hd__fill_2

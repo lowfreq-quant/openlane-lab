@@ -1,0 +1,104 @@
+Netgen 1.5.133 compiled on Thu Dec  1 22:32:11 UTC 2022
+Warning: netgen command 'global' use fully-qualified name '::netgen::global'
+Reading netlist file /path/to/openlane-lab/runs/17_lvs_device/counter_dev_ext_fix.spice
+Call to undefined subcircuit sky130_fd_pr__pfet_01v8_hvt
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_pr__nfet_01v8
+Creating placeholder cell definition.
+Reading netlist file /path/to/openlane-lab/runs/17_lvs_device/counter_golden_dev.spice
+Call to undefined subcircuit sky130_fd_sc_hd__nor2_2
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_sc_hd__nand2_2
+Creating placeholder cell definition.
+Reading setup file /path/to/openlane-lab/runs/17_lvs_device/lvs_setup.tcl
+No property w found for device short
+No property l found for device short
+Model sky130_fd_pr__nfet_01v8 pin 1 == 3
+No property mult found for device sky130_fd_pr__nfet_01v8
+No property sa found for device sky130_fd_pr__nfet_01v8
+No property sb found for device sky130_fd_pr__nfet_01v8
+No property sd found for device sky130_fd_pr__nfet_01v8
+No property nf found for device sky130_fd_pr__nfet_01v8
+No property nrd found for device sky130_fd_pr__nfet_01v8
+No property nrs found for device sky130_fd_pr__nfet_01v8
+No property area found for device sky130_fd_pr__nfet_01v8
+No property perim found for device sky130_fd_pr__nfet_01v8
+No property topography found for device sky130_fd_pr__nfet_01v8
+Model sky130_fd_pr__pfet_01v8_hvt pin 1 == 3
+No property mult found for device sky130_fd_pr__pfet_01v8_hvt
+No property sa found for device sky130_fd_pr__pfet_01v8_hvt
+No property sb found for device sky130_fd_pr__pfet_01v8_hvt
+No property sd found for device sky130_fd_pr__pfet_01v8_hvt
+No property nf found for device sky130_fd_pr__pfet_01v8_hvt
+No property nrd found for device sky130_fd_pr__pfet_01v8_hvt
+No property nrs found for device sky130_fd_pr__pfet_01v8_hvt
+No property area found for device sky130_fd_pr__pfet_01v8_hvt
+No property perim found for device sky130_fd_pr__pfet_01v8_hvt
+No property topography found for device sky130_fd_pr__pfet_01v8_hvt
+Model sky130_fd_pr__nfet_01v8 pin 1 == 3
+No property as found for device sky130_fd_pr__nfet_01v8
+No property ad found for device sky130_fd_pr__nfet_01v8
+No property ps found for device sky130_fd_pr__nfet_01v8
+No property pd found for device sky130_fd_pr__nfet_01v8
+No property mult found for device sky130_fd_pr__nfet_01v8
+No property sa found for device sky130_fd_pr__nfet_01v8
+No property sb found for device sky130_fd_pr__nfet_01v8
+No property sd found for device sky130_fd_pr__nfet_01v8
+No property nf found for device sky130_fd_pr__nfet_01v8
+No property nrd found for device sky130_fd_pr__nfet_01v8
+No property nrs found for device sky130_fd_pr__nfet_01v8
+No property area found for device sky130_fd_pr__nfet_01v8
+No property perim found for device sky130_fd_pr__nfet_01v8
+No property topography found for device sky130_fd_pr__nfet_01v8
+Model sky130_fd_pr__pfet_01v8_hvt pin 1 == 3
+No property as found for device sky130_fd_pr__pfet_01v8_hvt
+No property ad found for device sky130_fd_pr__pfet_01v8_hvt
+No property ps found for device sky130_fd_pr__pfet_01v8_hvt
+No property pd found for device sky130_fd_pr__pfet_01v8_hvt
+No property mult found for device sky130_fd_pr__pfet_01v8_hvt
+No property sa found for device sky130_fd_pr__pfet_01v8_hvt
+No property sb found for device sky130_fd_pr__pfet_01v8_hvt
+No property sd found for device sky130_fd_pr__pfet_01v8_hvt
+No property nf found for device sky130_fd_pr__pfet_01v8_hvt
+No property nrd found for device sky130_fd_pr__pfet_01v8_hvt
+No property nrs found for device sky130_fd_pr__pfet_01v8_hvt
+No property area found for device sky130_fd_pr__pfet_01v8_hvt
+No property perim found for device sky130_fd_pr__pfet_01v8_hvt
+No property topography found for device sky130_fd_pr__pfet_01v8_hvt
+Device classes sky130_fd_pr__nfet_01v8 and nfet_01v8 are equivalent.
+Matching pins of sky130_fd_pr__nfet_01v8 in circuit 1 and nfet_01v8 in circuit 2
+Device classes sky130_fd_pr__pfet_01v8_hvt and pfet_01v8_hvt are equivalent.
+Matching pins of sky130_fd_pr__pfet_01v8_hvt in circuit 1 and pfet_01v8_hvt in circuit 2
+Comparison output logged to file /path/to/openlane-lab/runs/17_lvs_device/lvs_dev.out
+Logging to file "/path/to/openlane-lab/runs/17_lvs_device/lvs_dev.out" enabled
+Contents of circuit 1:  Circuit: 'counter'
+Circuit counter contains 347 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances: 173
+  Class: sky130_fd_pr__pfet_01v8_hvt instances: 174
+Circuit contains 177 nets.
+Contents of circuit 2:  Circuit: 'counter'
+Circuit counter contains 346 device instances.
+  Class: pfet_01v8_hvt         instances: 173
+  Class: nfet_01v8             instances: 173
+Circuit contains 177 nets, and 1 disconnected pin.
+
+Circuit was modified by parallel/series device merging.
+New circuit summary:
+
+Contents of circuit 1:  Circuit: 'counter'
+Circuit counter contains 346 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances: 173
+  Class: sky130_fd_pr__pfet_01v8_hvt instances: 173
+Circuit contains 177 nets.
+Contents of circuit 2:  Circuit: 'counter'
+Circuit counter contains 346 device instances.
+  Class: pfet_01v8_hvt         instances: 173
+  Class: nfet_01v8             instances: 173
+Circuit contains 177 nets, and 1 disconnected pin.
+
+Circuit 1 contains 346 devices, Circuit 2 contains 346 devices.
+Circuit 1 contains 177 nets,    Circuit 2 contains 177 nets.
+
+Result: Netlists do not match.
+Logging to file "/path/to/openlane-lab/runs/17_lvs_device/lvs_dev.out" disabled
+LVS Done.

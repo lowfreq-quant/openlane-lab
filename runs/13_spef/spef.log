@@ -1,0 +1,206 @@
+OpenROAD 26Q2 
+Features included (+) or not (-): +GPU +GUI +Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0227] LEF file: /path/to/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef, created 13 layers, 25 vias, 441 library cells
+[WARNING STA-1171] /home/user/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib line 23, default_fanout_load is 0.0.
+PDK loaded from /home/user/.volare/sky130A  (merged LEF: /path/to/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef)
+======== 1) estimate_parasitics (baseline) ========
+wns max 0.00
+WNS_EST 
+tns max 0.00
+TNS_EST 
+Startpoint: rst_n (input port clocked by clk)
+Endpoint: _25_ (recovery check against rising-edge clock clk)
+Path Group: asynchronous
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   2.000    2.000 ^ input external delay
+   0.000    2.000 ^ rst_n (in)
+   0.001    2.001 ^ _25_/RESET_B (sky130_fd_sc_hd__dfrtp_1)
+            2.001   data arrival time
+
+   8.000    8.000   clock clk (rise edge)
+   0.000    8.000   clock network delay (ideal)
+  -0.250    7.750   clock uncertainty
+   0.000    7.750   clock reconvergence pessimism
+            7.750 ^ _25_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.228    7.978   library recovery time
+            7.978   data required time
+-----------------------------------------------------------
+            7.978   data required time
+           -2.001   data arrival time
+-----------------------------------------------------------
+            5.977   slack (MET)
+
+
+Startpoint: _23_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: tick (output port clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ _23_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.394    0.394 ^ _23_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.304    0.698 ^ _10_/X (sky130_fd_sc_hd__and4_1)
+   0.187    0.886 v _12_/Y (sky130_fd_sc_hd__nand4_1)
+   0.113    0.999 ^ _13_/X (sky130_fd_sc_hd__lpflow_isobufsrc_1)
+   0.000    0.999 ^ tick (out)
+            0.999   data arrival time
+
+   8.000    8.000   clock clk (rise edge)
+   0.000    8.000   clock network delay (ideal)
+  -0.250    7.750   clock uncertainty
+   0.000    7.750   clock reconvergence pessimism
+  -2.000    5.750   output external delay
+            5.750   data required time
+-----------------------------------------------------------
+            5.750   data required time
+           -0.999   data arrival time
+-----------------------------------------------------------
+            4.751   slack (MET)
+
+
+======== 2) extract_parasitics (OpenRCX) ========
+[INFO RCX-0435] Reading extraction model file /home/user/.volare/sky130A/libs.tech/openlane/rcx_rules.info ...
+[INFO RCX-0434] Defined process_corner MinMax0 with ext_model_index 0 (using extRulesFile defaults)
+[INFO RCX-0436] RC segment generation counter (max_merge_res 50.0) ...
+[INFO RCX-0040] Final 118 rc segments
+[INFO RCX-0439] Coupling Cap extraction counter ...
+[INFO RCX-0440] Coupling threshhold is 0.1000 fF, coupling capacitance less than 0.1000 fF will be grounded.
+[INFO RCX-0442] 60% of 276 wires extracted
+[INFO RCX-0442] 100% of 276 wires extracted
+[INFO RCX-0045] Extract 28 nets, 146 rsegs, 146 caps, 172 ccs
+EXTRACT_OK
+[INFO RCX-0443] 28 nets finished
+SPEF_WRITTEN
+======== 3) STA with SPEF ========
+SPEF_LOADED
+wns max 0.00
+WNS_SPEF 
+tns max 0.00
+TNS_SPEF 
+Startpoint: rst_n (input port clocked by clk)
+Endpoint: _26_ (recovery check against rising-edge clock clk)
+Path Group: asynchronous
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   2.000    2.000 ^ input external delay
+   0.000    2.000 ^ rst_n (in)
+   0.001    2.001 ^ _26_/RESET_B (sky130_fd_sc_hd__dfrtp_1)
+            2.001   data arrival time
+
+   8.000    8.000   clock clk (rise edge)
+   0.000    8.000   clock network delay (ideal)
+  -0.250    7.750   clock uncertainty
+   0.000    7.750   clock reconvergence pessimism
+            7.750 ^ _26_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.228    7.978   library recovery time
+            7.978   data required time
+-----------------------------------------------------------
+            7.978   data required time
+           -2.001   data arrival time
+-----------------------------------------------------------
+            5.977   slack (MET)
+
+
+Startpoint: _23_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: tick (output port clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ _23_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.406    0.406 ^ _23_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.332    0.739 ^ _10_/X (sky130_fd_sc_hd__and4_1)
+   0.210    0.948 v _12_/Y (sky130_fd_sc_hd__nand4_1)
+   0.123    1.072 ^ _13_/X (sky130_fd_sc_hd__lpflow_isobufsrc_1)
+   0.000    1.072 ^ tick (out)
+            1.072   data arrival time
+
+   8.000    8.000   clock clk (rise edge)
+   0.000    8.000   clock network delay (ideal)
+  -0.250    7.750   clock uncertainty
+   0.000    7.750   clock reconvergence pessimism
+  -2.000    5.750   output external delay
+            5.750   data required time
+-----------------------------------------------------------
+            5.750   data required time
+           -1.072   data arrival time
+-----------------------------------------------------------
+            4.678   slack (MET)
+
+
+Startpoint: rst_n (input port clocked by clk)
+Endpoint: _29_ (removal check against rising-edge clock clk)
+Path Group: asynchronous
+Path Type: min
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   2.000    2.000 ^ input external delay
+   0.000    2.000 ^ rst_n (in)
+   0.000    2.000 ^ _29_/RESET_B (sky130_fd_sc_hd__dfrtp_1)
+            2.000   data arrival time
+
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.250    0.250   clock uncertainty
+   0.000    0.250   clock reconvergence pessimism
+            0.250 ^ _29_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.296    0.546   library removal time
+            0.546   data required time
+-----------------------------------------------------------
+            0.546   data required time
+           -2.000   data arrival time
+-----------------------------------------------------------
+            1.454   slack (MET)
+
+
+Startpoint: _30_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: _30_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: min
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ _30_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.342    0.342 ^ _30_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.086    0.428 v _22_/Y (sky130_fd_sc_hd__xnor2_1)
+   0.000    0.428 v _30_/D (sky130_fd_sc_hd__dfrtp_1)
+            0.428   data arrival time
+
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.250    0.250   clock uncertainty
+   0.000    0.250   clock reconvergence pessimism
+            0.250 ^ _30_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.057    0.193   library hold time
+            0.193   data required time
+-----------------------------------------------------------
+            0.193   data required time
+           -0.428   data arrival time
+-----------------------------------------------------------
+            0.235   slack (MET)
+
+
+Found 0 unannotated drivers.
+Found 0 partially unannotated drivers.

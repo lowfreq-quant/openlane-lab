@@ -6,8 +6,8 @@
 #   bash scripts/06_signoff.sh        # 生成 runs/06_signoff/counter.sdf
 #   bash scripts/dump_route_netlist.sh
 #
-# 说明：sky130 的 PDK 不带 OpenRCX 模型，SDF 里的连线延迟来自
-# `estimate_parasitics -global_routing` 的估算，不是 3D 提取（见 README 局限）。
+# 说明：若存在 runs/13_spef/counter.spef，06_signoff 会用 read_spef 生成 SDF；
+# 否则退回 estimate_parasitics 估算（见 HANDOFF §10）。
 set -euo pipefail
 source "$(dirname "$0")/env.sh"
 

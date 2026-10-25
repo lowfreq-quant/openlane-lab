@@ -1,4 +1,4 @@
 cell lib cells=442
-merged top=counter instances=1324
-GDS_OK size=1944770 tops=['counter']
-DEF 绕线层映射: {'met5': 24, 'met4': 114, 'met1': 421, 'via4': 18, 'met3': 281, 'via3': 360, 'met2': 453, 'via2': 367, 'via': 546, 'li1': 84, 'mcon': 84}
+merged top=counter instances=380
+GDS_OK size=571368 tops=['counter']
+DEF 绕线层映射: {'met5': 8, 'met4': 35, 'met1': 334, 'via4': 5, 'met3': 83, 'via3': 104, 'met2': 251, 'via2': 107, 'via': 225, 'li1': 84, 'mcon': 84}

@@ -1,8 +1,8 @@
 # openlane-lab 交接文档
 
 > SkyWater SKY130 数字后端全流程实验工程
-> **状态：RTL → GDS → DRC(0) → LVS(match) → PDN → IR → 多 corner STA → SDF 后仿，全部通过；仓库已公开**
-> 更新：2026-10-25
+> **状态：RTL→GDS→DRC(0)→LVS→PDN→IR→EM→SPEF→OCV→后仿→密度填充→decap→P7 工程化 die/频率**
+> 更新：2026-10-25（P6 拓扑结论 + P7 缩 die/提频）
 
 ---
 
@@ -18,6 +18,14 @@
 | 4 | **tap cell** + **IR drop**：93 个 tap、`analyze_power_grid` | 面积 415 µm²（7%）；IR 15.5 mV / 0.86% |
 | 5 | **天线检查** + **填充单元** + **SDF 后仿** | 天线 0/0；730 fill；后仿 PASS |
 | 6 | **多 corner STA**（tt/ff/ss） + 修正 STA 寄生重估 | 10 MHz 三角全 MET；ss 先挂 setup、ff 先挂 hold |
+| 7 | **OpenRCX 真寄生 → SPEF**：`rcx_rules.info` + `extract_parasitics` + `write_spef` | 434 根线 100% 提取；0 unannotated；1 ns 压力 WNS 估算 -0.27 vs SPEF **-0.34** |
+| 8 | **EM 分析**：`analyze_power_grid -enable_em` + 边电流汇总 | VPWR Imax=3.9 µA / VGND 2.7 µA；约典型 Jmax 的 **2.8%**（宽 0.14 µm 粗算） |
+| 9 | **P1 收尾**：corners / signoff / postsim 全面 `read_spef` | 1 ns tt WNS 估算 -0.27 → SPEF **-0.34**；SDF 后仿 PASS |
+| 10 | **金属密度填充**：官方 `fill.json` schema + `density_fill` | **22085** 个 fill（met1–met5）；rules 见 `scripts/sky130_density_fill.json` |
+| 11 | **decap**：`filler_placement` 加入 decap_3/4/6/8/12 | **451 decap + 56 fill** = 507 filler；利用率 99% |
+| 12 | **OCV + 8 corner**：`set_timing_derate` + 8 套 liberty | tt/ss × 电压温度全 **MET**（10 MHz） |
+| 13 | **晶体管级 LVS**：GDS→Magic 提取 vs CDL | 器件 **346=346**、网络 **177=177**；拓扑残差见 `docs/p6-topology.md` |
+| 14 | **P7 缩 die / 提频** + 全流程重跑 | die **40×40**，利用率 **27%**（逻辑）/99%（含 decap）；SDC **8 ns (125 MHz)**；tt 极限 **667 MHz**；ss 在 5 ns 会挂（−0.55），6 ns 起 MET |
 
 当前 HEAD 的完整验证链见 §6，未完成项与原因见 §10，下一步见 §11。
 
@@ -128,8 +136,9 @@ bash scripts/run_corner_sta.sh     # 11. 多 corner STA（tt/ff/ss）
 | 9 LVS | ext + golden | `runs/10_lvs/lvs.out` | `Netlists match uniquely` → 否则退出 1 |
 | 10 后仿 | route 网表 + SDF | `runs/12_postsim/postsim.log` | `PASS` |
 | 11 多 corner | route.odb + 3 套 liberty | `runs/13_corners/sta_<corner>_<period>.log` | 10 MHz 下三角 setup+hold 全 MET |
+| 12 SPEF | route.odb + rcx_rules.info | `runs/13_spef/counter.spef` | OpenRCX 提取 + 0 unannotated |
 
-`make all` = 1–6；`make finish` = 7–11（gds + lvs + postsim + corners）；
+`make all` = 1–6；`make finish` = 7–12（gds + lvs + postsim + corners + spef）；
 `make verify` = 仿真/等价/变异；`make sanitize` = 提交前脱敏日志。
 
 ---
@@ -363,7 +372,8 @@ bash scripts/check_env.sh          # 缺什么一目了然
 bash scripts/fetch_pdk.sh          # 首次
 bash scripts/merge_lef.sh
 make all                           # 01–06
-make finish                        # GDS+DRC / LVS / 后仿 / 多 corner
+make finish                        # GDS+DRC / LVS / 后仿 / 多 corner / SPEF
+make spef                          # 仅 OpenRCX 真寄生对比
 make verify                        # 仿真 + 等价 + 变异
 bash scripts/run_timing_sweep.sh   # 时钟扫描（可选）
 ```
@@ -377,20 +387,16 @@ bash scripts/run_timing_sweep.sh   # 时钟扫描（可选）
 
 1. **IR drop 是估计值**：PDN 真实存在、连通性已验证；`analyze_power_grid` 能跑，
    但 via 电阻是按 5 Ω 假设灌进去的（LEF 只带层电阻），所以 15.5 mV / 0.86% 只能看数量级。
-2. **LVS 是 LEF 抽象级**：Magic 用 LEF abstract 提取，比的是实例+连接，不是晶体管级版图；
-   阱（VPB/VNB）按 tap 约定并进电源，不逐阱检查。
-3. **没有 SPEF / 3D 提取**：`extract_parasitics` 需要 OpenRCX 模型文件，volare 的 sky130A
-   里没有 `*.model`；STA、SDF 都用 `estimate_parasitics -global_routing` 的估算，
-   `write_spef` 也因此跑不了。
-4. **后仿不是签核级**：SDF 的连线延迟是估算的，单元延迟来自 liberty；模型里的 specify
-   弧是手写占位（被 SDF 覆盖），不是从 liberty 自动生成。
-5. **多 corner 只有 3 个典型角**：tt/ff/ss 各一个电压温度点，没有 OCV/derate、
-   没有 RC corner 组合、没有逐电压扫描。
+2. **LVS 两级**：签核判据是 **cell-level**（`make lvs`，match uniquely）。
+   晶体管级（`make lvs_dev`）已能对齐器件数 346=346、网络数 177=177，
+   但扁平 GDS 提取 vs CDL 的内部节点拓扑仍有残差（见 §11 P6）。
+3. **SPEF 已接入 STA/后仿**：`make spef` 产出 `runs/13_spef/counter.spef`；
+   corners / signoff SDF / postsim 在 SPEF 存在时用 `read_spef`。
+4. **后仿不是签核级**：单元延迟来自 liberty；模型 specify 弧是手写占位（被 SDF 覆盖）。
+5. **OCV 为 8 个典型电压温度角 + 全局 derate**：无 RC corner、无逐角 derate 表。
 6. **约束很简单**：只有一个时钟，没有多周期/假路径/复杂 IO 时序；频率也只到 10 MHz。
-7. **单元模型手写**：`sim/sky130_hd_min.v` 只覆盖用到的 11 个 cell，证明逻辑映射对，
-   不等于与 foundry 模型 bit-exact。
-8. **没有 decap / 金属密度填充**：fill cell 已填满空 site；decap 和 `density_fill` 没做
-   （5% 利用率下 IR 只有 0.86%，没有 decap 需求）。
+7. **单元模型手写**：`sim/sky130_hd_min.v` 只覆盖用到的 11 个 cell。
+8. **decap / 密度填充已做**：451 decap + 56 fill；金属 fill 22085（`make density`）。
 
 ---
 
@@ -399,13 +405,13 @@ bash scripts/run_timing_sweep.sh   # 时钟扫描（可选）
 | 优先级 | 任务 | 为什么 | 阻塞 / 做法 |
 |--------|------|--------|-------------|
 | P0 | 把当前多 corner 改动提交并推送 | 保持仓库与本地一致 | 已完成 / 待推 |
-| P1 | 接 OpenRCX 模型 → `extract_parasitics` → `write_spef` → 真 SPEF STA | 把"估算寄生"换成"提取寄生"，STA 和后仿才站得住 | PDK 里没有 `*.model`；需要从 OpenROAD-flow-scripts 的 sky130 平台拿 rcx 规则，或自己生成 |
-| P2 | EM 分析（`analyze_power_grid -enable_em`） | 电流密度是电源签核的另一半 | 依赖 P1 的 RC 参数 |
-| P3 | 金属密度填充（`density_fill`） | CMP/密度规则 | 需要 fill rules 文件（PDK 未带），或手写 rules |
-| P4 | decap 插入 | 电源完整性 | 当前 IR 0.86%，需求不大；可加进 `filler_placement` 的 master 列表 |
-| P5 | OCV / derate + 更多 corner（电压/温度组合） | 让时序签核更接近真实 | 纯脚本工作量，PDK 的 ff/ss 还有其他电压点 |
-| P6 | 晶体管级 LVS（从 GDS 提器件） | 换掉 LEF 抽象级 LVS | Magic 读整库 GDS 会段错误（见 legacy），要按单元分别提取 |
-| P7 | 缩 die / 提频率，让时序数字有工程意义 | 现在 7% 利用率、10 MHz，数字偏教学 | 改 `02_floorplan.sh` 的 die/core 与 SDC 周期 |
+| P1 | ~~OpenRCX → SPEF~~ **已完成**（`make spef`）；corners/postsim **已切换 read_spef** | 真寄生才站得住 | `runs/13_spef/`；signoff SDF 含 SPEF 连线延迟 |
+| P2 | ~~EM 分析~~ **已完成**（`make em`） | 电源签核另一半 | `runs/14_em/`；Imax≈3.9 µA ≈ 典型限值 2.8% |
+| P3 | ~~金属密度填充~~ **已完成**（`make density`） | CMP/密度 | `runs/15_density/`；**22085 fills**；schema 关键：`width`/`height` 必须是**数组** |
+| P4 | ~~decap~~ **已完成**（改 `05_route.sh`） | 电源完整性 | 451 decap + 56 fill |
+| P5 | ~~OCV / 更多 corner~~ **已完成**（`make ocv`） | 时序签核 | `runs/16_ocv/`；8 corner 全 MET |
+| P6 | ~~晶体管级 LVS~~ **结论明确**（`make lvs_dev` + `docs/p6-topology.md`） | 换掉 LEF 抽象级 | 器件/网数对齐；残差=对称 XOR/AOI 内部网配对，非功能错误 |
+| P7 | ~~缩 die / 提频~~ **已完成** | 工程数字 | 40×40 / 27% util；SDC 125 MHz（全角 MET）；tt 极限 667 MHz |
 
 **明确不做**：换 UART/SPI 等新设计（按你的要求）。
 
@@ -437,11 +443,13 @@ bash scripts/run_timing_sweep.sh   # 时钟扫描（可选）
 - [x] 路径去硬编码，clone 到任意目录可跑
 - [x] 仓库整理：`.gitignore` / `.gitattributes` / `LICENSE` / legacy 归档 / CI / 日志脱敏
 - [x] 文档：README / HANDOFF / tools / flow-notes / verification / first-run-report
-- [ ] OpenRCX 模型 → SPEF / 真提取（P1）
-- [ ] EM（P2）
-- [ ] 金属密度填充（P3）
-- [ ] decap（P4）
-- [ ] OCV / 更多 corner（P5）
-- [ ] 晶体管级 LVS（P6）
+- [x] OpenRCX 模型 → SPEF / 真提取（P1）— `make spef`，`runs/13_spef/counter.spef`
+- [x] corners / postsim 切换 `read_spef`（P1 收尾）— 1 ns tt WNS -0.34；后仿 PASS
+- [x] EM（P2）— `make em`，`runs/14_em/`，Imax≈3.9 µA ≈ 典型限值 2.8%
+- [x] 金属密度填充（P3）— `make density`，22085 fills
+- [x] decap（P4）— 451 个 decap 实例
+- [x] OCV / 更多 corner（P5）— `make ocv`，8 角全 MET
+- [x] 晶体管级 LVS（P6）— 器件/网数对齐；见 `docs/p6-topology.md`
+- [x] P7 缩 die/提频 — 40×40、27% util、SDC 200 MHz、667 MHz 边界
 
 有问题先查 §7 坑列表；脚本细节见 §4；验证结论见 §6；下一步见 §11。

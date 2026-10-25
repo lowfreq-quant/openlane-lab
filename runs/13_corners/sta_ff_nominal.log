@@ -7,8 +7,8 @@ Components of this program may be licensed under more restrictive licenses which
 SLACK_MAX_BEGIN
 Group                                  Slack
 --------------------------------------------
-asynchronous                           97.89
-clk                                    97.09
+asynchronous                            5.89
+clk                                     5.09
 
 SLACK_MAX_END
 SLACK_MIN_BEGIN

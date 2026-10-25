@@ -22,8 +22,14 @@ if command -v openroad >/dev/null 2>&1; then
 source $::env(SCRIPTS_DIR)/common.tcl
 read_db $::env(RT)/route.odb
 read_sdc $::env(SDC)
-# 用布线后的估算寄生（没有 OpenRCX 模型，做不了 3D 提取，见 README）
-estimate_parasitics -global_routing
+# 优先真寄生 SPEF；没有再退回估算
+if {[file exists $::env(SPEF)]} {
+  read_spef $::env(SPEF)
+  puts "PARASITICS: SPEF $::env(SPEF)"
+} else {
+  estimate_parasitics -global_routing
+  puts "PARASITICS: estimate_parasitics (no SPEF)"
+}
 report_checks -path_delay max -fields {slew capacitance} -format full_clock_expanded
 report_checks -path_delay min
 report_clock_skew
@@ -33,6 +39,7 @@ report_design_area
 # 后仿要用的 SDF（含单元/连线延迟）
 write_sdf $::env(OUT)/counter.sdf
 EOF
+  SPEF="$ROOT/runs/13_spef/counter.spef" \
   SCRIPTS_DIR="$ROOT/scripts" RT="$RT" SDC="$SDC" OUT="$OUT" \
     openroad -no_init -exit "$OUT/sta.tcl" 2>&1 | tee "$OUT/sta.log"
   if [[ -s "$OUT/counter.sdf" ]]; then

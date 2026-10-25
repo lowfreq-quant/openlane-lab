@@ -45,18 +45,25 @@ EOF
 
 run_sta() {   # $1=corner $2=sdc $3=tag $4=extra reports
   local c=$1 sdc=$2 tag=$3 extra=$4
+  local spef="$ROOT/runs/13_spef/counter.spef"
+  local parasitics
+  if [[ -f "$spef" ]]; then
+    parasitics="read_spef $spef"
+  else
+    parasitics="estimate_parasitics -global_routing"
+  fi
   cat > "$OUT/sta.tcl" <<EOF
 read_lef \$::env(MERGED_LEF)
 read_liberty ${LIB[$c]}
 read_db $ROOT_RT/route.odb
 read_sdc $sdc
-estimate_parasitics -global_routing
+$parasitics
 $extra
 EOF
   MERGED_LEF="$MERGED_LEF" openroad -no_init -exit "$OUT/sta.tcl" > "$OUT/sta_${c}_${tag}.log" 2>&1
 }
 
-printf '== 标称签核（真实 SDC, 10 MHz）==\n'
+printf '== 标称签核（真实 SDC, constraints/counter.sdc）==\n'
 printf '%-5s %-9s %-10s %-9s %-10s %s\n' "corner" "setup WNS" "setup slack" "hold WNS" "hold slack" "结论"
 fail=0
 for c in $CORNERS; do

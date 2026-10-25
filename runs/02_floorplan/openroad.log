@@ -5,23 +5,24 @@ Components of this program may be licensed under more restrictive licenses which
 [INFO ODB-0227] LEF file: /path/to/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef, created 13 layers, 25 vias, 441 library cells
 [WARNING STA-1171] /home/user/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib line 23, default_fanout_load is 0.0.
 PDK loaded from /home/user/.volare/sky130A  (merged LEF: /path/to/openlane-lab/runs/lef/sky130_fd_sc_hd_merged.lef)
-[WARNING IFP-0028] Core area lower left (10.000, 10.000) snapped to (10.120, 10.880).
-[INFO IFP-0001] Added 29 rows of 173 site unithd.
-[INFO IFP-0100] Die BBox:  (  0.000  0.000 ) ( 100.000 100.000 ) um
-[INFO IFP-0101] Core BBox: ( 10.120 10.880 ) ( 89.700 89.760 ) um
-[INFO IFP-0102] Core area:                         6277.270 um^2
+[WARNING IFP-0028] Core area lower left (2.000, 2.000) snapped to (2.300, 2.720).
+[INFO IFP-0001] Added 12 rows of 77 site unithd.
+[INFO IFP-0100] Die BBox:  (  0.000  0.000 ) ( 40.000 40.000 ) um
+[INFO IFP-0101] Core BBox: (  2.300  2.720 ) ( 37.720 35.360 ) um
+[INFO IFP-0102] Core area:                         1156.109 um^2
 [INFO IFP-0103] Total instances area:               299.037 um^2
-[INFO IFP-0104] Effective utilization:                0.048
+[INFO IFP-0104] Effective utilization:                0.259
 [INFO IFP-0105] Number of instances:                     23
 Found 0 macro blocks.
 Using 2 tracks default min distance between IO pins.
-[INFO PPL-0001] Number of available slots 354
+[INFO PPL-0001] Number of available slots 136
 [INFO PPL-0002] Number of I/O             11
 [INFO PPL-0003] Number of I/O w/sink      11
 [INFO PPL-0004] Number of I/O w/o sink    0
 [INFO PPL-0005] Slots per section         200
 [INFO PPL-0008] Successfully assigned pins to sections.
-[INFO PPL-0012] I/O nets HPWL: 577.69 um.
-[INFO TAP-0005] Inserted 93 tapcells.
+[INFO PPL-0012] I/O nets HPWL: 248.05 um.
+[INFO TAP-0005] Inserted 14 tapcells.
 [INFO PDN-0001] Inserting grid: stdcell
-Design area 415 um^2 7% utilization.
+[WARNING PDN-0110] No via inserted between met4 and met5 at (36.7000, 9.1200) - (37.7200, 10.7200) on VGND
+Design area 317 um^2 27% utilization.
