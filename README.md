@@ -9,7 +9,7 @@
 > **两条线：**
 > - 数字主线（本 README）：RTL → GDS 全流程，工具链自动化
 > - 模拟支线 [`ro/`](ro/README.md)：7 级环振，**手工版图 + PEX 后仿 + 四版优化**，
->   1.905 GHz / 寄生损耗 29.47%，DRC 0、LVS `match uniquely`
+>   2.19 GHz / 寄生损耗 27.6%，DRC 0、LVS `match uniquely`，支持一键复现
 
 ![版图渲染](docs/img/layout_overview.png)
 

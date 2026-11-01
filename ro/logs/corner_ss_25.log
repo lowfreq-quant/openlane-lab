@@ -1,0 +1,26 @@
+Using SPARSE 1.3 as Direct Linear Solver
+
+Note: No compatibility mode selected!
+
+
+Circuit: * ro post-layout netlist (first line = spice title)
+
+Doing analysis at TEMP = 25.000000 and TNOM = 27.000000
+
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+vgnd                                         0
+vpwr                                         0
+out                                2.34905e-18
+vvcc#branch                       -2.08896e-30
+vvss#branch                        2.08896e-30
+
+ Reference value :  0.00000e+00 Reference value :  1.31425e-08 Reference value :  2.56525e-08 Reference value :  4.06975e-08 Reference value :  5.53725e-08 Reference value :  6.97875e-08 Reference value :  8.52275e-08 Reference value :  9.99325e-08 Reference value :  1.15208e-07
+No. of Data Rows : 24014
+r10                 =  6.358213e-09
+r50                 =  3.225947e-08
+Note: Simulation executed from .control section 

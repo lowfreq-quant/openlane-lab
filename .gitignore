@@ -36,3 +36,4 @@ Thumbs.db
 *.swp
 sim/out/
 runs/20_postsim_signoff/tb_post
+ro/out/

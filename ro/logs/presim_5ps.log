@@ -1,0 +1,32 @@
+Using SPARSE 1.3 as Direct Linear Solver
+
+Note: No compatibility mode selected!
+
+
+Circuit: ** sch_path: /home/user/asic_ro/ro.sch
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+n1                                 1.32644e-18
+out                               -1.76296e-18
+vss                                          0
+vcc                                          0
+n2                                -3.04982e-18
+n3                                 3.90765e-18
+n4                                  1.5997e-18
+n5                                 8.81722e-19
+n6                                 6.25889e-18
+vvcc#branch                        -7.3323e-30
+vvss#branch                        7.34096e-30
+
+ Reference value :  0.00000e+00 Reference value :  1.25375e-08 Reference value :  2.48425e-08 Reference value :  3.79525e-08 Reference value :  5.12775e-08 Reference value :  6.31525e-08 Reference value :  7.67275e-08 Reference value :  9.06975e-08 Reference value :  1.04168e-07 Reference value :  1.17823e-07
+No. of Data Rows : 24014
+r10                 =  4.084600e-09
+r50                 =  1.732771e-08
+Note: Simulation executed from .control section 
