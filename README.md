@@ -6,6 +6,11 @@
 在 WSL2 里一步步跑完综合 → 布图（含 PDN）→ 布局 → CTS → 布线 → STA → GDS → DRC → LVS，
 每一步的命令、输入、输出、日志都留在仓库里。
 
+> **两条线：**
+> - 数字主线（本 README）：RTL → GDS 全流程，工具链自动化
+> - 模拟支线 [`ro/`](ro/README.md)：7 级环振，**手工版图 + PEX 后仿 + 四版优化**，
+>   1.905 GHz / 寄生损耗 29.47%，DRC 0、LVS `match uniquely`
+
 ![版图渲染](docs/img/layout_overview.png)
 
 | 指标 | 结果 |
@@ -160,6 +165,7 @@ make report                        # 只读产物，打印验证矩阵
 │   ├── dump_shapes.py / render_from_json.py
 │   └── legacy/                没走通的路径（留作踩坑记录）
 ├── docs/                      流程笔记、验证证据链、工具安装、版图截图
+├── ro/                        **模拟支线**：7 级环振（手工版图 + PEX，见 ro/README.md）
 ├── runs/                      各阶段产物（.odb / .spice / 后仿临时文件不入库）
 ├── Makefile
 └── HANDOFF.md                 完整交接文档（方法流 / 脚本手册 / 踩坑清单）

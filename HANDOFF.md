@@ -1,8 +1,9 @@
 # openlane-lab 交接文档
 
-> SkyWater SKY130 数字后端全流程实验工程
-> **状态：RTL→GDS→DRC(0)→LVS→PDN→IR→EM→SPEF→OCV→后仿→密度填充→decap→工程化 die/频率，全流程重跑通过**
-> 更新：2026-10-25 · 已推送 GitHub（HEAD 见 `git log`）
+> SkyWater SKY130 实验工程（数字主线 + 模拟支线）
+> **数字**：RTL→GDS→DRC(0)→LVS→PDN→IR→EM→SPEF→OCV→后仿→密度填充→decap→工程化 die/频率，全流程重跑通过
+> **模拟**：7 级环振手工版图 + PEX，四版优化到 **1.905 GHz / 损耗 29.47%**，DRC 0、LVS match
+> 更新：2026-11-01 · 已推送 GitHub（HEAD 见 `git log`）
 
 ---
 
@@ -77,11 +78,14 @@
 | 9 | **P1 收尾**：corners / signoff / postsim 全面 `read_spef` | 1 ns tt WNS 估算 -0.27 → SPEF **-0.34**；SDF 后仿 PASS |
 | 10 | **金属密度填充**：官方 `fill.json` schema + `density_fill` | 大 die 时 **22085**、缩到 40 µm 后 **4900** 个 fill（met1–met5）；独立 DEF |
 | 11 | **decap**：`filler_placement` 加入 decap_3/4/6/8/12 | 大 die 时 451 decap；缩 die 后 **68 decap + 7 fill**，铺满 99% |
-| 12 | **OCV + 8 corner**：`set_timing_derate` + 8 套 liberty | tt/ss × 电压温度全 **MET**（10 MHz） |
+| 12 | **OCV + 8 corner**：`set_timing_derate` + 8 套 liberty | tt/ss × 电压温度全 **MET**（当时 10 MHz；P7 后提到 125 MHz） |
 | 13 | **晶体管级 LVS**：GDS→Magic 提取 vs CDL | 器件 **346=346**、网络 **177=177**；拓扑残差见 `docs/p6-topology.md` |
 | 14 | **P7 缩 die / 提频** + 全流程重跑 | die **40×40**，利用率 **27%**（逻辑）/99%（含 decap）；SDC **8 ns (125 MHz)**；tt 极限 **667 MHz**；ss 在 5 ns 会挂（−0.55），6 ns 起 MET |
-| 15 | **全流程重跑 + commit** | `make all/verify/finish` 全绿；commit **`7cabc34`**；**push 未成功**（ahead 1） |
+| 15 | **全流程重跑 + commit** | `make all/verify/finish` 全绿；随后已 push |
 | 16 | **闭环交付**：`make report`、文档数字对齐、复杂 SDC/RC/签核后仿 | 验证矩阵可一键打印；README/verification 对齐 125 MHz/40 µm |
+| 17 | **模拟支线**：7 级环振 xschem→ngspice→magic 手工版图→PEX→LVS | 前仿 **2.700 GHz**；v5 1.671 GHz / 损耗 38.10% |
+| 18 | **四版优化**：布线收紧 → 结面积 → **两排蛇形 floorplan** | **1.905 GHz / 损耗 29.47%**；DRC 0；LVS match |
+| 19 | **环振归档入库**：`ro/`（脚本/网表/GDS/日志）+ 文档 | 见 §14 |
 
 当前 HEAD 的完整验证链见 §6，未完成项与原因见 §10，下一步见 §11。
 
@@ -528,3 +532,63 @@ bash scripts/run_timing_sweep.sh   # 时钟扫描（可选）
 - [ ] 多周期等复杂约束
 
 有问题先查 §7 坑列表；脚本细节见 §4；验证结论见 §6；**当前状态与下一步见 §0**。
+
+---
+
+## 14. 模拟支线：7 级环形振荡器（`ro/`）
+
+数字主线之外的独立小项目，验证「模拟设计靠 floorplan」这件事。
+
+### 14.1 设计
+
+| 项 | 值 |
+|----|-----|
+| 工艺 | SKY130A（`sky130_fd_pr`，1.8 V 器件） |
+| 器件 | nfet W=1 µm / pfet W=2 µm，L=0.15 µm |
+| 拓扑 | 7 级反相器闭环，输出 `out` |
+| 工具 | xschem → ngspice → magic（版图/提取/DRC）→ netgen（LVS）→ KLayout（渲染） |
+
+### 14.2 四版结果
+
+| 版本 | 改动 | 尺寸 | 后仿频率* | 寄生损耗 |
+|------|------|------|-----------|----------|
+| v5 | 单排 7 级 | 25.4 × 6.0 µm | 1.671 GHz | 38.10% |
+| R1 | 布线收紧 | 18.7 × 6.7 µm | 1.764 GHz | 34.67% |
+| R2 | 结面积最小化 | 18.7 × 6.7 µm | 1.822 GHz | 32.54% |
+| **R3** | **两排蛇形** | **11.1 × 11.5 µm** | **1.905 GHz** | **29.47%** |
+
+\* 真实频率。原脚本 `f=3/(t2-t1)` 把 6 个周期当 3 个，打印值只有一半（835.7/882.0/910.8/952.2 MHz）；
+用相邻上升沿复核：稳态周期 **525.0 ps → 1.905 GHz**。损耗是比值，不受口径影响。
+
+前仿（无寄生）**2.700 GHz**；蛇形版累计 +14% 频率、损耗压低 8.6 个百分点。
+每一版：**DRC 0**、**LVS 14 器件 / 9 网络 match uniquely**。
+
+### 14.3 三个值得记住的坑
+
+1. **抄错一行比写错一片更常见**：蛇形版第一次跑挂，根因是栅极 poly 条终点从 556 写成 500，
+   和 IN blob 之间裂了 5 µm——栅极全悬空。换代重写时最危险。
+2. **180° 旋转单元会让提取器交换源漏判定**：这不是错误（MOSFET 对称），
+   但自定义校验脚本若按「源极必须在电源上」硬断言会误报；LVS 的 permute 规则天然兼容。
+3. **测量口径要复核**：`rise=4 → rise=10` 是 6 个周期，不是 3 个。频率绝对值差 2×，
+   而损耗比不受影响——所以做优化对比时优先信比值。
+
+### 14.4 目录与复现
+
+```
+ro/
+├── README.md      流程、结果、测量口径、局限
+├── netlist/       ro.sch / ro.spice / ro_schem.spice（LVS 金标准）/ 各版提取网表
+├── gds/           三版 GDS + PNG
+├── logs/          presim/postsim/possim2/postsim3、LVS、magic（DRC）
+└── scripts/       ro_frontend / ro_layout / ro_opt / ro_serp / ro_lvs / fix_ngspice …
+```
+
+脚本是当时 WSL `~/asic_ro` 环境原样，入库做了路径脱敏；复用时改 `RO`/PDK 路径。
+首次跑 ngspice 前需要 `fix_ngspice.sh` 补 PDK 缺失的模型层。
+
+### 14.5 局限与下一步
+
+- 手工单元（非 stdcell），无天线/密度规则；
+- PEX 只跑 nominal，无 RC corner / MC / 温度扫描；
+- 下一步：脚本参数化入库、加 corner、把「蛇形 floorplan」的结论写成可复用的布线策略。
+

@@ -1,0 +1,42 @@
+* SPICE3 file created from ro_opt.ext - technology: sky130A
+
+X0 a_1210_200# a_730_200# vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.5 pd=3 as=0.4 ps=2.8 w=1 l=0.15
+X1 a_1690_200# a_1210_200# vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.5 pd=3 as=0.4 ps=2.8 w=1 l=0.15
+X2 a_1210_200# a_730_200# vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1 pd=5 as=0.8 ps=4.8 w=2 l=0.15
+X3 a_1690_200# a_1210_200# vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1 pd=5 as=0.8 ps=4.8 w=2 l=0.15
+X4 a_250_200# out vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.5 pd=3 as=0.4 ps=2.8 w=1 l=0.15
+X5 a_250_200# out vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1 pd=5 as=0.8 ps=4.8 w=2 l=0.15
+X6 a_730_200# a_250_200# vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.5 pd=3 as=0.4 ps=2.8 w=1 l=0.15
+X7 a_730_200# a_250_200# vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1 pd=5 as=0.8 ps=4.8 w=2 l=0.15
+X8 out a_2650_200# vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.5 pd=3 as=0.4 ps=2.8 w=1 l=0.15
+X9 out a_2650_200# vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1 pd=5 as=0.8 ps=4.8 w=2 l=0.15
+X10 a_2170_200# a_1690_200# vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.5 pd=3 as=0.4 ps=2.8 w=1 l=0.15
+X11 a_2650_200# a_2170_200# vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.5 pd=3 as=0.4 ps=2.8 w=1 l=0.15
+X12 a_2170_200# a_1690_200# vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1 pd=5 as=0.8 ps=4.8 w=2 l=0.15
+X13 a_2650_200# a_2170_200# vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1 pd=5 as=0.8 ps=4.8 w=2 l=0.15
+C0 a_2650_200# vpwr 0.59971f
+C1 a_2650_200# out 0.11675f
+C2 out vpwr 0.73268f
+C3 vpwr a_1690_200# 0.60052f
+C4 out a_1690_200# 0.05003f
+C5 a_2650_200# a_2170_200# 0.08415f
+C6 vpwr a_2170_200# 0.60052f
+C7 vpwr a_1210_200# 0.60052f
+C8 a_730_200# vpwr 0.60052f
+C9 out a_2170_200# 0.05003f
+C10 out a_1210_200# 0.05003f
+C11 vpwr a_250_200# 0.56884f
+C12 a_730_200# out 0.05003f
+C13 out a_250_200# 0.11097f
+C14 a_2170_200# a_1690_200# 0.08415f
+C15 a_1210_200# a_1690_200# 0.08415f
+C16 a_730_200# a_1210_200# 0.08415f
+C17 a_730_200# a_250_200# 0.08415f
+C18 a_2650_200# vgnd 0.97644f **FLOATING
+C19 a_2170_200# vgnd 0.9508f **FLOATING
+C20 a_1690_200# vgnd 0.9508f **FLOATING
+C21 a_1210_200# vgnd 0.9508f **FLOATING
+C22 a_730_200# vgnd 0.9508f **FLOATING
+C23 a_250_200# vgnd 1.00925f **FLOATING
+C24 out vgnd 2.39335f **FLOATING
+C25 vpwr vgnd 6.2496f **FLOATING

@@ -1,0 +1,43 @@
+** sch_path: /home/user/asic_ro/ro.sch
+**.subckt ro
+x1 n1 out VCC VSS not W_N=1 L_N=0.15 W_P=2 L_P=0.15 m=1
+x2 n2 n1 VCC VSS not W_N=1 L_N=0.15 W_P=2 L_P=0.15 m=1
+x3 n3 n2 VCC VSS not W_N=1 L_N=0.15 W_P=2 L_P=0.15 m=1
+x4 n4 n3 VCC VSS not W_N=1 L_N=0.15 W_P=2 L_P=0.15 m=1
+x5 n5 n4 VCC VSS not W_N=1 L_N=0.15 W_P=2 L_P=0.15 m=1
+x6 n6 n5 VCC VSS not W_N=1 L_N=0.15 W_P=2 L_P=0.15 m=1
+x7 out n6 VCC VSS not W_N=1 L_N=0.15 W_P=2 L_P=0.15 m=1
+**** begin user architecture code
+
+.lib /home/user/.volare/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+
+
+vvss VSS 0 dc 0
+vvcc VCC 0 pwl 0 0 1n 0 1.05n 1.8 200n 1.8
+
+.control
+save all
+tran 0.05n 200n
+meas tran t1 when v(out)=0.9 rise=4
+meas tran t2 when v(out)=0.9 rise=10
+write ro_pre.raw
+.endc
+
+
+**** end user architecture code
+**.ends
+
+* expanding   symbol:  sky130_tests/not.sym # of pins=2
+** sym_path: /home/user/.volare/sky130A/libs.tech/xschem/sky130_tests/not.sym
+** sch_path: /home/user/.volare/sky130A/libs.tech/xschem/sky130_tests/not.sch
+.subckt not y a VCCPIN VSSPIN     W_N=1 L_N=0.15 W_P=2 L_P=0.15
+*.opin y
+*.ipin a
+XM1 y a VSSPIN VSSPIN sky130_fd_pr__nfet_01v8 L=L_N W=W_N nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM2 y a VCCPIN VCCPIN sky130_fd_pr__pfet_01v8 L=L_P W=W_P nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+.ends
+
+.end

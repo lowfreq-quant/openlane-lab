@@ -1,0 +1,42 @@
+* SPICE3 file created from ro_layout.ext - technology: sky130A
+
+X0 a_1690_200# a_1010_200# vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.55 pd=3.1 as=1.47 ps=4.94 w=1 l=0.15
+X1 a_1690_200# a_1010_200# vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1.1 pd=5.1 as=2.94 ps=6.94 w=2 l=0.15
+X2 a_2370_200# a_1690_200# vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.55 pd=3.1 as=1.47 ps=4.94 w=1 l=0.15
+X3 a_2370_200# a_1690_200# vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1.1 pd=5.1 as=2.94 ps=6.94 w=2 l=0.15
+X4 a_330_200# out vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.55 pd=3.1 as=1.47 ps=4.94 w=1 l=0.15
+X5 a_3050_200# a_2370_200# vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.55 pd=3.1 as=1.47 ps=4.94 w=1 l=0.15
+X6 a_330_200# out vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1.1 pd=5.1 as=2.94 ps=6.94 w=2 l=0.15
+X7 a_3050_200# a_2370_200# vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1.1 pd=5.1 as=2.94 ps=6.94 w=2 l=0.15
+X8 a_1010_200# a_330_200# vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.55 pd=3.1 as=1.47 ps=4.94 w=1 l=0.15
+X9 a_1010_200# a_330_200# vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1.1 pd=5.1 as=2.94 ps=6.94 w=2 l=0.15
+X10 out a_3730_200# vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.55 pd=3.1 as=1.47 ps=4.94 w=1 l=0.15
+X11 out a_3730_200# vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1.1 pd=5.1 as=2.94 ps=6.94 w=2 l=0.15
+X12 a_3730_200# a_3050_200# vgnd vgnd sky130_fd_pr__nfet_01v8 ad=0.55 pd=3.1 as=1.47 ps=4.94 w=1 l=0.15
+X13 a_3730_200# a_3050_200# vpwr vpwr sky130_fd_pr__pfet_01v8 ad=1.1 pd=5.1 as=2.94 ps=6.94 w=2 l=0.15
+C0 vpwr a_1010_200# 0.59355f
+C1 a_1690_200# a_2370_200# 0.09286f
+C2 vpwr a_330_200# 0.58455f
+C3 vpwr a_1690_200# 0.59355f
+C4 out a_1010_200# 0.41393f
+C5 a_3730_200# a_3050_200# 0.09286f
+C6 a_2370_200# a_3050_200# 0.09286f
+C7 vpwr a_3050_200# 0.59355f
+C8 out a_330_200# 0.49028f
+C9 a_1690_200# out 0.41393f
+C10 vpwr a_3730_200# 0.59342f
+C11 vpwr a_2370_200# 0.59355f
+C12 out a_3050_200# 0.41393f
+C13 a_1010_200# a_330_200# 0.09286f
+C14 a_1690_200# a_1010_200# 0.09286f
+C15 out a_3730_200# 0.50675f
+C16 out a_2370_200# 0.41393f
+C17 vpwr out 0.9257f
+C18 a_3730_200# vgnd 1.18265f **FLOATING
+C19 a_3050_200# vgnd 1.18198f **FLOATING
+C20 a_2370_200# vgnd 1.18198f **FLOATING
+C21 a_1690_200# vgnd 1.18198f **FLOATING
+C22 a_1010_200# vgnd 1.18198f **FLOATING
+C23 a_330_200# vgnd 1.19683f **FLOATING
+C24 out vgnd 2.68368f **FLOATING
+C25 vpwr vgnd 8.83232f **FLOATING

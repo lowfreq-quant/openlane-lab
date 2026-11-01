@@ -1,0 +1,17 @@
+* 7-stage ring oscillator - schematic (flat, from xschem netlist)
+.subckt ro out vpwr vgnd
+xm1n n1 out vgnd vgnd sky130_fd_pr__nfet_01v8 w=1 l=0.15
+xm1p n1 out vpwr vpwr sky130_fd_pr__pfet_01v8 w=2 l=0.15
+xm2n n2 n1 vgnd vgnd sky130_fd_pr__nfet_01v8 w=1 l=0.15
+xm2p n2 n1 vpwr vpwr sky130_fd_pr__pfet_01v8 w=2 l=0.15
+xm3n n3 n2 vgnd vgnd sky130_fd_pr__nfet_01v8 w=1 l=0.15
+xm3p n3 n2 vpwr vpwr sky130_fd_pr__pfet_01v8 w=2 l=0.15
+xm4n n4 n3 vgnd vgnd sky130_fd_pr__nfet_01v8 w=1 l=0.15
+xm4p n4 n3 vpwr vpwr sky130_fd_pr__pfet_01v8 w=2 l=0.15
+xm5n n5 n4 vgnd vgnd sky130_fd_pr__nfet_01v8 w=1 l=0.15
+xm5p n5 n4 vpwr vpwr sky130_fd_pr__pfet_01v8 w=2 l=0.15
+xm6n n6 n5 vgnd vgnd sky130_fd_pr__nfet_01v8 w=1 l=0.15
+xm6p n6 n5 vpwr vpwr sky130_fd_pr__pfet_01v8 w=2 l=0.15
+xm7n out n6 vgnd vgnd sky130_fd_pr__nfet_01v8 w=1 l=0.15
+xm7p out n6 vpwr vpwr sky130_fd_pr__pfet_01v8 w=2 l=0.15
+.ends ro
